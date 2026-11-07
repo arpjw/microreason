@@ -45,6 +45,28 @@ def _cmd_config_validate(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _cmd_data_fetch(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from microreason.data.fetch import ChecksumError, fetch_source
+    from microreason.data.sources import load_sources
+
+    try:
+        cfg = load_sources(args.config)
+    except (ValidationError, ValueError, OSError) as exc:
+        print(f"error: invalid sources config {args.config}:\n{exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    try:
+        for source in cfg.sources:
+            paths = fetch_source(source, Path(args.out))
+            for p in paths:
+                print(p)
+    except ChecksumError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    return EXIT_OK
+
+
 def _cmd_model_inspect(args: argparse.Namespace) -> int:
     try:
         model = load_model_config(args.config)
@@ -116,6 +138,10 @@ def build_parser() -> argparse.ArgumentParser:
     da = data_sub.add_parser("audit", help="Audit a data manifest for splits and overlap.")
     da.add_argument("--manifest", required=True)
     da.set_defaults(func=_not_implemented(2, "data audit"))
+    df = data_sub.add_parser("fetch-sources", help="Download pinned text sources; verify sha256.")
+    df.add_argument("--config", default="configs/data_sources.yaml")
+    df.add_argument("--out", default="data/raw")
+    df.set_defaults(func=_cmd_data_fetch)
 
     # tokenizer
     tok = sub.add_parser("tokenizer", help="Tokenizer utilities (Phase 3).")
