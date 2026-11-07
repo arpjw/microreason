@@ -1,0 +1,24 @@
+# Local smoke-test stage on CPU/MPS. Paths are placeholders until Phases 2-3 produce them.
+stage: smoke
+model: configs/model_smoke.yaml
+tokenizer: artifacts/tokenizer/v1
+data_manifest: data/manifests/smoke_train_v1.json
+seed: 42
+precision: fp32
+sequence_length: 256
+effective_batch_tokens: 4096
+max_steps: 200
+eval_every_steps: 50
+checkpoint_every_steps: 100
+optimizer:
+  name: adamw
+  peak_lr: 0.001
+  weight_decay: 0.1
+  grad_clip_norm: 1.0
+scheduler:
+  name: cosine
+  warmup_fraction: 0.02
+  min_lr_fraction: 0.1
+budget:
+  paid_compute_allowed: false
+  max_spend_usd: 0

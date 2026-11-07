@@ -1,0 +1,17 @@
+# Full v1 architecture (spec §3). Analytic count: 42,742,272 parameters.
+name: microreason-43m
+n_layers: 12
+d_model: 512
+n_heads: 8
+n_kv_heads: 8
+head_dim: 64
+mlp_hidden: 1408
+vocab_size: 8192
+max_seq_len: 2048
+norm: rmsnorm
+position: rope
+rope_theta: 10000.0
+mlp: swiglu
+tie_embeddings: true
+bias: false
+dropout: 0.0

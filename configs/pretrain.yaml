@@ -1,0 +1,27 @@
+# Stage 1 base pretraining (spec §6). Proposal only; nothing here has been run.
+stage: pretrain
+model: configs/model_43m.yaml
+tokenizer: artifacts/tokenizer/v1
+data_manifest: data/manifests/base_train_v1.json
+validation_manifests:
+  - data/manifests/general_val_v1.json
+  - data/manifests/math_val_v1.json
+seed: 42
+precision: bf16
+sequence_length: 1024
+effective_batch_tokens: 65536
+max_train_tokens: 120000000
+eval_every_steps: 250
+checkpoint_every_steps: 500
+optimizer:
+  name: adamw
+  peak_lr: 0.0003
+  weight_decay: 0.1
+  grad_clip_norm: 1.0
+scheduler:
+  name: cosine
+  warmup_fraction: 0.02
+  min_lr_fraction: 0.1
+budget:
+  paid_compute_allowed: false
+  max_spend_usd: 0

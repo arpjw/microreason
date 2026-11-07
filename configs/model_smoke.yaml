@@ -1,0 +1,14 @@
+# Same model class, scaled down for CPU/MPS smoke tests (spec §3: 2-5M parameters).
+# Analytic count: 3,344,064 parameters.
+name: microreason-smoke
+n_layers: 4
+d_model: 192
+n_heads: 3
+n_kv_heads: 3
+head_dim: 64
+mlp_hidden: 512
+vocab_size: 8192
+max_seq_len: 512
+tie_embeddings: true
+bias: false
+dropout: 0.0

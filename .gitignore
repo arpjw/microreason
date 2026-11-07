@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+
+# Large or private artifacts (spec §9: keep out of Git)
+artifacts/*
+!artifacts/.gitkeep
+runs/*
+!runs/.gitkeep
+data/raw/
+data/generated/
+*.pt
+*.safetensors
+*.bin
+*.ckpt
+*.parquet
+
+# Secrets
+.env
+.env.*
+*.pem
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
