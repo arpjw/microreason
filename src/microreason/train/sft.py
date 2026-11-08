@@ -123,7 +123,7 @@ def build_sft_trainer(
 
     stage = resolved.stage
     cfg = stage.sft
-    if stage.stage != "sft" or cfg is None:
+    if stage.stage not in ("sft", "extra_sft") or cfg is None:
         raise NotImplementedError(f"stage '{stage.stage}' is not built by the SFT builder")
     if stage.parent is None:
         raise ValueError("SFT needs a parent checkpoint")
@@ -131,14 +131,24 @@ def build_sft_trainer(
     if tok.vocab_size != resolved.model.vocab_size:
         raise ValueError("tokenizer vocab size does not match the model config")
 
-    records, train_manifest = select_records(cfg.train_manifest, "train", cfg.num_examples)
+    if cfg.stream_partition is not None:
+        from microreason.rl.pool import ORDER_RULE, load_partition
+
+        records, train_manifest = load_partition(
+            cfg.train_manifest, cfg.stream_partition, cfg.num_examples
+        )
+        selection = f"partition {cfg.stream_partition}; {ORDER_RULE}; first num_examples"
+    else:
+        records, train_manifest = select_records(cfg.train_manifest, "train", cfg.num_examples)
+        selection = SELECTION_RULE
     items: list[tuple[str, Example]] = []
     counts = {"show_work": 0, "direct": 0}
     for r in records:
         mode = mode_for(r["id"], cfg.show_work_fraction)
         counts[mode] += 1
         items.append((r["id"], build_record_example(tok, r, mode, max_len=stage.sequence_length)))
-    stream = SFTStream(items, stage.seed, tok.pad_id, "sft_math_train_v1")
+    name = "sft_math_train_v1" if cfg.stream_partition is None else f"sft_{cfg.stream_partition}"
+    stream = SFTStream(items, stage.seed, tok.pad_id, name)
 
     micro = stage.micro_batch_size or stage.sequences_per_step
     val_records, val_manifest = select_records(cfg.val_manifest, "val", cfg.val_examples_per_format)
@@ -158,7 +168,7 @@ def build_sft_trainer(
         "sft_data": {
             "train_manifest_sha256": train_manifest["sha256"],
             "val_manifest_sha256": val_manifest["sha256"],
-            "selection_rule": SELECTION_RULE,
+            "selection_rule": selection,
             "mode_rule": MODE_RULE,
             "prompt_format": PROMPT_FORMAT_VERSION,
             "examples": len(items),

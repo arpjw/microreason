@@ -307,6 +307,78 @@ def _cmd_model_inspect(args: argparse.Namespace) -> int:
     return EXIT_OK if out["counts_match"] else EXIT_CONFIG_ERROR
 
 
+def _rl_guard(budget, args, run_dir):
+    """A budget guard for a paid RL run, or None for an unpaid one. Raises ValueError."""
+    import os
+    from datetime import datetime
+    from pathlib import Path
+
+    if not budget.paid_compute_allowed:
+        return None
+    from microreason.train.budget import BudgetGuard
+
+    pod_id = args.pod_id or os.environ.get("RUNPOD_POD_ID")
+    start = args.billing_start or os.environ.get("MICROREASON_BILLING_START")
+    if not pod_id or not start:
+        raise ValueError("paid runs need --pod-id and --billing-start (or RUNPOD_POD_ID and "
+                         "MICROREASON_BILLING_START)")  # fmt: skip
+    started = datetime.fromisoformat(start.replace("Z", "+00:00")).timestamp()
+    return BudgetGuard(budget, started, pod_id, Path(run_dir) / "budget_ledger.json")
+
+
+def _load_rl(args):
+    import yaml
+
+    from microreason.rl.config import load_rl_config
+
+    over = {"parent": getattr(args, "parent", None)}
+    if getattr(args, "budget", None):
+        with open(args.budget, encoding="utf-8") as f:
+            over["budget"] = yaml.safe_load(f)
+    return load_rl_config(args.config, over)
+
+
+def _cmd_rl_gate(args: argparse.Namespace) -> int:
+    from microreason.rl.gate import run_gate
+    from microreason.train.pretrain import default_device
+
+    try:
+        resolved = _load_rl(args)
+    except (ValidationError, ValueError, OSError) as exc:
+        print(f"error: invalid config {args.config}:\n{exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    report = run_gate(resolved, args.checkpoint, args.out, args.device or default_device())
+    print(json.dumps({"passed": report["passed"], "failures": report["failures"],
+                      "overall": report["overall"]}, indent=2))  # fmt: skip
+    return EXIT_OK if report["passed"] else 3
+
+
+def _cmd_rl_train(args: argparse.Namespace) -> int:
+    from microreason.train.pretrain import default_device
+
+    try:
+        resolved = _load_rl(args)
+        guard = _rl_guard(resolved.stage.budget, args, args.run_dir)
+    except (ValidationError, ValueError, OSError, RuntimeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    if resolved.stage.stage != args.expect_stage:
+        print(f"error: {args.config} is a {resolved.stage.stage} config", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    device = args.device or default_device()
+    if resolved.stage.stage == "grpo":
+        from microreason.rl.grpo import GRPOTrainer
+
+        trainer = GRPOTrainer(resolved, args.run_dir, device, guard)
+    else:
+        from microreason.rl.dpo import DPOTrainer
+
+        trainer = DPOTrainer(resolved, args.run_dir, device, guard)
+    result = trainer.train()
+    print(json.dumps(result, indent=2, sort_keys=True, default=str))
+    return EXIT_OK if result["status"] == "completed" else 4
+
+
 def _cmd_train(args: argparse.Namespace) -> int:
     from datetime import UTC, datetime
     from pathlib import Path
@@ -322,6 +394,7 @@ def _cmd_train(args: argparse.Namespace) -> int:
                 "parent": args.parent,
                 "micro_batch_size": args.micro_batch_size,
                 "max_steps": args.max_steps,
+                "max_wall_seconds": getattr(args, "max_wall_seconds", None),
             }.items()
             if v is not None
         }
@@ -339,7 +412,7 @@ def _cmd_train(args: argparse.Namespace) -> int:
         print(f"error: invalid config {args.config}:\n{exc}", file=sys.stderr)
         return EXIT_CONFIG_ERROR
     stage = resolved.stage
-    if stage.stage not in (*CAUSAL_LM_STAGES, "sft"):
+    if stage.stage not in (*CAUSAL_LM_STAGES, "sft", "extra_sft"):
         print(f"error: stage '{stage.stage}' is not implemented yet.", file=sys.stderr)
         return EXIT_NOT_IMPLEMENTED
     chash = resolved.config_hash()
@@ -373,7 +446,7 @@ def _cmd_train(args: argparse.Namespace) -> int:
             return EXIT_CONFIG_ERROR
 
     try:
-        if stage.stage == "sft":
+        if stage.stage in ("sft", "extra_sft"):
             from microreason.train.sft import build_sft_trainer
 
             trainer = build_sft_trainer(resolved, run_dir, device, guard)
@@ -505,10 +578,36 @@ def build_parser() -> argparse.ArgumentParser:
     tr.add_argument("--resume", default=None, help="Checkpoint path, or 'latest' in --run-dir.")
     tr.add_argument("--micro-batch-size", type=int, default=None, help="Override the config.")
     tr.add_argument("--max-steps", type=int, default=None, help="Override the config.")
+    tr.add_argument(
+        "--max-wall-seconds",
+        type=float,
+        default=None,
+        help="Stop as completed after this much training-loop time.",
+    )
     tr.add_argument("--pod-id", default=None, help="Paid runs: provider pod id.")
     tr.add_argument("--billing-start", default=None, help="Paid runs: ISO time billing began.")
     tr.add_argument("--budget", default=None, help="YAML budget that replaces the config's own.")
     tr.set_defaults(func=_cmd_train)
+
+    # rl branches (gate, grpo, dpo)
+    rl = sub.add_parser("rl", help="RL-stage branches: reward-variance gate, GRPO, DPO.")
+    rl_sub = rl.add_subparsers(dest="rl_command", required=True)
+    rg = rl_sub.add_parser("gate", help="Reward-variance gate on the RL training distribution.")
+    rg.add_argument("--config", required=True, help="A grpo config (sampling settings + rule).")
+    rg.add_argument("--checkpoint", required=True)
+    rg.add_argument("--out", required=True)
+    rg.add_argument("--device", default=None)
+    rg.set_defaults(func=_cmd_rl_gate)
+    for name in ("grpo", "dpo"):
+        rt = rl_sub.add_parser(name, help=f"Train the {name} branch from v2-sft.")
+        rt.add_argument("--config", required=True)
+        rt.add_argument("--parent", default=None)
+        rt.add_argument("--run-dir", required=True)
+        rt.add_argument("--device", default=None)
+        rt.add_argument("--budget", default=None)
+        rt.add_argument("--pod-id", default=None)
+        rt.add_argument("--billing-start", default=None)
+        rt.set_defaults(func=_cmd_rl_train, expect_stage=name)
 
     # eval / compare / serve
     ev = sub.add_parser("eval", help="Evaluate a checkpoint on a frozen suite.")

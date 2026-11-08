@@ -335,13 +335,22 @@ class Trainer:
         stop_reason = None
         if self.device.type == "cuda":
             torch.cuda.reset_peak_memory_stats(self.device)
+        wall_limit = self.stage.max_wall_seconds
+        loop_start = time.time()
+        wall_stop = False
         try:
             while self.step < self.total_steps:
+                if wall_limit is not None and time.time() - loop_start >= wall_limit:
+                    wall_stop = True
+                    log.info("wall-time limit %.0fs reached at step %d", wall_limit, self.step)
+                    break
                 if self.guard is not None:
                     est = sorted(step_times[-5:])[len(step_times[-5:]) // 2] if step_times else None
-                    stop_reason = self.guard.check(
-                        est, steps_this_run, self.total_steps - self.step
-                    )
+                    remaining = self.total_steps - self.step
+                    if wall_limit is not None and est:
+                        left = max(0.0, wall_limit - (time.time() - loop_start))
+                        remaining = min(remaining, math.ceil(left / est))
+                    stop_reason = self.guard.check(est, steps_this_run, remaining)
                     if stop_reason:
                         log.warning("budget guard stopped the run: %s", stop_reason)
                         break
@@ -372,7 +381,7 @@ class Trainer:
                              {k: round(v, 4) for k, v in last_eval.items()})  # fmt: skip
                 if self.step % self.stage.checkpoint_every_steps == 0 or done:
                     last_ckpt = self.save()
-            if stop_reason and self.step > 0:
+            if (stop_reason or wall_stop) and self.step > 0:
                 from microreason.checkpoint import checkpoint_dir
 
                 if not checkpoint_dir(self.run_dir, self.step).exists():
@@ -387,7 +396,12 @@ class Trainer:
             if step_times
             else None,
             "peak_memory_gib": peak_memory_gib(self.device),
+            "train_wall_seconds": round(time.time() - loop_start, 2),
+            "stopped_at_wall_limit": wall_stop,
         }
+        if wall_stop:
+            last_eval = self.evaluate()
+            self._event("eval", **{f"val_loss/{k}": v for k, v in last_eval.items()})
         if self.guard is not None:
             timing["budget_ledger"] = self.guard.write(
                 timing["median_step_seconds"], self.total_steps - self.step, stop_reason

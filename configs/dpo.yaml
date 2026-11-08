@@ -1,0 +1,29 @@
+# Stage 4A: DPO preference branch from v2-sft (spec §6). Pairs are v2-sft's own samples on
+# training-only `dpo`-partition prompts, labelled by the exact verifier (correct vs incorrect).
+# beta 0.1 and 1 epoch per the spec; LR 2e-6 is inside the spec's 1e-6..5e-6 range (no sweep).
+stage: dpo
+model: configs/model_43m.yaml
+tokenizer: artifacts/tokenizer/v1
+parent: artifacts/p2-v2-sft
+pool_manifest: data/manifests/math_train_stream_rl1.json
+seed: 46
+precision: bf16
+sampling:
+  group_size: 4
+  temperature: 0.8
+  max_new_tokens: 128
+  generation_batch_size: 256
+max_pair_prompts: 16000
+target_pairs: 6000
+heldout_fraction: 0.10
+beta: 0.1
+lr: 0.000002
+warmup_fraction: 0.1
+batch_pairs: 32
+epochs: 1
+weight_decay: 0.0
+grad_clip_norm: 1.0
+log_every_steps: 10
+budget:
+  paid_compute_allowed: false
+  max_spend_usd: 0

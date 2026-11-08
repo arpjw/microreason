@@ -176,6 +176,9 @@ class SFTDataConfig(_Strict):
     num_examples: PositiveInt = 50_000
     show_work_fraction: float = Field(default=0.75, ge=0, le=1)
     val_examples_per_format: PositiveInt = 256
+    # When set, train_manifest is a training-only stream manifest and examples come from this
+    # partition of it (microreason.rl.pool), e.g. "sft_extra" for the v2-extra-sft control.
+    stream_partition: str | None = None
 
 
 class ValidationItem(_Strict):
@@ -203,6 +206,9 @@ class StageConfig(_Strict):
     max_train_tokens: PositiveInt | None = None
     max_steps: PositiveInt | None = None
     max_examples: PositiveInt | None = None
+    # Stop (as completed) once the training loop has run this long; used to time-match the
+    # equal-compute SFT control to GRPO. Steps/examples still cap the run.
+    max_wall_seconds: float | None = Field(default=None, gt=0)
     log_every_steps: PositiveInt = 10
     eval_every_steps: PositiveInt = 250
     checkpoint_every_steps: PositiveInt = 500

@@ -1,0 +1,35 @@
+# Stage 5: on-policy GRPO from v2-sft (spec §6). Declared before any GRPO run; see
+# reports/rl_protocol_v1.md and the implementation notes in src/microreason/rl/grpo.py.
+# 300 steps x 32 prompts x 4 samples = 38,400 completions (spec planning range 20-40 k).
+stage: grpo
+model: configs/model_43m.yaml
+tokenizer: artifacts/tokenizer/v1
+parent: artifacts/p2-v2-sft
+pool_manifest: data/manifests/math_train_stream_rl1.json
+seed: 45
+precision: bf16
+sampling:
+  group_size: 4
+  temperature: 0.8
+  max_new_tokens: 128
+  generation_batch_size: 128
+gate:              # reward-variance gate on 512 `gate`-partition prompts, same sampling
+  prompts: 512
+  min_mixed_group_fraction: 0.20
+  max_malformed_fraction: 0.10
+  min_pass_at_1: 0.05
+  max_pass_at_1: 0.95
+prompts_per_step: 32
+steps: 300
+minibatches_per_step: 2   # 2 updates per rollout step; staleness <= 1 update
+clip_eps: 0.2
+kl_beta: 0.04
+lr: 0.000005              # v2-sft's final LR; constant after warmup
+warmup_steps: 10
+weight_decay: 0.0
+grad_clip_norm: 1.0
+log_every_steps: 5
+checkpoint_every_steps: 100
+budget:
+  paid_compute_allowed: false
+  max_spend_usd: 0

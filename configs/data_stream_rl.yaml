@@ -1,0 +1,36 @@
+# RL-stage training-only math pool (stream rl1): GRPO prompts, the reward-variance gate, DPO pair
+# prompts and the equal-compute SFT control's examples. See reports/rl_protocol_v1.md.
+# Same generators and in-distribution ranges as streams v1/v2; frozen evaluation problems excluded.
+#
+# Template weights (declared before any RL run): proportional to the chance that a group of 4
+# samples from v2-sft mixes successes and failures, 1 - p^4 - (1-p)^4, using v2-sft's greedy
+# show-work val accuracy p per template (reports/scale_v2.md), floored at a 2% share so every
+# template stays represented, then renormalized. Expected mixed-group fraction ~0.49 (uniform: ~0.25).
+# Records are split into disjoint partitions by a hash of their id (microreason.rl.pool).
+# ~880 k problems in total, so the time-matched SFT control (60% partition) repeats its data
+# only a few times. Capacity-limited single-operation templates contribute what they have.
+version: rl1
+root_seed: 20261109
+max_attempts_factor: 20
+parallel_workers: 12
+shard_a_fraction: 0.5   # unused by the RL stages (they use partitions); required by the schema
+targets:
+  add_ab: 16800                      # p 0.990, P(mixed) 0.039
+  sub_ab: 16800                      # p 0.994, P(mixed) 0.024
+  mul_ab: 16800                      # p 0.996, P(mixed) 0.016
+  div_ab: 17200                      # p 0.982, P(mixed) 0.070
+  ax_equals_b: 16800                 # p 0.984, P(mixed) 0.062
+  x_plus_a_equals_b: 36800           # p 0.960, P(mixed) 0.151
+  add_mul_abc: 70400                # p 0.918, P(mixed) 0.290
+  ax_plus_b_equals_c: 16800          # p 0.988, P(mixed) 0.047
+  mul_sub_mul: 202400                # p 0.380, P(mixed) 0.831
+  sub_mul_add: 133200                # p 0.820, P(mixed) 0.547
+  ax_plus_b_equals_cx_plus_d: 16800  # p 0.988, P(mixed) 0.047
+  a_paren_x_plus_b_equals_c: 135200  # p 0.816, P(mixed) 0.555
+  a_times_paren_diff: 58000         # p 0.934, P(mixed) 0.239
+  paren_sum_times_diff: 126400       # p 0.832, P(mixed) 0.520
+eval_manifest_dir: data/manifests
+eval_version: v1
+out_path: data/generated/math_v1/train_stream_rl1/train_stream.jsonl
+manifest_path: data/manifests/math_train_stream_rl1.json
+tokenized_prefix: math_stream_rl1

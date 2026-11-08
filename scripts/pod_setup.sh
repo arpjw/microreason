@@ -33,6 +33,16 @@ if [[ "${SETUP_PROFILE:-full}" == "scale" ]]; then
   uv run microreason data tokenize-stream --config configs/data_stream_v2.yaml
   exit 0
 fi
+if [[ "${SETUP_PROFILE:-full}" == "rl" ]]; then
+  # RL branches: the math splits plus the training-only rl1 pool (no tokenized streams needed).
+  echo "== cross-machine determinism check (math manifests)"
+  uv run python scripts/check_fingerprints.py --only math
+  echo "== stream rl1 (RL pool)"
+  uv run microreason data generate-stream --config configs/data_stream_rl.yaml
+  uv run microreason data audit-stream --config configs/data_stream_rl.yaml --sample 0.02 \
+    --report /tmp/data_stream_audit_rl1.json
+  exit 0
+fi
 if [[ "${SETUP_PROFILE:-full}" == "sft" ]]; then
   # SFT and its evaluations need only the math splits (already rebuilt and audited above).
   echo "== cross-machine determinism check (math manifests)"
