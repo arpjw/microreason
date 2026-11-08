@@ -1,0 +1,157 @@
+{
+  "device": "cuda",
+  "final_checkpoint": "runs/rl/v3-dpo/checkpoints/step_0000125",
+  "heldout_after": {
+    "implicit_reward_accuracy": 0.6274509803921569,
+    "mean_beta_margin": 0.07092482789149732,
+    "pairs": 459,
+    "policy_prefers_chosen": 0.7712418300653595
+  },
+  "heldout_before": {
+    "implicit_reward_accuracy": 0.0,
+    "mean_beta_margin": 0.0,
+    "pairs": 459,
+    "policy_prefers_chosen": 0.7908496732026143
+  },
+  "pairs": {
+    "by_template": {
+      "a_paren_x_plus_b_equals_c": 488,
+      "a_times_paren_diff": 177,
+      "add_ab": 46,
+      "add_mul_abc": 286,
+      "ax_equals_b": 6,
+      "ax_plus_b_equals_c": 26,
+      "ax_plus_b_equals_cx_plus_d": 28,
+      "div_ab": 24,
+      "mul_ab": 9,
+      "mul_sub_mul": 1643,
+      "paren_sum_times_diff": 591,
+      "sub_ab": 29,
+      "sub_mul_add": 997,
+      "x_plus_a_equals_b": 97
+    },
+    "heldout": 459,
+    "mixed_group_fraction": 0.2779375,
+    "pairs": 4447,
+    "prompts_sampled": 16000,
+    "rejected_status": {
+      "invalid_format": 3,
+      "wrong": 4444
+    },
+    "sha256": "cc964cacb0dab7247c8f444defccf09164c0489e15b766fda7028dc722499094",
+    "train": 3988
+  },
+  "provenance": {
+    "code_revision": {
+      "dirty": false,
+      "git_commit": "bb44f080ebe5b3f8aa0c7618770ab7f0afcadf0f",
+      "source": "REVISION file"
+    },
+    "config_hash": "sha256:abecf4d9e477fd6f04824abf674cfba4ee128b16467836e871529136cf13a513",
+    "parent": "artifacts/p2-v2-sft",
+    "parent_checkpoint_id": "sha256:1ec3ff35f8697140e8018d57e1cd6bf21ea2b23f782e532742a8325ecde2a904",
+    "parent_config_hash": "sha256:c1d74fdf3f23b128ca49bafebe6f1e136df0645b38ce4bc757e5e84c900c71b9",
+    "pool": {
+      "manifest": "data/manifests/math_train_stream_rl1.json",
+      "partition": "dpo",
+      "sha256": "5c18caa1153f238fbcdbf43ac3b6ddbc3948e126dfd9753b5a45d29de48ed358"
+    },
+    "stage": "dpo",
+    "tokenizer_sha256": "739dc16f65ea94839d37f0602f3e2f84e51cb630428f90e6f71d663d4b30c9be"
+  },
+  "resolved_config": {
+    "model": {
+      "bias": false,
+      "d_model": 512,
+      "dropout": 0.0,
+      "head_dim": 64,
+      "max_seq_len": 2048,
+      "mlp": "swiglu",
+      "mlp_hidden": 1408,
+      "n_heads": 8,
+      "n_kv_heads": 8,
+      "n_layers": 12,
+      "name": "microreason-43m",
+      "norm": "rmsnorm",
+      "position": "rope",
+      "rope_theta": 10000.0,
+      "tie_embeddings": true,
+      "vocab_size": 8192
+    },
+    "schema_version": 1,
+    "stage": {
+      "batch_pairs": 32,
+      "beta": 0.1,
+      "betas": [
+        0.9,
+        0.95
+      ],
+      "budget": {
+        "approved_at": "2026-11-08",
+        "approved_by": "project owner (approval in chat for the RL branches)",
+        "gpu_type": "NVIDIA RTX 6000 Ada Generation (Secure Cloud)",
+        "hourly_rate_usd": 0.99,
+        "max_runtime_hours": 3.5,
+        "max_spend_usd": 5.0,
+        "paid_compute_allowed": true,
+        "provider": "runpod",
+        "reserve_minutes": 15.0,
+        "shutdown_rule": "Copy reports, metrics, rollout and pair records, eval rows, budget ledgers and the final v4-grpo, v2-extra-sft and v3-dpo checkpoints off the pod, then terminate (delete) it when the session finishes, at either ceiling, or on any failure; the pod also deletes itself 45 minutes after finishing if not collected."
+      },
+      "epochs": 1,
+      "grad_clip_norm": 1.0,
+      "heldout_fraction": 0.1,
+      "log_every_steps": 10,
+      "lr": 2e-06,
+      "max_pair_prompts": 16000,
+      "model": "configs/model_43m.yaml",
+      "parent": "artifacts/p2-v2-sft",
+      "pool_manifest": "data/manifests/math_train_stream_rl1.json",
+      "precision": "bf16",
+      "sampling": {
+        "generation_batch_size": 256,
+        "group_size": 4,
+        "max_new_tokens": 128,
+        "temperature": 0.8
+      },
+      "seed": 46,
+      "stage": "dpo",
+      "target_pairs": 6000,
+      "tokenizer": "artifacts/tokenizer/v1",
+      "warmup_fraction": 0.1,
+      "weight_decay": 0.0
+    }
+  },
+  "started_at": "2026-11-08T19:41:35.323533+00:00",
+  "status": "completed",
+  "steps": 125,
+  "steps_completed": 125,
+  "timing": {
+    "budget_ledger": {
+      "approved_at": "2026-11-08",
+      "approved_by": "project owner (approval in chat for the RL branches)",
+      "approved_max_runtime_hours": 3.5,
+      "approved_max_usd": 5.0,
+      "billing_start": "2026-11-08T18:31:01+00:00",
+      "ceiling_at": "2026-11-08T22:01:01+00:00",
+      "elapsed_hours": 1.2728,
+      "estimated_accrued_usd": 1.26,
+      "gpu_type": "NVIDIA RTX 6000 Ada Generation (Secure Cloud)",
+      "hourly_rate_usd": 0.99,
+      "measured_step_seconds": null,
+      "note": "GPU time at the listed rate only; storage and other charges are excluded.",
+      "pod_id": "iabuazi1zbika0",
+      "projected_total_usd": null,
+      "provider": "runpod",
+      "reserve_minutes": 15.0,
+      "shutdown_rule": "Copy reports, metrics, rollout and pair records, eval rows, budget ledgers and the final v4-grpo, v2-extra-sft and v3-dpo checkpoints off the pod, then terminate (delete) it when the session finishes, at either ceiling, or on any failure; the pod also deletes itself 45 minutes after finishing if not collected.",
+      "steps_remaining": 0,
+      "stop_reason": null,
+      "updated_at": "2026-11-08T19:47:22.916802+00:00"
+    },
+    "pair_generation_seconds": 333.51,
+    "total_wall_seconds": 347.59,
+    "train_seconds": 12.29
+  },
+  "updated_at": "2026-11-08T19:47:22.919842+00:00"
+}

@@ -1,0 +1,72 @@
+{
+  "final_checkpoint": "runs/rl/v3-dpo/checkpoints/step_0000125",
+  "heldout_after": {
+    "implicit_reward_accuracy": 0.6274509803921569,
+    "mean_beta_margin": 0.07092482789149732,
+    "pairs": 459,
+    "policy_prefers_chosen": 0.7712418300653595
+  },
+  "heldout_before": {
+    "implicit_reward_accuracy": 0.0,
+    "mean_beta_margin": 0.0,
+    "pairs": 459,
+    "policy_prefers_chosen": 0.7908496732026143
+  },
+  "pairs": {
+    "by_template": {
+      "a_paren_x_plus_b_equals_c": 488,
+      "a_times_paren_diff": 177,
+      "add_ab": 46,
+      "add_mul_abc": 286,
+      "ax_equals_b": 6,
+      "ax_plus_b_equals_c": 26,
+      "ax_plus_b_equals_cx_plus_d": 28,
+      "div_ab": 24,
+      "mul_ab": 9,
+      "mul_sub_mul": 1643,
+      "paren_sum_times_diff": 591,
+      "sub_ab": 29,
+      "sub_mul_add": 997,
+      "x_plus_a_equals_b": 97
+    },
+    "heldout": 459,
+    "mixed_group_fraction": 0.2779375,
+    "pairs": 4447,
+    "prompts_sampled": 16000,
+    "rejected_status": {
+      "invalid_format": 3,
+      "wrong": 4444
+    },
+    "sha256": "cc964cacb0dab7247c8f444defccf09164c0489e15b766fda7028dc722499094",
+    "train": 3988
+  },
+  "status": "completed",
+  "steps": 125,
+  "timing": {
+    "budget_ledger": {
+      "approved_at": "2026-11-08",
+      "approved_by": "project owner (approval in chat for the RL branches)",
+      "approved_max_runtime_hours": 3.5,
+      "approved_max_usd": 5.0,
+      "billing_start": "2026-11-08T18:31:01+00:00",
+      "ceiling_at": "2026-11-08T22:01:01+00:00",
+      "elapsed_hours": 1.2728,
+      "estimated_accrued_usd": 1.26,
+      "gpu_type": "NVIDIA RTX 6000 Ada Generation (Secure Cloud)",
+      "hourly_rate_usd": 0.99,
+      "measured_step_seconds": null,
+      "note": "GPU time at the listed rate only; storage and other charges are excluded.",
+      "pod_id": "iabuazi1zbika0",
+      "projected_total_usd": null,
+      "provider": "runpod",
+      "reserve_minutes": 15.0,
+      "shutdown_rule": "Copy reports, metrics, rollout and pair records, eval rows, budget ledgers and the final v4-grpo, v2-extra-sft and v3-dpo checkpoints off the pod, then terminate (delete) it when the session finishes, at either ceiling, or on any failure; the pod also deletes itself 45 minutes after finishing if not collected.",
+      "steps_remaining": 0,
+      "stop_reason": null,
+      "updated_at": "2026-11-08T19:47:22.916802+00:00"
+    },
+    "pair_generation_seconds": 333.51,
+    "total_wall_seconds": 347.59,
+    "train_seconds": 12.29
+  }
+}

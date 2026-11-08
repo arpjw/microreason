@@ -1,0 +1,177 @@
+{
+  "checkpoint": "runs/rl/v4-grpo/checkpoints/step_0000300",
+  "checkpoint_id": "sha256:74c203aaa8f0679f7ba7f1ba1debe01f8758e4a38ba98b3848d27d549e45cc46",
+  "checkpoint_step": 300,
+  "decode": {
+    "greedy": {
+      "max_new_tokens": 128
+    },
+    "sampled": {
+      "max_new_tokens": 128,
+      "samples": 4,
+      "seed": 0,
+      "temperature": 0.8
+    }
+  },
+  "device": "cuda",
+  "greedy": {
+    "accuracy_by_difficulty": {
+      "1": {
+        "denominator": 1500,
+        "numerator": 1473,
+        "value": 0.982,
+        "wilson95": [
+          0.9739373620090142,
+          0.9876001667767309
+        ]
+      },
+      "2": {
+        "denominator": 2000,
+        "numerator": 1901,
+        "value": 0.9505,
+        "wilson95": [
+          0.9400999950103993,
+          0.9591727453891917
+        ]
+      },
+      "3": {
+        "denominator": 1500,
+        "numerator": 1064,
+        "value": 0.7093333333333334,
+        "wilson95": [
+          0.6858430547843443,
+          0.7317541568874731
+        ]
+      },
+      "4": {
+        "denominator": 2000,
+        "numerator": 1751,
+        "value": 0.8755,
+        "wilson95": [
+          0.8603068678385486,
+          0.8892534296532302
+        ]
+      }
+    },
+    "accuracy_by_family": {
+      "arithmetic": {
+        "denominator": 1500,
+        "numerator": 1473,
+        "value": 0.982,
+        "wilson95": [
+          0.9739373620090142,
+          0.9876001667767309
+        ]
+      },
+      "division": {
+        "denominator": 500,
+        "numerator": 487,
+        "value": 0.974,
+        "wilson95": [
+          0.9560285091657758,
+          0.9847436160766728
+        ]
+      },
+      "linear_equation": {
+        "denominator": 1500,
+        "numerator": 1370,
+        "value": 0.9133333333333333,
+        "wilson95": [
+          0.8980187445668171,
+          0.9265362593711663
+        ]
+      },
+      "multi_step_arithmetic": {
+        "denominator": 1000,
+        "numerator": 582,
+        "value": 0.582,
+        "wilson95": [
+          0.5511729797517128,
+          0.612199431856656
+        ]
+      },
+      "one_step_equation": {
+        "denominator": 1000,
+        "numerator": 954,
+        "value": 0.954,
+        "wilson95": [
+          0.9391877960583809,
+          0.9653375072367351
+        ]
+      },
+      "order_of_operations": {
+        "denominator": 500,
+        "numerator": 460,
+        "value": 0.92,
+        "wilson95": [
+          0.8928936834221488,
+          0.9407018705901475
+        ]
+      },
+      "parentheses": {
+        "denominator": 1000,
+        "numerator": 863,
+        "value": 0.863,
+        "wilson95": [
+          0.8402949039724817,
+          0.8829268693670053
+        ]
+      }
+    },
+    "exact_accuracy": {
+      "denominator": 7000,
+      "numerator": 6189,
+      "value": 0.8841428571428571,
+      "wilson95": [
+        0.8764336684794235,
+        0.8914306573509253
+      ]
+    },
+    "generated_tokens": {
+      "max": 61,
+      "mean": 33.943,
+      "median": 34
+    },
+    "prompts": 7000,
+    "status_counts": {
+      "correct": 6189,
+      "wrong": 811
+    },
+    "valid_format_rate": {
+      "denominator": 7000,
+      "numerator": 7000,
+      "value": 1.0,
+      "wilson95": [
+        0.9994515211625962,
+        0.9999999999999999
+      ]
+    }
+  },
+  "greedy_seconds": 68.117,
+  "limited_to": null,
+  "prompt_format": "sft-show-work-v1",
+  "protocol": "eval-v1",
+  "sampled": {
+    "pass@4": {
+      "denominator": 7000,
+      "numerator": 6467,
+      "value": 0.9238571428571428,
+      "wilson95": [
+        0.9174088109428626,
+        0.9298405214255439
+      ]
+    },
+    "sampled_pass@1": {
+      "denominator": 28000,
+      "numerator": 23656,
+      "value": 0.8448571428571429,
+      "wilson95": [
+        0.84056927052136,
+        0.8490504028508828
+      ]
+    },
+    "samples_per_prompt": 4
+  },
+  "suite": "val",
+  "suite_sha256": "7b2f36797924777ae611c92ba6d49d2aa4d5fba33d49abc4b436cbe57d393124"
+}

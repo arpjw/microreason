@@ -1,0 +1,177 @@
+{
+  "checkpoint": "runs/rl/v2-extra-sft/checkpoints/step_0005517",
+  "checkpoint_id": "sha256:9e2d075083c1267487a08f6ee4322ecd43ccca7d4b5fdeedd128e9ac8a46ae47",
+  "checkpoint_step": 5517,
+  "decode": {
+    "greedy": {
+      "max_new_tokens": 128
+    },
+    "sampled": {
+      "max_new_tokens": 128,
+      "samples": 4,
+      "seed": 0,
+      "temperature": 0.8
+    }
+  },
+  "device": "cuda",
+  "greedy": {
+    "accuracy_by_difficulty": {
+      "1": {
+        "denominator": 1500,
+        "numerator": 1499,
+        "value": 0.9993333333333333,
+        "wilson95": [
+          0.9962333345857864,
+          0.9998823072683257
+        ]
+      },
+      "2": {
+        "denominator": 2000,
+        "numerator": 1974,
+        "value": 0.987,
+        "wilson95": [
+          0.9810196914827969,
+          0.9911131044652626
+        ]
+      },
+      "3": {
+        "denominator": 1500,
+        "numerator": 1219,
+        "value": 0.8126666666666666,
+        "wilson95": [
+          0.7921316367879983,
+          0.831604325868315
+        ]
+      },
+      "4": {
+        "denominator": 2000,
+        "numerator": 1884,
+        "value": 0.942,
+        "wilson95": [
+          0.9308834016573861,
+          0.9514219285459862
+        ]
+      }
+    },
+    "accuracy_by_family": {
+      "arithmetic": {
+        "denominator": 1500,
+        "numerator": 1499,
+        "value": 0.9993333333333333,
+        "wilson95": [
+          0.9962333345857864,
+          0.9998823072683257
+        ]
+      },
+      "division": {
+        "denominator": 500,
+        "numerator": 495,
+        "value": 0.99,
+        "wilson95": [
+          0.9768069002442693,
+          0.9957212461034096
+        ]
+      },
+      "linear_equation": {
+        "denominator": 1500,
+        "numerator": 1429,
+        "value": 0.9526666666666667,
+        "wilson95": [
+          0.9407157464732553,
+          0.9623049755814072
+        ]
+      },
+      "multi_step_arithmetic": {
+        "denominator": 1000,
+        "numerator": 721,
+        "value": 0.721,
+        "wilson95": [
+          0.6923963660323501,
+          0.7479122067170344
+        ]
+      },
+      "one_step_equation": {
+        "denominator": 1000,
+        "numerator": 998,
+        "value": 0.998,
+        "wilson95": [
+          0.9927371921365079,
+          0.9994513564118793
+        ]
+      },
+      "order_of_operations": {
+        "denominator": 500,
+        "numerator": 481,
+        "value": 0.962,
+        "wilson95": [
+          0.9414152274693561,
+          0.9755398819441696
+        ]
+      },
+      "parentheses": {
+        "denominator": 1000,
+        "numerator": 953,
+        "value": 0.953,
+        "wilson95": [
+          0.9380600619184716,
+          0.9644728948936154
+        ]
+      }
+    },
+    "exact_accuracy": {
+      "denominator": 7000,
+      "numerator": 6576,
+      "value": 0.9394285714285714,
+      "wilson95": [
+        0.9335957813463891,
+        0.9447793269667955
+      ]
+    },
+    "generated_tokens": {
+      "max": 61,
+      "mean": 33.94614285714286,
+      "median": 34
+    },
+    "prompts": 7000,
+    "status_counts": {
+      "correct": 6576,
+      "wrong": 424
+    },
+    "valid_format_rate": {
+      "denominator": 7000,
+      "numerator": 7000,
+      "value": 1.0,
+      "wilson95": [
+        0.9994515211625962,
+        0.9999999999999999
+      ]
+    }
+  },
+  "greedy_seconds": 68.287,
+  "limited_to": null,
+  "prompt_format": "sft-show-work-v1",
+  "protocol": "eval-v1",
+  "sampled": {
+    "pass@4": {
+      "denominator": 7000,
+      "numerator": 6738,
+      "value": 0.9625714285714285,
+      "wilson95": [
+        0.957865214642079,
+        0.9667702212220599
+      ]
+    },
+    "sampled_pass@1": {
+      "denominator": 28000,
+      "numerator": 25434,
+      "value": 0.9083571428571429,
+      "wilson95": [
+        0.9049214382628482,
+        0.9116808137398676
+      ]
+    },
+    "samples_per_prompt": 4
+  },
+  "suite": "val",
+  "suite_sha256": "7b2f36797924777ae611c92ba6d49d2aa4d5fba33d49abc4b436cbe57d393124"
+}

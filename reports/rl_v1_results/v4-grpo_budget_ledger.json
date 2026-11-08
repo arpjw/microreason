@@ -1,0 +1,22 @@
+{
+  "approved_at": "2026-11-08",
+  "approved_by": "project owner (approval in chat for the RL branches)",
+  "approved_max_runtime_hours": 3.5,
+  "approved_max_usd": 5.0,
+  "billing_start": "2026-11-08T18:31:01+00:00",
+  "ceiling_at": "2026-11-08T22:01:01+00:00",
+  "elapsed_hours": 0.847,
+  "estimated_accrued_usd": 0.8385,
+  "gpu_type": "NVIDIA RTX 6000 Ada Generation (Secure Cloud)",
+  "hourly_rate_usd": 0.99,
+  "measured_step_seconds": 0.789,
+  "note": "GPU time at the listed rate only; storage and other charges are excluded.",
+  "pod_id": "iabuazi1zbika0",
+  "projected_total_usd": 1.086,
+  "provider": "runpod",
+  "reserve_minutes": 15.0,
+  "shutdown_rule": "Copy reports, metrics, rollout and pair records, eval rows, budget ledgers and the final v4-grpo, v2-extra-sft and v3-dpo checkpoints off the pod, then terminate (delete) it when the session finishes, at either ceiling, or on any failure; the pod also deletes itself 45 minutes after finishing if not collected.",
+  "steps_remaining": 0,
+  "stop_reason": null,
+  "updated_at": "2026-11-08T19:21:50.038234+00:00"
+}

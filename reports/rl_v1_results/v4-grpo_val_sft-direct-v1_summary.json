@@ -1,0 +1,151 @@
+{
+  "checkpoint": "runs/rl/v4-grpo/checkpoints/step_0000300",
+  "checkpoint_id": "sha256:74c203aaa8f0679f7ba7f1ba1debe01f8758e4a38ba98b3848d27d549e45cc46",
+  "checkpoint_step": 300,
+  "decode": {
+    "greedy": {
+      "max_new_tokens": 128
+    }
+  },
+  "device": "cuda",
+  "greedy": {
+    "accuracy_by_difficulty": {
+      "1": {
+        "denominator": 1500,
+        "numerator": 1227,
+        "value": 0.818,
+        "wilson95": [
+          0.7976696667006642,
+          0.8367057153613002
+        ]
+      },
+      "2": {
+        "denominator": 2000,
+        "numerator": 1266,
+        "value": 0.633,
+        "wilson95": [
+          0.6116401475123484,
+          0.6538499179108382
+        ]
+      },
+      "3": {
+        "denominator": 1500,
+        "numerator": 48,
+        "value": 0.032,
+        "wilson95": [
+          0.0242202185354456,
+          0.042170728618644286
+        ]
+      },
+      "4": {
+        "denominator": 2000,
+        "numerator": 37,
+        "value": 0.0185,
+        "wilson95": [
+          0.013451349814109871,
+          0.025394766717736703
+        ]
+      }
+    },
+    "accuracy_by_family": {
+      "arithmetic": {
+        "denominator": 1500,
+        "numerator": 1227,
+        "value": 0.818,
+        "wilson95": [
+          0.7976696667006642,
+          0.8367057153613002
+        ]
+      },
+      "division": {
+        "denominator": 500,
+        "numerator": 470,
+        "value": 0.94,
+        "wilson95": [
+          0.9156389368747802,
+          0.9576516435190539
+        ]
+      },
+      "linear_equation": {
+        "denominator": 1500,
+        "numerator": 76,
+        "value": 0.050666666666666665,
+        "wilson95": [
+          0.040670651803700913,
+          0.06295826327016886
+        ]
+      },
+      "multi_step_arithmetic": {
+        "denominator": 1000,
+        "numerator": 1,
+        "value": 0.001,
+        "wilson95": [
+          0.00017654637062607809,
+          0.0056425585979579355
+        ]
+      },
+      "one_step_equation": {
+        "denominator": 1000,
+        "numerator": 794,
+        "value": 0.794,
+        "wilson95": [
+          0.7678312571433845,
+          0.8179186088671091
+        ]
+      },
+      "order_of_operations": {
+        "denominator": 500,
+        "numerator": 2,
+        "value": 0.004,
+        "wilson95": [
+          0.0010976305226827934,
+          0.014465715215177033
+        ]
+      },
+      "parentheses": {
+        "denominator": 1000,
+        "numerator": 8,
+        "value": 0.008,
+        "wilson95": [
+          0.004059195818806103,
+          0.015706334530980144
+        ]
+      }
+    },
+    "exact_accuracy": {
+      "denominator": 7000,
+      "numerator": 2578,
+      "value": 0.36828571428571427,
+      "wilson95": [
+        0.3570615166691816,
+        0.37965439689884295
+      ]
+    },
+    "generated_tokens": {
+      "max": 33,
+      "mean": 5.4397142857142855,
+      "median": 5
+    },
+    "prompts": 7000,
+    "status_counts": {
+      "correct": 2578,
+      "invalid_format": 17,
+      "wrong": 4405
+    },
+    "valid_format_rate": {
+      "denominator": 7000,
+      "numerator": 6983,
+      "value": 0.9975714285714286,
+      "wilson95": [
+        0.9961139269062933,
+        0.9984831154392273
+      ]
+    }
+  },
+  "greedy_seconds": 9.38,
+  "limited_to": null,
+  "prompt_format": "sft-direct-v1",
+  "protocol": "eval-v1",
+  "suite": "val",
+  "suite_sha256": "7b2f36797924777ae611c92ba6d49d2aa4d5fba33d49abc4b436cbe57d393124"
+}
