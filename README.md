@@ -10,6 +10,8 @@ The full design is in [MICROREASON_MASTER_SPEC.md](MICROREASON_MASTER_SPEC.md).
 
 **Stage 1 trained: v0-base and v1-math** (RTX 4090, ≈$0.64). On val, math mid-training lifts exact
 accuracy from 25.8% to 48.9% (paired +23.2 pts, 95% CI [+22.1, +24.3]); see `reports/stage1_v1.md`.
+**v2-sft trained** (≈$0.44): val show-work 50.0%, direct 21.8%, 100% valid format, pass@4 60.5%;
+see `reports/stage2_v1.md`.
 Math training data: a 1.47M-problem training-only stream (≈70M tokens) excludes every frozen
 evaluation problem; see `reports/math_stream_v1.md`. No real training stage or evaluation has run yet. Every number in the spec is a target or estimate, not a measured result.
 
@@ -21,7 +23,8 @@ evaluation problem; see `reports/math_stream_v1.md`. No real training stage or e
 | 4 | Common training loop, resume, smoke tests | Done; see `reports/phase4_training_loop_v1.md` |
 | 5 | Authorized GPU pilot | Done; see `reports/phase5_pilot_v1.md` |
 | 6 | Base pretraining and math mid-training | Done (val only; test sealed) |
-| 7–8 | SFT, DPO/GRPO branches, final evaluation, report | Not started |
+| 7 | SFT (v2-sft) | Done (val only); DPO, GRPO and SFT control not started |
+| 8 | Branch comparisons, sealed test evaluation, final report | Not started |
 
 ## Setup
 

@@ -1,0 +1,17 @@
+{
+  "a": "runs/eval/v1-math_val_sft-direct-v1",
+  "accuracy_a": 0.0,
+  "accuracy_b": 0.21814285714285714,
+  "b": "runs/eval/v2-sft_val_sft-direct-v1",
+  "bootstrap95": [
+    0.20857142857142857,
+    0.2277142857142857
+  ],
+  "bootstrap_seed": 0,
+  "difference_b_minus_a": 0.21814285714285714,
+  "method": "paired bootstrap over prompt ids",
+  "prompt_format": "sft-direct-v1",
+  "prompts": 7000,
+  "resamples": 10000,
+  "suite": "val"
+}

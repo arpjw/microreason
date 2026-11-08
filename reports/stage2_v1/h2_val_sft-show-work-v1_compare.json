@@ -1,0 +1,17 @@
+{
+  "a": "runs/eval/v1-math_val_sft-show-work-v1",
+  "accuracy_a": 0.0,
+  "accuracy_b": 0.49985714285714283,
+  "b": "runs/eval/v2-sft_val_sft-show-work-v1",
+  "bootstrap95": [
+    0.48828571428571427,
+    0.5114285714285715
+  ],
+  "bootstrap_seed": 0,
+  "difference_b_minus_a": 0.49985714285714283,
+  "method": "paired bootstrap over prompt ids",
+  "prompt_format": "sft-show-work-v1",
+  "prompts": 7000,
+  "resamples": 10000,
+  "suite": "val"
+}

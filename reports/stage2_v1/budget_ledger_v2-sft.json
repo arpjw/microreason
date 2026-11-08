@@ -1,0 +1,22 @@
+{
+  "approved_at": "2026-11-08",
+  "approved_by": "project owner (chat approval)",
+  "approved_max_runtime_hours": 1.5,
+  "approved_max_usd": 2.0,
+  "billing_start": "2026-11-08T06:14:14.808000+00:00",
+  "ceiling_at": "2026-11-08T07:44:14.808000+00:00",
+  "elapsed_hours": 0.2107,
+  "estimated_accrued_usd": 0.1875,
+  "gpu_type": "NVIDIA GeForce RTX 4090 (Secure Cloud)",
+  "hourly_rate_usd": 0.89,
+  "measured_step_seconds": 0.0765,
+  "note": "GPU time at the listed rate only; storage and other charges are excluded.",
+  "pod_id": "0qmy7214qq4fmu",
+  "projected_total_usd": 0.3359,
+  "provider": "runpod",
+  "reserve_minutes": 10.0,
+  "shutdown_rule": "Copy reports, metrics, eval rows, budget ledgers and the final v2-sft checkpoint off the pod, then terminate (delete) it when the session finishes, at either ceiling, or on any failure. Never leave it stopped or idle.",
+  "steps_remaining": 0,
+  "stop_reason": null,
+  "updated_at": "2026-11-08T06:26:53.435791+00:00"
+}

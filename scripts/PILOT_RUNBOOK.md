@@ -77,6 +77,10 @@ inside it.
   the cap, pytest stalled for more than 30 minutes.
 - Use micro-batch 16 for the 43M model. It was the fastest setting, at 7.6 GiB.
 
+- When uploading a checkpoint from macOS, set `COPYFILE_DISABLE=1` on `tar`. Otherwise macOS adds
+  `._*` AppleDouble files, and checkpoint verification correctly rejects them (SFT session,
+  2026-11-08).
+
 ## Known limits
 
 - The ledger counts GPU time at the listed rate only. Storage and other charges are excluded,
