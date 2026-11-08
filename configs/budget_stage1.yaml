@@ -1,0 +1,17 @@
+# Owner-approved budget for the first training session (base pretraining, math mid-training and
+# their val evaluations), applied with `microreason train --budget configs/budget_stage1.yaml`.
+# Approved in chat on 2026-11-08: RTX 4090 Secure at $0.89/h; fallback RTX 5090 Secure at $1.19/h
+# within the same caps. hourly_rate_usd must equal the live rate of the pod actually created.
+paid_compute_allowed: true
+provider: runpod
+gpu_type: NVIDIA GeForce RTX 4090 (Secure Cloud)
+hourly_rate_usd: 0.89
+max_spend_usd: 3.0
+max_runtime_hours: 2.0
+reserve_minutes: 15
+shutdown_rule: >-
+  Copy reports, metrics, eval rows, budget ledgers and the final v0-base and v1-math checkpoints
+  off the pod, then terminate (delete) it when the session finishes, at either ceiling, or on any
+  failure. Never leave it stopped or idle.
+approved_by: project owner (chat approval)
+approved_at: "2026-11-08"

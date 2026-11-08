@@ -290,6 +290,11 @@ def _cmd_train(args: argparse.Namespace) -> int:
             }.items()
             if v is not None
         }
+        if args.budget:
+            import yaml
+
+            with open(args.budget, encoding="utf-8") as f:
+                updates["budget"] = yaml.safe_load(f)
         if updates:
             from microreason.config import ResolvedConfig, StageConfig
 
@@ -456,6 +461,7 @@ def build_parser() -> argparse.ArgumentParser:
     tr.add_argument("--max-steps", type=int, default=None, help="Override the config.")
     tr.add_argument("--pod-id", default=None, help="Paid runs: provider pod id.")
     tr.add_argument("--billing-start", default=None, help="Paid runs: ISO time billing began.")
+    tr.add_argument("--budget", default=None, help="YAML budget that replaces the config's own.")
     tr.set_defaults(func=_cmd_train)
 
     # eval / compare / serve

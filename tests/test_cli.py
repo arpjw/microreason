@@ -87,3 +87,34 @@ def test_paid_run_needs_pod_id_and_billing_start(tmp_path, monkeypatch):
 def test_stubs_exit_not_implemented(argv, capsys):
     assert main(argv) == EXIT_NOT_IMPLEMENTED
     assert "not implemented" in capsys.readouterr().err
+
+
+def test_budget_overlay_replaces_config_budget(tmp_path, monkeypatch):
+    monkeypatch.delenv("RUNPOD_POD_ID", raising=False)
+    monkeypatch.delenv("MICROREASON_BILLING_START", raising=False)
+    # The approved stage-1 budget is valid, and applying it makes a run paid (so it needs a pod
+    # id and billing start, and refuses to start without them).
+    import yaml
+
+    from microreason.config import BudgetConfig
+
+    b = BudgetConfig(**yaml.safe_load((CONFIGS / "budget_stage1.yaml").read_text()))
+    assert (b.max_spend_usd, b.max_runtime_hours) == (3.0, 2.0)
+    cfg = tmp_path / "s.yaml"
+    cfg.write_text(
+        (CONFIGS / "smoke.yaml")
+        .read_text()
+        .replace("model: configs/model_smoke.yaml", f"model: {CONFIGS / 'model_smoke.yaml'}")
+    )
+    rc = main(
+        [
+            "train",
+            "--config",
+            str(cfg),
+            "--budget",
+            str(CONFIGS / "budget_stage1.yaml"),
+            "--run-dir",
+            str(tmp_path / "r"),
+        ]
+    )
+    assert rc == EXIT_CONFIG_ERROR and not (tmp_path / "r").exists()
