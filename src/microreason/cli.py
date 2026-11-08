@@ -353,6 +353,20 @@ def _cmd_rl_gate(args: argparse.Namespace) -> int:
     return EXIT_OK if report["passed"] else 3
 
 
+def _cmd_rl_kv_check(args: argparse.Namespace) -> int:
+    from microreason.rl.kvcheck import run_kv_check
+    from microreason.train.pretrain import default_device
+
+    try:
+        resolved = _load_rl(args)
+    except (ValidationError, ValueError, OSError) as exc:
+        print(f"error: invalid config {args.config}:\n{exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    report = run_kv_check(resolved, args.checkpoint, args.out, args.device or default_device())
+    print(json.dumps(report, indent=2, sort_keys=True))
+    return EXIT_OK if report["passed"] else 5
+
+
 def _cmd_rl_train(args: argparse.Namespace) -> int:
     from microreason.train.pretrain import default_device
 
@@ -598,6 +612,12 @@ def build_parser() -> argparse.ArgumentParser:
     rg.add_argument("--out", required=True)
     rg.add_argument("--device", default=None)
     rg.set_defaults(func=_cmd_rl_gate)
+    rk = rl_sub.add_parser("kv-check", help="KV-cache sampler parity on the real checkpoint.")
+    rk.add_argument("--config", required=True, help="A grpo config (sampling settings).")
+    rk.add_argument("--checkpoint", required=True)
+    rk.add_argument("--out", required=True)
+    rk.add_argument("--device", default=None)
+    rk.set_defaults(func=_cmd_rl_kv_check)
     for name in ("grpo", "dpo"):
         rt = rl_sub.add_parser(name, help=f"Train the {name} branch from v2-sft.")
         rt.add_argument("--config", required=True)

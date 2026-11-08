@@ -64,6 +64,7 @@ def sample_groups(
     generator: torch.Generator,
     batch_size: int,
     precision: str = "fp32",
+    use_cache: bool = False,
 ) -> list[list[Completion]]:
     """Sample `group_size` completions per record. Returns one group per record, in order."""
     device = next(model.parameters()).device
@@ -79,7 +80,7 @@ def sample_groups(
         with autocast(device, precision):
             gens = generate(model, [p for _, p in chunk], max_new_tokens=max_new_tokens,
                             eos_id=tok.eos_id, pad_id=tok.pad_id, temperature=temperature,
-                            generator=generator)  # fmt: skip
+                            generator=generator, use_cache=use_cache)  # fmt: skip
         for (i, _), g in zip(chunk, gens, strict=True):
             groups[i].append(score(records[i], g.ids, g.hit_eos, tok))
     if was_training:

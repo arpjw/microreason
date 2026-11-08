@@ -182,6 +182,17 @@ def test_gate_runs_on_training_records(tmp_path, tok, model_cfg, parent, records
     assert json.loads((tmp_path / "g.json").read_text())["failures"] == rep["failures"]
 
 
+def test_kv_check_passes_on_tiny_model(tmp_path, model_cfg, parent, records):
+    from microreason.rl.kvcheck import run_kv_check
+
+    cfg = GRPOConfig(model=str(SMOKE), tokenizer=str(TOK), parent=str(parent), precision="fp32",
+                     sampling={"max_new_tokens": 8, "generation_batch_size": 8})  # fmt: skip
+    rep = run_kv_check(ResolvedRL(stage=cfg, model=model_cfg), str(parent), tmp_path / "kv.json",
+                       "cpu", records=records[:6])  # fmt: skip
+    assert rep["passed"] and rep["fp32_greedy_agreement"] == 1.0 and rep["prompts"] == 6
+    assert json.loads((tmp_path / "kv.json").read_text())["passed"]
+
+
 # ----------------------------------------------------------------------------- end to end
 
 
@@ -204,6 +215,60 @@ def test_grpo_tiny_run_writes_rollouts_checkpoint_and_manifest(tmp_path, model_c
     assert cm["stage"] == "grpo" and cm["tokenizer_sha256"]
     with pytest.raises(FileExistsError):
         GRPOTrainer(ResolvedRL(stage=cfg, model=model_cfg), run, "cpu", pool=records)
+
+
+def test_grpo_dynamic_sampling_keeps_only_mixed_groups(tmp_path, model_cfg, parent, records,
+                                                       monkeypatch):  # fmt: skip
+    """Real sampled tokens (KV-cache sampler), stubbed rewards: every third prompt is mixed,
+    the rest all-wrong. Steps keep exactly `prompts_per_step` mixed groups, record every sampled
+    completion, never repeat a prompt, and a step with no mixed group makes no update."""
+    real = GRPOTrainer._sample
+    pos = {r["id"]: i for i, r in enumerate(records)}
+    state = {"all_wrong": False}
+
+    def fake(self, recs):
+        groups = real(self, recs)
+        for r, g in zip(recs, groups, strict=True):
+            for j, c in enumerate(g):
+                mixed = pos[r["id"]] % 3 == 0 and not state["all_wrong"]
+                c.reward = 1.0 if (mixed and j == 0) else 0.0
+        return groups
+
+    monkeypatch.setattr(GRPOTrainer, "_sample", fake)
+    cfg = GRPOConfig(model=str(SMOKE), tokenizer=str(TOK), parent=str(parent), precision="fp32",
+                     sampling={"group_size": 2, "max_new_tokens": 6, "generation_batch_size": 8,
+                               "kv_cache": True},
+                     prompts_per_step=2, steps=2, warmup_steps=0, checkpoint_every_steps=10,
+                     log_every_steps=1, dynamic_sampling=True, sample_chunk_prompts=4,
+                     max_sample_rounds=5)  # fmt: skip
+    run = tmp_path / "grpo-dyn"
+    tr = GRPOTrainer(ResolvedRL(stage=cfg, model=model_cfg), run, "cpu", pool=records)
+    with (tmp_path / "r.jsonl").open("w") as f:
+        m1 = tr.train_step(f)
+        m2 = tr.train_step(f)
+        state["all_wrong"] = True
+        m3 = tr.train_step(f)
+    assert m1["trained_groups"] == m2["trained_groups"] == 2 and m3["trained_groups"] == 0
+    assert m3["sample_rounds"] == 5 and tr.updates == 4  # no update on the all-wrong step
+    rows = [json.loads(x) for x in (tmp_path / "r.jsonl").read_text().splitlines()]
+    assert len(rows) == tr.cursor * 2
+    sampled = [r["prompt_id"] for r in rows[::2]]
+    assert len(set(sampled)) == len(sampled) == tr.cursor  # no prompt repeats
+    used = [r for r in rows if r["used_in_loss"]]
+    assert len(used) == 2 * 2 * 2
+    assert all(pos[r["prompt_id"]] % 3 == 0 for r in used)
+    assert all(len(r["old_logprobs"]) == len(r["token_ids"]) for r in used)
+    assert all(r["old_logprobs"] is None and r["advantage"] == 0 for r in rows
+               if not r["used_in_loss"])  # fmt: skip
+    assert all(r["generation"]["kv_cache"] for r in rows)
+    # end to end with the stub still active: completes, manifest counts prompts actually used
+    state["all_wrong"] = False
+    run2 = tmp_path / "grpo-dyn2"
+    res = GRPOTrainer(ResolvedRL(stage=cfg, model=model_cfg), run2, "cpu", pool=records).train()
+    man = json.loads((run2 / "run_manifest.json").read_text())
+    assert res["status"] == "completed" and res["updates"] == 4
+    assert man["trained_completions"] == 2 * 2 * 2
+    assert man["provenance"]["pool"]["prompts_used"] == man["completions"] // 2
 
 
 def test_dpo_tiny_run_with_stubbed_samples(tmp_path, tok, model_cfg, parent, records, monkeypatch):

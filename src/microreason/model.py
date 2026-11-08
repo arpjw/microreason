@@ -112,6 +112,32 @@ def apply_rope(x: torch.Tensor, cos: torch.Tensor, sin: torch.Tensor) -> torch.T
     return x * cos + rotate_half(x) * sin
 
 
+class KVCache:
+    """Per-layer key/value buffers for incremental decoding, preallocated to `max_len` keys.
+
+    Buffers are created on first write with the dtype the keys arrive in (bf16 under autocast).
+    `length` counts filled key positions; the model advances it after every layer has written.
+    """
+
+    def __init__(self, n_layers: int, max_len: int):
+        self.max_len = max_len
+        self.length = 0
+        self.k: list[torch.Tensor | None] = [None] * n_layers
+        self.v: list[torch.Tensor | None] = [None] * n_layers
+
+    def write(self, layer: int, k: torch.Tensor, v: torch.Tensor):
+        b, h, t, d = k.shape
+        end = self.length + t
+        if end > self.max_len:
+            raise ValueError(f"KV cache overflow: {end} > {self.max_len}")
+        if self.k[layer] is None:
+            self.k[layer] = k.new_zeros((b, h, self.max_len, d))
+            self.v[layer] = v.new_zeros((b, h, self.max_len, d))
+        self.k[layer][:, :, self.length : end] = k
+        self.v[layer][:, :, self.length : end] = v
+        return self.k[layer][:, :, :end], self.v[layer][:, :, :end]
+
+
 class Attention(nn.Module):
     def __init__(self, cfg: MicroReasonConfig):
         super().__init__()
@@ -121,12 +147,14 @@ class Attention(nn.Module):
         self.v = nn.Linear(cfg.d_model, cfg.n_kv_heads * cfg.head_dim, bias=False)
         self.o = nn.Linear(cfg.n_heads * cfg.head_dim, cfg.d_model, bias=False)
 
-    def forward(self, x, cos, sin, attn_mask):
+    def forward(self, x, cos, sin, attn_mask, cache: KVCache | None = None, layer: int = 0):
         b, t, _ = x.shape
         q = self.q(x).view(b, t, self.n_heads, self.hd).transpose(1, 2)
         k = self.k(x).view(b, t, self.n_kv, self.hd).transpose(1, 2)
         v = self.v(x).view(b, t, self.n_kv, self.hd).transpose(1, 2)
         q, k = apply_rope(q, cos, sin), apply_rope(k, cos, sin)
+        if cache is not None:
+            k, v = cache.write(layer, k, v)
         if self.n_kv != self.n_heads:
             rep = self.n_heads // self.n_kv
             k, v = k.repeat_interleave(rep, dim=1), v.repeat_interleave(rep, dim=1)
@@ -156,8 +184,8 @@ class Block(nn.Module):
         self.mlp_norm = RMSNorm(cfg.d_model, cfg.norm_eps)
         self.mlp = SwiGLU(cfg)
 
-    def forward(self, x, cos, sin, attn_mask):
-        x = x + self.attn(self.attn_norm(x), cos, sin, attn_mask)
+    def forward(self, x, cos, sin, attn_mask, cache=None, layer=0):
+        x = x + self.attn(self.attn_norm(x), cos, sin, attn_mask, cache, layer)
         return x + self.mlp(self.mlp_norm(x))
 
 
@@ -223,31 +251,59 @@ class MicroReasonForCausalLM(PreTrainedModel):
         eye = torch.eye(t, dtype=torch.bool, device=attention_mask.device)
         return (causal & keys) | eye
 
+    @staticmethod
+    def build_cached_attention_mask(attention_mask: torch.Tensor, start: int, t: int):
+        """Mask for `t` new queries at key positions [start, start + t) over all keys so far.
+
+        attention_mask is the (B, start + t) key mask. Rows equal the last `t` rows of
+        build_attention_mask(attention_mask), so cached and uncached decoding see the same keys.
+        """
+        dev = attention_mask.device
+        q_idx = torch.arange(start, start + t, device=dev)[:, None]
+        k_idx = torch.arange(attention_mask.shape[1], device=dev)[None, :]
+        keys = attention_mask.bool()[:, None, None, :]
+        return ((k_idx <= q_idx) & keys) | (k_idx == q_idx)
+
     def forward(
         self,
         input_ids: torch.Tensor,
         attention_mask: torch.Tensor | None = None,
         position_ids: torch.Tensor | None = None,
         labels: torch.Tensor | None = None,
+        cache: KVCache | None = None,
         **_: object,
     ) -> CausalLMOutput:
+        """With `cache`, input_ids holds only the new tokens and attention_mask covers every key
+        so far (cached plus new); positions come from the full mask, as without a cache."""
         b, t = input_ids.shape
-        if t > self.config.max_seq_len:
-            raise ValueError(f"sequence length {t} exceeds max_seq_len {self.config.max_seq_len}")
+        start = 0 if cache is None else cache.length
+        if start + t > self.config.max_seq_len:
+            raise ValueError(
+                f"sequence length {start + t} exceeds max_seq_len {self.config.max_seq_len}"
+            )
+        if cache is not None and attention_mask is None:
+            raise ValueError("cached decoding needs the full attention mask")
         if position_ids is None:
             if attention_mask is None:
                 position_ids = torch.arange(t, device=input_ids.device).expand(b, t)
             else:
-                position_ids = (attention_mask.long().cumsum(-1) - 1).clamp(min=0)
+                position_ids = (attention_mask.long().cumsum(-1) - 1).clamp(min=0)[:, -t:]
         cos_t, sin_t = self.rope_tables(input_ids.device)
         cos = cos_t[position_ids].unsqueeze(1)
         sin = sin_t[position_ids].unsqueeze(1)
-        mask = None if attention_mask is None else self.build_attention_mask(attention_mask)
+        if attention_mask is None:
+            mask = None
+        elif cache is None:
+            mask = self.build_attention_mask(attention_mask)
+        else:
+            mask = self.build_cached_attention_mask(attention_mask, start, t)
 
         x = self.embed(input_ids)
         cos, sin = cos.to(x.dtype), sin.to(x.dtype)
-        for block in self.blocks:
-            x = block(x, cos, sin, mask)
+        for i, block in enumerate(self.blocks):
+            x = block(x, cos, sin, mask, cache, i)
+        if cache is not None:
+            cache.length = start + t
         x = self.norm(x)
         logits = F.linear(x, self.embed.weight)  # tied output projection
 

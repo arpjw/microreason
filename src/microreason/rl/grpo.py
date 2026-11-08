@@ -28,6 +28,14 @@ Implementation choices (stated as the spec requires):
   scores 0 (the evaluation also counts it as a failure).
 - **Schedule.** AdamW, linear warmup over `warmup_steps` rollout steps, then constant LR.
 
+**Dynamic sampling (protocol rl-v2, `dynamic_sampling: true`).** Instead of a fixed
+`prompts_per_step` prompts, the step draws chunks of `sample_chunk_prompts` new prompts, samples
+each chunk from the current policy, and keeps only mixed groups (some success, some failure)
+until `prompts_per_step` are collected or `max_sample_rounds` chunks have been drawn; surplus
+mixed groups beyond the target are dropped. Every sampled completion is still recorded, with
+`used_in_loss` false for dropped ones. Dropped groups would have zero advantage, so the only term
+they lose is their KL contribution. Prompts are consumed in order and never repeat.
+
 Every completion is appended to an immutable rollout record (`rollouts.jsonl`): prompt id,
 policy version, sampled token ids, old log probabilities, reward, status and the generation
 settings. Its sha256 goes into the run manifest.
@@ -147,7 +155,9 @@ class GRPOTrainer:
             raise ValueError(f"grpo partition has {len(pool)} prompts, need {need}")
         order = list(range(len(pool)))
         random.Random(f"{cfg.seed}|grpo-prompts").shuffle(order)
-        self.prompts = [pool[i] for i in order[:need]]
+        # dynamic sampling consumes a variable number of prompts, so it keeps the whole order
+        self.prompts = [pool[i] for i in (order if cfg.dynamic_sampling else order[:need])]
+        self.cursor = 0
         self.parent_id = (
             "sha256:" + hashlib.sha256((Path(cfg.parent) / MANIFEST).read_bytes()).hexdigest()
         )
@@ -204,55 +214,106 @@ class GRPOTrainer:
 
     # ------------------------------------------------------------------ one step
 
+    def _sample(self, recs: list[dict]):
+        s = self.cfg.sampling
+        return sample_groups(self.policy, self.tok, recs, group_size=s.group_size,
+                             temperature=s.temperature, max_new_tokens=s.max_new_tokens,
+                             generator=self.gen, batch_size=s.generation_batch_size,
+                             precision=self.cfg.precision, use_cache=s.kv_cache)  # fmt: skip
+
+    def _collect(self) -> tuple[list[dict], list[list], list[bool], int]:
+        """Sampled records, their groups, which groups train, and the number of rounds."""
+        cfg = self.cfg
+        if not cfg.dynamic_sampling:
+            recs = self.prompts[self.cursor : self.cursor + cfg.prompts_per_step]
+            self.cursor += len(recs)
+            groups = self._sample(recs)
+            return recs, groups, [True] * len(recs), 1
+        k = cfg.sampling.group_size
+        recs, groups, use = [], [], []
+        kept, rounds = 0, 0
+        while kept < cfg.prompts_per_step and rounds < cfg.max_sample_rounds:
+            chunk = self.prompts[self.cursor : self.cursor + cfg.sample_chunk_prompts]
+            if not chunk:
+                raise RuntimeError("grpo partition exhausted during dynamic sampling")
+            self.cursor += len(chunk)
+            rounds += 1
+            for r, g in zip(chunk, self._sample(chunk), strict=True):
+                n = sum(c.reward for c in g)
+                take = 0 < n < k and kept < cfg.prompts_per_step
+                kept += take
+                recs.append(r)
+                groups.append(g)
+                use.append(take)
+        return recs, groups, use, rounds
+
     def train_step(self, rollout_file) -> dict:
         cfg, s = self.cfg, self.cfg.sampling
         lr = _lr_at(self.step, cfg)
         for g in self.optimizer.param_groups:
             g["lr"] = lr
-        recs = self.prompts[
-            self.step * cfg.prompts_per_step : (self.step + 1) * cfg.prompts_per_step
-        ]
         t0 = time.time()
-        groups = sample_groups(self.policy, self.tok, recs, group_size=s.group_size,
-                               temperature=s.temperature, max_new_tokens=s.max_new_tokens,
-                               generator=self.gen, batch_size=s.generation_batch_size,
-                               precision=cfg.precision)  # fmt: skip
+        recs, groups, use, rounds = self._collect()
         t_roll = time.time() - t0
-        rewards = torch.tensor([[c.reward for c in g] for g in groups])
-        adv = group_advantages(rewards, cfg.adv_eps).flatten()
+        rewards_all = torch.tensor([[c.reward for c in g] for g in groups])
+        adv_all = group_advantages(rewards_all, cfg.adv_eps)
         from microreason.eval.generate import eval_prompt_ids
         from microreason.rl.rollout import ROLLOUT_FORMAT
 
-        prompt_cache = [eval_prompt_ids(self.tok, r["prompt"], ROLLOUT_FORMAT) for r in recs]
-        flat = [(gi, c) for gi, g in enumerate(groups) for c in g]
-        # an empty completion still needs one target position; generate() always emits >= 1 id
-        batch = build_sequences([prompt_cache[gi] for gi, _ in flat], [c.ids for _, c in flat],
-                                self.tok.pad_id)  # fmt: skip
-        batch = {k: v.to(self.device) for k, v in batch.items()}
+        gen_settings = {"temperature": s.temperature, "max_new_tokens": s.max_new_tokens,
+                        "group_size": s.group_size, "format": ROLLOUT_FORMAT,
+                        "kv_cache": s.kv_cache}  # fmt: skip
+        train_idx = [gi for gi, u in enumerate(use) if u]
+        flat = [(gi, c) for gi in train_idx for c in groups[gi]]
+        adv = torch.tensor([float(adv_all[gi, j]) for gi in train_idx
+                            for j in range(len(groups[gi]))])  # fmt: skip
         t1 = time.time()
-        with torch.no_grad(), autocast(self.device, cfg.precision):
-            old_lp = token_logprobs(self.policy, batch, s.temperature)
-            ref_lp = token_logprobs(self.ref, batch, s.temperature)
-        mask = batch["response_mask"]
-        old_cpu, mask_cpu = old_lp.cpu(), mask.cpu()
-        # immutable rollout record (one line per completion)
-        for row, (gi, c) in enumerate(flat):
-            n = int(mask_cpu[row].sum())
-            lp = old_cpu[row][mask_cpu[row]].tolist()
-            rollout_file.write(json.dumps({
-                "prompt_id": recs[gi]["id"], "template_id": recs[gi]["template_id"],
-                "step": self.step, "policy_updates_before": self.updates,
-                "parent_checkpoint_id": self.parent_id, "token_ids": c.ids,
-                "old_logprobs": [round(x, 5) for x in lp], "n_tokens": n,
-                "reward": c.reward, "status": c.status, "reason": c.reason,
-                "hit_eos": c.hit_eos, "advantage": round(float(adv[row]), 6),
-                "generation": {"temperature": s.temperature, "max_new_tokens": s.max_new_tokens,
-                               "group_size": s.group_size, "format": ROLLOUT_FORMAT},
-            }, sort_keys=True) + "\n")  # fmt: skip
-        adv = adv.to(self.device)
-        perm = torch.randperm(len(flat), generator=self.shuffle_rng)
+        old_cpu = mask_cpu = None
+        if flat:
+            prompt_cache = {gi: eval_prompt_ids(self.tok, recs[gi]["prompt"], ROLLOUT_FORMAT)
+                            for gi in train_idx}  # fmt: skip
+            # an empty completion still needs one target position; generate() emits >= 1 id
+            batch = build_sequences([prompt_cache[gi] for gi, _ in flat],
+                                    [c.ids for _, c in flat], self.tok.pad_id)  # fmt: skip
+            batch = {k: v.to(self.device) for k, v in batch.items()}
+            with torch.no_grad(), autocast(self.device, cfg.precision):
+                old_lp = token_logprobs(self.policy, batch, s.temperature)
+                ref_lp = token_logprobs(self.ref, batch, s.temperature)
+            old_cpu, mask_cpu = old_lp.cpu(), batch["response_mask"].cpu()
+        # immutable rollout record: every sampled completion, trained on or not
+        row_of = {(gi, j): n for n, (gi, j) in enumerate(
+            (gi, j) for gi in train_idx for j in range(len(groups[gi])))}  # fmt: skip
+        for gi, (r, g) in enumerate(zip(recs, groups, strict=True)):
+            for j, c in enumerate(g):
+                row = row_of.get((gi, j))
+                lp, a = None, 0.0
+                if row is not None:
+                    lp = [round(x, 5) for x in old_cpu[row][mask_cpu[row]].tolist()]
+                    a = round(float(adv_all[gi, j]), 6)
+                rollout_file.write(json.dumps({
+                    "prompt_id": r["id"], "template_id": r["template_id"],
+                    "step": self.step, "policy_updates_before": self.updates,
+                    "parent_checkpoint_id": self.parent_id, "token_ids": c.ids,
+                    "old_logprobs": lp, "n_tokens": len(c.ids), "used_in_loss": row is not None,
+                    "reward": c.reward, "status": c.status, "reason": c.reason,
+                    "hit_eos": c.hit_eos, "advantage": a,
+                    "generation": gen_settings,
+                }, sort_keys=True) + "\n")  # fmt: skip
         stats = defaultdict(float)
         grad_norms = []
+        if not flat:
+            log.warning("step %d: no mixed groups after %d rounds; no update", self.step, rounds)
+        else:
+            adv = adv.to(self.device)
+            perm = torch.randperm(len(flat), generator=self.shuffle_rng)
+            self._update(batch, old_lp, ref_lp, adv, perm, stats, grad_norms)
+        t_upd = time.time() - t1
+        self.step += 1
+        return self._step_metrics(lr, recs, groups, use, rounds, rewards_all, stats, grad_norms,
+                                  t_roll, t_upd)  # fmt: skip
+
+    def _update(self, batch, old_lp, ref_lp, adv, perm, stats, grad_norms) -> None:
+        cfg, s = self.cfg, self.cfg.sampling
         for chunk in perm.chunk(cfg.minibatches_per_step):
             idx = chunk.to(self.device)
             sub = {k: v[idx] for k, v in batch.items()}
@@ -272,8 +333,12 @@ class GRPOTrainer:
             stats["loss"] += float(loss.detach()) / cfg.minibatches_per_step
             for k, v in st.items():
                 stats[k] += v / cfg.minibatches_per_step
-        t_upd = time.time() - t1
-        self.step += 1
+
+    def _step_metrics(self, lr, recs, groups, use, rounds, rewards, stats, grad_norms, t_roll,
+                      t_upd) -> dict:  # fmt: skip
+        """Reward and group statistics are over every sampled group (the policy's behaviour);
+        loss statistics are over the groups trained on."""
+        s = self.cfg.sampling
         succ = rewards.sum(dim=1)
         k = s.group_size
         comps = [c for g in groups for c in g]
@@ -282,6 +347,9 @@ class GRPOTrainer:
             by_family[r["family"]] += [c.reward for c in g]
         return {
             "lr": lr,
+            "sampled_prompts": len(recs),
+            "trained_groups": sum(use),
+            "sample_rounds": rounds,
             "mean_reward": float(rewards.mean()),
             "mixed_group_fraction": float(((succ > 0) & (succ < k)).float().mean()),
             "all_correct_fraction": float((succ == k).float().mean()),
@@ -290,7 +358,7 @@ class GRPOTrainer:
             "truncated_fraction": sum(c.status == "truncated" for c in comps) / len(comps),
             "verifier_errors": sum(c.status == "verifier_error" for c in comps),
             "mean_response_tokens": sum(len(c.ids) for c in comps) / len(comps),
-            "grad_norm": max(grad_norms),
+            "grad_norm": max(grad_norms) if grad_norms else 0.0,
             "success_by_family": {f: sum(v) / len(v) for f, v in sorted(by_family.items())},
             "status_counts": dict(Counter(c.status for c in comps)),
             "rollout_seconds": round(t_roll, 3),
@@ -331,7 +399,8 @@ class GRPOTrainer:
                     t0 = time.time()
                     m = self.train_step(rf)
                     step_times.append(time.time() - t0)
-                    totals["completions"] += cfg.prompts_per_step * cfg.sampling.group_size
+                    totals["completions"] += m["sampled_prompts"] * cfg.sampling.group_size
+                    totals["trained_completions"] += m["trained_groups"] * cfg.sampling.group_size
                     totals["rollout_seconds"] += m["rollout_seconds"]
                     totals["update_seconds"] += m["update_seconds"]
                     self._event("train", step_seconds=round(step_times[-1], 3),
@@ -339,7 +408,8 @@ class GRPOTrainer:
                     if self.step % cfg.log_every_steps == 0 or self.step == cfg.steps:
                         log.info("step %d/%d reward %.3f mixed %.2f kl %.4f clip %.3f len %.1f "
                                  "%.1fs", self.step, cfg.steps, m["mean_reward"],
-                                 m["mixed_group_fraction"], m["kl"], m["clip_fraction"],
+                                 m["mixed_group_fraction"], m.get("kl", 0.0),
+                                 m.get("clip_fraction", 0.0),
                                  m["mean_response_tokens"], step_times[-1])  # fmt: skip
                         rf.flush()
                     if self.step % cfg.checkpoint_every_steps == 0 or self.step == cfg.steps:
@@ -354,6 +424,7 @@ class GRPOTrainer:
             self._write_manifest("failed", error=f"{type(e).__name__}: {e}")
             raise
         wall = time.time() - loop_start
+        self.provenance["pool"]["prompts_used"] = self.cursor
         h = hashlib.sha256(rollout_path.read_bytes()).hexdigest()
         rollout_path.chmod(0o444)
         timing = {
@@ -370,6 +441,7 @@ class GRPOTrainer:
             )
         self._write_manifest(stop_reason or "completed", final_checkpoint=str(last),
                              timing=timing, completions=totals["completions"],
+                             trained_completions=totals["trained_completions"],
                              rollouts_sha256=h,
                              estimated_cost_usd=round(self.guard.accrued_usd(), 4)
                              if self.guard else 0.0)  # fmt: skip

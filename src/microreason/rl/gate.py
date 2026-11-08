@@ -51,7 +51,7 @@ def run_gate(resolved: ResolvedRL, checkpoint: str, out: str | Path, device: str
     groups = sample_groups(model, tok, records, group_size=s.group_size,
                            temperature=s.temperature, max_new_tokens=s.max_new_tokens,
                            generator=gen, batch_size=s.generation_batch_size,
-                           precision=cfg.precision)  # fmt: skip
+                           precision=cfg.precision, use_cache=s.kv_cache)  # fmt: skip
     stats = group_stats(records, groups)
     passed, failures = decide(stats["overall"], cfg)
     report = {

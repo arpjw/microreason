@@ -82,6 +82,98 @@ def test_sampling_is_seeded(tok, model):
     assert a == b and a != c
 
 
+def _mixed_prompts(tok):
+    return [eval_prompt_ids(tok, p, "sft-show-work-v1") for p in
+            ("Compute: 3 + (-5)", "Solve for x: 12x - 7 = 3x + 100", "What is 9?",
+             "Compute: 7 * 8 - 2 * 3")]  # fmt: skip
+
+
+@pytest.fixture(scope="module")
+def varied():
+    """Smoke-size model with a large init, so untrained greedy outputs vary across rows and
+    positions (the default init repeats one token)."""
+    torch.manual_seed(1)
+    return build_model(load_model_config(ROOT / "configs" / "model_smoke.yaml"),
+                       init_std=0.3).eval()  # fmt: skip
+
+
+def _uneven_stop_token(tok, model, prompts, steps):
+    """A token that the untrained model emits mid-sequence in some rows but never in others,
+    used as [eos] so rows stop at different steps (and some never stop)."""
+    rows = [g.ids for g in generate(model, prompts, max_new_tokens=steps, eos_id=-1,
+                                    pad_id=tok.pad_id)]  # fmt: skip
+    for t in sorted({t for r in rows for t in r[2:]}):
+        if any(t in r[2:] and t not in r[:2] for r in rows) and any(t not in r for r in rows):
+            return t
+    pytest.skip("untrained model produced no usable stop token")
+
+
+def test_kv_cache_logits_match_uncached(tok, varied):
+    model = varied
+    from microreason.model import KVCache
+
+    prompts = _mixed_prompts(tok)
+    longest = max(map(len, prompts))
+    ids = torch.full((len(prompts), longest), tok.pad_id)
+    mask = torch.zeros_like(ids)
+    for i, p in enumerate(prompts):
+        ids[i, longest - len(p) :] = torch.tensor(p)
+        mask[i, longest - len(p) :] = 1
+    cache = KVCache(model.config.n_layers, longest + 8)
+    with torch.no_grad():
+        logits_c = model(ids, attention_mask=mask, cache=cache).logits[:, -1]
+        for step in range(8):
+            full = model(ids, attention_mask=mask).logits[:, -1]
+            # fp32 rounding only: a wrong mask or position gives errors of order the logits
+            err = float((full - logits_c).abs().max() / full.abs().max())
+            assert err < 1e-4, (step, err)
+            nxt = full.argmax(-1)
+            ids = torch.cat([ids, nxt[:, None]], 1)
+            # one row "finished": its new key is masked out, as generate() does
+            keep = torch.ones_like(nxt)
+            keep[0] = 0 if step % 2 else 1
+            mask = torch.cat([mask, keep[:, None]], 1)
+            logits_c = model(nxt[:, None], attention_mask=mask, cache=cache).logits[:, -1]
+    assert cache.length == ids.shape[1]
+
+
+def test_kv_cache_greedy_and_sampled_match_uncached(tok, varied):
+    model = varied
+    prompts = _mixed_prompts(tok) * 2
+    eos = _uneven_stop_token(tok, model, prompts, 24)
+    kw = dict(max_new_tokens=24, eos_id=eos, pad_id=tok.pad_id)
+    a = generate(model, prompts, **kw)
+    b = generate(model, prompts, use_cache=True, **kw)
+    assert a == b
+    assert {g.hit_eos for g in a} == {True, False}
+    for temp in (0.8, 1.5):
+        s1 = generate(model, prompts, temperature=temp,
+                      generator=torch.Generator().manual_seed(7), **kw)  # fmt: skip
+        s2 = generate(model, prompts, temperature=temp, use_cache=True,
+                      generator=torch.Generator().manual_seed(7), **kw)  # fmt: skip
+        assert s1 == s2
+    assert generate_all(model, prompts, batch_size=3, use_cache=True, **kw) == a
+
+
+def test_kv_cache_with_grouped_query_attention(tok):
+    mc = load_model_config(ROOT / "configs" / "model_smoke.yaml")
+    mc = mc.model_copy(update={"n_kv_heads": max(1, mc.n_heads // 2)})
+    torch.manual_seed(3)
+    m = build_model(mc, init_std=0.3).eval()
+    prompts = _mixed_prompts(tok)
+    kw = dict(max_new_tokens=16, eos_id=tok.eos_id, pad_id=tok.pad_id)
+    assert generate(m, prompts, **kw) == generate(m, prompts, use_cache=True, **kw)
+
+
+def test_kv_cache_overflow_is_an_error(tok, model):
+    from microreason.model import KVCache
+
+    ids = torch.tensor([eval_prompt_ids(tok, "Compute: 1 + 1", "plain-v1")])
+    cache = KVCache(model.config.n_layers, ids.shape[1] - 1)
+    with pytest.raises(ValueError, match="overflow"):
+        model(ids, attention_mask=torch.ones_like(ids), cache=cache)
+
+
 # ----------------------------------------------------------------------------- scoring
 
 

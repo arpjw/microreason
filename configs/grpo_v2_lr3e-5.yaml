@@ -1,0 +1,34 @@
+# Protocol rl-v2 (reports/rl_protocol_v2.md): GRPO from v2-sft, declared before any v2 run.
+# One of two pre-declared learning rates (1e-5, 3e-5); the one with the higher val greedy
+# show-work accuracy is selected by the rule in the protocol. Changes from configs/grpo.yaml:
+# KV-cache rollouts, dynamic sampling (train only on mixed groups), group size 8, higher LR.
+stage: grpo
+model: configs/model_43m.yaml
+tokenizer: artifacts/tokenizer/v1
+parent: artifacts/p2-v2-sft
+pool_manifest: data/manifests/math_train_stream_rl1.json
+seed: 45
+precision: bf16
+sampling:
+  group_size: 8
+  temperature: 0.8
+  max_new_tokens: 128
+  generation_batch_size: 256
+  kv_cache: true
+prompts_per_step: 32       # mixed groups trained on per step
+steps: 300                 # 300 x 32 x 8 = 76,800 trained completions
+dynamic_sampling: true
+sample_chunk_prompts: 64   # 64 new prompts x 8 samples per sampling round
+max_sample_rounds: 8
+minibatches_per_step: 2    # 2 updates per rollout step; staleness <= 1 update
+clip_eps: 0.2
+kl_beta: 0.04
+lr: 0.00003
+warmup_steps: 10
+weight_decay: 0.0
+grad_clip_norm: 1.0
+log_every_steps: 5
+checkpoint_every_steps: 100
+budget:
+  paid_compute_allowed: false
+  max_spend_usd: 0

@@ -1,0 +1,19 @@
+# Budget for protocol rl-v2 (reports/rl_protocol_v2.md) and the confirmatory test-suite
+# evaluation (reports/confirmatory_plan_v1.md), one pod session.
+# Owner approved in chat on 2026-11-08 ("I'm authorizing step 1, 2, and 3") after quoted
+# estimates of about $1-2 for GRPO v2 and $0.50-1 for the test evaluation; Claude set these
+# bounds. hourly_rate_usd must equal the live rate of the pod actually created.
+paid_compute_allowed: true
+provider: runpod
+gpu_type: NVIDIA RTX 6000 Ada Generation (Secure Cloud)
+hourly_rate_usd: 0.99
+max_spend_usd: 4.0
+max_runtime_hours: 3.5
+reserve_minutes: 15
+shutdown_rule: >-
+  Copy reports, metrics, rollout records, eval rows, budget ledgers and the final GRPO v2 and
+  v2-extra-sft-r2 checkpoints off the pod, then terminate (delete) it when the session finishes,
+  at either ceiling, or on any failure; the pod also deletes itself 45 minutes after finishing if
+  not collected.
+approved_by: project owner (approval in chat for rl-v2 and the confirmatory test evaluation)
+approved_at: "2026-11-08"

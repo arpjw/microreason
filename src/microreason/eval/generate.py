@@ -4,6 +4,12 @@ Prompts are left-padded into one batch; the model derives positions from the att
 a padded prompt sees exactly the same positions as it would alone. Greedy decoding is the
 primary protocol; sampling uses a seeded generator so sampled pass@k is reproducible.
 
+With `use_cache=True` the prompt is run once and each new token reuses the stored keys and
+values (`model.KVCache`). Positions and attention masks are the same as the uncached path's, so
+the two give the same tokens up to floating-point rounding. Evaluation keeps the uncached path
+(protocol eval-v1); RL rollouts may use the cache because their loss recomputes log
+probabilities by teacher forcing.
+
 Prompt formats are versioned:
   plain-v1          [bos] "{prompt}\\n"  -> the model continues "1. ...\\nAnswer: x[eos]"
                     (the format base and mid-trained checkpoints saw in pretraining)
@@ -51,8 +57,11 @@ def generate(
     pad_id: int,
     temperature: float = 0.0,
     generator: torch.Generator | None = None,
+    use_cache: bool = False,
 ) -> list[Generation]:
     """Generate for one batch of prompts. temperature 0 means greedy."""
+    from microreason.model import KVCache
+
     if not prompts:
         return []
     device = next(model.parameters()).device
@@ -67,22 +76,32 @@ def generate(
         mask[i, longest - len(p) :] = 1
 
     finished = torch.zeros(b, dtype=torch.bool, device=device)
-    out: list[list[int]] = [[] for _ in range(b)]
-    for _ in range(max_new_tokens):
-        logits = model(ids, attention_mask=mask).logits[:, -1, :].float()
+    steps: list[torch.Tensor] = []
+    cache = KVCache(model.config.n_layers, longest + max_new_tokens) if use_cache else None
+    for step in range(max_new_tokens):
+        if cache is None:
+            logits = model(ids, attention_mask=mask).logits[:, -1, :].float()
+        else:
+            new = ids if step == 0 else ids[:, -1:]
+            logits = model(new, attention_mask=mask, cache=cache).logits[:, -1, :].float()
         if temperature == 0.0:
             nxt = logits.argmax(dim=-1)
         else:
             probs = torch.softmax(logits / temperature, dim=-1)
             nxt = torch.multinomial(probs, 1, generator=generator).squeeze(-1)
         nxt = torch.where(finished, torch.full_like(nxt, pad_id), nxt)
-        for i in (~finished).nonzero().flatten().tolist():
-            out[i].append(int(nxt[i]))
+        steps.append(nxt)
         finished |= nxt == eos_id
         ids = torch.cat([ids, nxt[:, None]], dim=1)
         mask = torch.cat([mask, (~finished | (nxt == eos_id)).long()[:, None]], dim=1)
         if bool(finished.all()):
             break
+    # Each row keeps its tokens up to and including its first [eos] (all of them if none):
+    # exactly the tokens generated while the row was unfinished.
+    out: list[list[int]] = []
+    for row in torch.stack(steps, dim=1).tolist():
+        cut = row.index(eos_id) + 1 if eos_id in row else len(row)
+        out.append(row[:cut])
     return [Generation(o, bool(o) and o[-1] == eos_id) for o in out]
 
 

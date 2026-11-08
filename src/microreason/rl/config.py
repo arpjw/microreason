@@ -33,6 +33,9 @@ class SamplingConfig(_Strict):
     temperature: float = Field(default=0.8, gt=0)
     max_new_tokens: PositiveInt = 128
     generation_batch_size: PositiveInt = 128
+    # Rollouts only: incremental decoding with a KV cache (model.KVCache). Evaluation never
+    # uses it. False reproduces the v1 sampler exactly.
+    kv_cache: bool = False
 
 
 class GRPOConfig(_Strict):
@@ -47,6 +50,13 @@ class GRPOConfig(_Strict):
     gate: GateRule = GateRule()
     prompts_per_step: PositiveInt = 32
     steps: PositiveInt = 300
+    # Dynamic sampling (protocol rl-v2): sample prompts in chunks of `sample_chunk_prompts`
+    # and keep only groups whose rewards mix successes and failures, until `prompts_per_step`
+    # such groups are collected or `max_sample_rounds` chunks have been drawn. Dropped groups
+    # carry zero advantage anyway; they are recorded but not trained on. Off reproduces v1.
+    dynamic_sampling: bool = False
+    sample_chunk_prompts: PositiveInt = 64
+    max_sample_rounds: PositiveInt = 8
     minibatches_per_step: PositiveInt = 2
     clip_eps: float = Field(default=0.2, gt=0, lt=1)
     kl_beta: float = Field(default=0.04, ge=0)
