@@ -36,7 +36,7 @@ def test_config_validate_bad_file(tmp_path, capsys):
 def test_model_inspect(capsys):
     assert main(["model", "inspect", "--config", str(CONFIGS / "model_smoke.yaml")]) == EXIT_OK
     out = json.loads(capsys.readouterr().out)
-    assert out["parameter_count_instantiated"] is None
+    assert out["parameter_count_instantiated"] == out["parameter_count_analytic"] == 3_344_064
 
 
 def test_train_validates_then_refuses():
@@ -46,7 +46,6 @@ def test_train_validates_then_refuses():
 @pytest.mark.parametrize(
     "argv",
     [
-        ["tokenizer", "train", "--config", "x"],
         ["eval", "--suite", "x", "--checkpoint", "y"],
         ["compare", "--runs", "x"],
         ["serve", "--checkpoint", "x"],

@@ -96,6 +96,47 @@ def _cmd_data_freeze(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _cmd_data_split_text(args: argparse.Namespace) -> int:
+    from microreason.data.text_split import build_text_split_manifest
+
+    try:
+        m = build_text_split_manifest(args.sources, args.raw_dir, args.out)
+    except (FileNotFoundError, ValueError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    print(json.dumps(m, indent=2, sort_keys=True))
+    return EXIT_OK
+
+
+def _cmd_tokenizer_train(args: argparse.Namespace) -> int:
+    from microreason import tokenizer as T
+
+    try:
+        cfg = T.load_tokenizer_config(args.config)
+        texts, stats = T.collect_training_texts(cfg)
+    except (ValidationError, ValueError, OSError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    log.info("training tokenizer on %d texts (math fraction %.3f)", len(texts),
+             stats["math_char_fraction"])  # fmt: skip
+    path = T.save_tokenizer(T.train_tokenizer(cfg, iter(texts)), cfg, stats)
+    print((path.parent / T.MANIFEST_FILE).read_text())
+    return EXIT_OK
+
+
+def _cmd_tokenizer_inspect(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from microreason.inspect_report import tokenizer_report
+
+    report = tokenizer_report(args.tokenizer, include_corpus=not args.skip_corpus)
+    Path(args.report).parent.mkdir(parents=True, exist_ok=True)
+    Path(args.report).write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
+    print(json.dumps({"passed": report["passed"], "failures": report["failures"],
+                      "report": args.report}, indent=2))  # fmt: skip
+    return EXIT_OK if report["passed"] else EXIT_CONFIG_ERROR
+
+
 def _cmd_data_fetch(args: argparse.Namespace) -> int:
     from pathlib import Path
 
@@ -119,20 +160,21 @@ def _cmd_data_fetch(args: argparse.Namespace) -> int:
 
 
 def _cmd_model_inspect(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from microreason.inspect_report import model_report
+
     try:
-        model = load_model_config(args.config)
+        load_model_config(args.config)
     except (ValidationError, ValueError, OSError) as exc:
         print(f"error: invalid model config {args.config}:\n{exc}", file=sys.stderr)
         return EXIT_CONFIG_ERROR
-    out = {
-        "name": model.name,
-        "parameter_count_analytic": model.parameter_count(),
-        "parameter_count_instantiated": None,
-        "note": "Analytic count only; the model is not implemented until Phase 3.",
-        "config": model.model_dump(mode="json"),
-    }
+    out = model_report(args.config, measure_mps=args.measure)
+    if args.report:
+        Path(args.report).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.report).write_text(json.dumps(out, indent=2, sort_keys=True) + "\n")
     print(json.dumps(out, indent=2, sort_keys=True))
-    return EXIT_OK
+    return EXIT_OK if out["counts_match"] else EXIT_CONFIG_ERROR
 
 
 def _cmd_train(args: argparse.Namespace) -> int:
@@ -177,6 +219,8 @@ def build_parser() -> argparse.ArgumentParser:
         "inspect", help="Print the analytic parameter count for a model config."
     )
     mi.add_argument("--config", required=True)
+    mi.add_argument("--report", default=None, help="Also write the report JSON here.")
+    mi.add_argument("--measure", action="store_true", help="Time a training step on MPS.")
     mi.set_defaults(func=_cmd_model_inspect)
 
     # data
@@ -192,6 +236,11 @@ def build_parser() -> argparse.ArgumentParser:
     da.add_argument("--version", default="v1")
     da.add_argument("--report", default="reports/data_audit_v1.json")
     da.set_defaults(func=_cmd_data_audit)
+    ds = data_sub.add_parser("split-text", help="Hash-split general text into train/val.")
+    ds.add_argument("--sources", default="configs/data_sources.yaml")
+    ds.add_argument("--raw-dir", default="data/raw")
+    ds.add_argument("--out", default="data/manifests/general_text_split_v1.json")
+    ds.set_defaults(func=_cmd_data_split_text)
     dz = data_sub.add_parser("freeze", help="Freeze evaluation suite hashes after review.")
     dz.add_argument("--manifest-dir", default="data/manifests")
     dz.add_argument("--version", default="v1")
@@ -205,8 +254,13 @@ def build_parser() -> argparse.ArgumentParser:
     tok = sub.add_parser("tokenizer", help="Tokenizer utilities (Phase 3).")
     tok_sub = tok.add_subparsers(dest="tokenizer_command", required=True, metavar="SUBCOMMAND")
     tt = tok_sub.add_parser("train", help="Train the byte-level BPE tokenizer.")
-    tt.add_argument("--config", required=True)
-    tt.set_defaults(func=_not_implemented(3, "tokenizer train"))
+    tt.add_argument("--config", default="configs/tokenizer.yaml")
+    tt.set_defaults(func=_cmd_tokenizer_train)
+    ti = tok_sub.add_parser("inspect", help="Tokenizer diagnostics and corpus token counts.")
+    ti.add_argument("--tokenizer", default="artifacts/tokenizer/v1")
+    ti.add_argument("--report", default="reports/tokenizer_v1.json")
+    ti.add_argument("--skip-corpus", action="store_true", help="Skip general-text token counts.")
+    ti.set_defaults(func=_cmd_tokenizer_inspect)
 
     # train
     tr = sub.add_parser("train", help="Run a training stage (Phase 4+).")

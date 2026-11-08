@@ -1,0 +1,33 @@
+{
+  "counts_match": true,
+  "memory_estimates_gib": {
+    "activations_bf16_by_micro_batch_at_seq_1024": {
+      "16": 3.62,
+      "32": 7.25,
+      "4": 0.91,
+      "64": 14.5,
+      "8": 1.81
+    },
+    "note": "Estimates only. Measure real peak memory in the authorized GPU pilot.",
+    "training_state_fp32_weights_grads_adamw": 0.637,
+    "weights_fp32": 0.159
+  },
+  "mps_measurement": {
+    "device": "Apple MPS",
+    "driver_allocated_gib": 5.2,
+    "micro_batch": 4,
+    "note": "Local fp32 measurement; not a forecast of rented-GPU throughput.",
+    "precision": "fp32",
+    "seconds_per_step": 1.085,
+    "seq_len": 1024,
+    "tokens_per_second": 3774
+  },
+  "name": "microreason-43m",
+  "parameter_count_analytic": 42742272,
+  "parameter_count_instantiated": 42742272,
+  "parameters_by_module": {
+    "blocks": 38547456,
+    "embed": 4194304,
+    "norm": 512
+  }
+}

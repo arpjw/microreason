@@ -8,14 +8,14 @@ The full design is in [MICROREASON_MASTER_SPEC.md](MICROREASON_MASTER_SPEC.md).
 
 ## Status
 
-**Phase 2 of 8 done: data and verifier built, evaluation suites frozen.** No tokenizer, model,
-training run, checkpoint, or evaluation exists yet. Every number in the spec is a target or estimate, not a measured result.
+**Phase 3 of 8 done: tokenizer and model built and inspected.** No training run, checkpoint, or
+evaluation exists yet. Every number in the spec is a target or estimate, not a measured result.
 
 | Phase | Scope | Status |
 | --- | --- | --- |
 | 1 | Package, typed config schema, logging, CLI skeleton, tests | Done (local tests green) |
 | 2 | Data generators, splits, manifests, answer verifier | Done; eval suites frozen (`data/manifests/math_eval_frozen_v1.json`) |
-| 3 | Tokenizer and model | Not started |
+| 3 | Tokenizer and model | Done; see `reports/phase3_inspection_v1.md` |
 | 4 | Common training loop, resume, smoke tests | Not started |
 | 5 | Authorized GPU pilot | Not started (needs explicit approval) |
 | 6–8 | Training stages, branches, evaluation, report | Not started |
@@ -34,13 +34,16 @@ uv run microreason --help
 
 ```bash
 uv run microreason config validate --config configs/pretrain.yaml   # validate and print resolved config + hash
-uv run microreason model inspect --config configs/model_43m.yaml    # analytic parameter count
+uv run microreason model inspect --config configs/model_43m.yaml    # instantiate; count + memory
+uv run microreason tokenizer train                                  # train tokenizer (train splits only)
+uv run microreason tokenizer inspect                                # diagnostics + real token counts
 ```
 
 Data pipeline:
 
 ```bash
 uv run microreason data fetch-sources   # download pinned Cosmopedia files (~1.2 GB), verify sha256
+uv run microreason data split-text      # hash-split general text into train/val
 uv run microreason data generate        # build math splits + manifests, scan corpus for overlap
 uv run microreason data audit           # re-verify every record, check cross-split leakage
 uv run microreason data freeze          # lock evaluation suite hashes (only after review)
@@ -49,7 +52,7 @@ uv run microreason data freeze          # lock evaluation suite hashes (only aft
 Generated JSONL lives in `data/generated/` (not tracked; rebuilt deterministically). Manifests with
 hashes and counts are tracked in `data/manifests/`; the audit report is in `reports/`.
 
-The remaining subcommands (`tokenizer`, `train`, `eval`, `compare`, `serve`) are placeholders that
+The remaining subcommands (`train`, `eval`, `compare`, `serve`) are placeholders that
 exit with an error naming the phase that will implement them.
 
 ## Spending

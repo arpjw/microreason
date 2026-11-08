@@ -1,0 +1,12 @@
+# Byte-level BPE tokenizer v1 (spec §3). Trained on training splits only.
+version: v1
+vocab_size: 8192
+min_frequency: 2
+sources_config: configs/data_sources.yaml
+raw_dir: data/raw
+# ~0.8% of general-text train docs (~13M chars), hash-selected across all subsets, so math is ~30%
+# of tokenizer training characters (matching the proposed 70/30 base pretraining mix).
+text_select_per_100k: 800
+math_manifest: data/manifests/math_train_v1.json
+math_format: plain
+out_dir: artifacts/tokenizer/v1

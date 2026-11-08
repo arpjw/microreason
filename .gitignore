@@ -11,6 +11,8 @@ build/
 # Large or private artifacts (spec §9: keep out of Git)
 artifacts/*
 !artifacts/.gitkeep
+# The tokenizer is small and every checkpoint depends on it, so it is tracked.
+!artifacts/tokenizer/
 runs/*
 !runs/.gitkeep
 data/raw/

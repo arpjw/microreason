@@ -1,0 +1,265 @@
+{
+  "budget_check": {
+    "available_unique_general_train_tokens": 384901964,
+    "available_unique_math_train_tokens_plain": 2264957,
+    "general_epochs_needed": 0.234,
+    "math_epochs_needed_with_current_train_split": 30.9,
+    "needed": {
+      "base_general_tokens": 84000000,
+      "base_math_tokens": 36000000,
+      "mid_general_tokens": 6000000,
+      "mid_math_tokens": 34000000
+    }
+  },
+  "diagnostic_pieces": {
+    "(30 + (-16)) * (-77)": [
+      "(",
+      "30",
+      " +",
+      " (-",
+      "16",
+      "))",
+      " *",
+      " (-",
+      "77",
+      ")"
+    ],
+    "-12": [
+      "-",
+      "12"
+    ],
+    "-30/17": [
+      "-",
+      "30",
+      "/",
+      "17"
+    ],
+    "0.5": [
+      "0",
+      ".",
+      "5"
+    ],
+    "1/2": [
+      "1",
+      "/",
+      "2"
+    ],
+    "12": [
+      "12"
+    ],
+    "170459": [
+      "170",
+      "45",
+      "9"
+    ],
+    "3 + (-5)": [
+      "3",
+      " +",
+      " (-",
+      "5",
+      ")"
+    ],
+    "4x + 7 = 31": [
+      "4",
+      "x",
+      " +",
+      " 7",
+      " =",
+      " 31"
+    ],
+    "Solve 3(x + 4) = 27. Show your work.": [
+      "Solve",
+      " 3",
+      "(",
+      "x",
+      " +",
+      " 4",
+      ")",
+      " =",
+      " 27",
+      ".",
+      " Show",
+      " your",
+      " work",
+      "."
+    ],
+    "x = -3/4": [
+      "x",
+      " =",
+      " -",
+      "3",
+      "/",
+      "4"
+    ]
+  },
+  "failures": [],
+  "general_text": {
+    "train": {
+      "chars": 1670193136,
+      "chars_per_token": 4.339,
+      "documents": 426354,
+      "encode_seconds": 74.1,
+      "tokens": 384901964
+    },
+    "val": {
+      "chars": 34156085,
+      "chars_per_token": 4.341,
+      "documents": 8665,
+      "encode_seconds": 4.5,
+      "tokens": 7867899
+    }
+  },
+  "marker_text_encodings": {
+    "[/answer]": 5,
+    "[/steps]": 5,
+    "[answer]": 4,
+    "[assistant]": 5,
+    "[bos]": 4,
+    "[eos]": 4,
+    "[pad]": 4,
+    "[steps]": 4,
+    "[user]": 4
+  },
+  "math": {
+    "test_extrapolation": {
+      "chars_per_token_plain": 2.313,
+      "plain_tokens_total": 335009,
+      "records": 7000,
+      "sft_direct_tokens": {
+        "max": 38,
+        "mean": 28.7
+      },
+      "sft_show_work_tokens": {
+        "max": 94,
+        "mean": 59.8,
+        "total": 418838
+      }
+    },
+    "test_heldout_template": {
+      "chars_per_token_plain": 2.251,
+      "plain_tokens_total": 533046,
+      "records": 6000,
+      "sft_direct_tokens": {
+        "max": 39,
+        "mean": 33.7
+      },
+      "sft_show_work_tokens": {
+        "max": 133,
+        "mean": 100.8,
+        "total": 604955
+      }
+    },
+    "test_id": {
+      "chars_per_token_plain": 2.445,
+      "plain_tokens_total": 283058,
+      "records": 7000,
+      "sft_direct_tokens": {
+        "max": 34,
+        "mean": 25.6
+      },
+      "sft_show_work_tokens": {
+        "max": 84,
+        "mean": 52.4,
+        "total": 367007
+      }
+    },
+    "train": {
+      "chars_per_token_plain": 2.444,
+      "plain_tokens_total": 2264957,
+      "records": 56000,
+      "sft_direct_tokens": {
+        "max": 35,
+        "mean": 25.7
+      },
+      "sft_show_work_tokens": {
+        "max": 86,
+        "mean": 52.4,
+        "total": 2936323
+      }
+    },
+    "val": {
+      "chars_per_token_plain": 2.444,
+      "plain_tokens_total": 282848,
+      "records": 7000,
+      "sft_direct_tokens": {
+        "max": 34,
+        "mean": 25.6
+      },
+      "sft_show_work_tokens": {
+        "max": 83,
+        "mean": 52.4,
+        "total": 366754
+      }
+    }
+  },
+  "number_tokenization": {
+    "0-9": {
+      "single_token_fraction": 1.0,
+      "tokens_per_negative_number": {
+        "1": 1,
+        "2": 9
+      },
+      "tokens_per_number": {
+        "1": 10
+      }
+    },
+    "10-99": {
+      "single_token_fraction": 1.0,
+      "tokens_per_negative_number": {
+        "2": 90
+      },
+      "tokens_per_number": {
+        "1": 90
+      }
+    },
+    "100-999": {
+      "single_token_fraction": 0.162,
+      "tokens_per_negative_number": {
+        "2": 146,
+        "3": 754
+      },
+      "tokens_per_number": {
+        "1": 146,
+        "2": 754
+      }
+    },
+    "1000-9999 (every 7th)": {
+      "single_token_fraction": 0.0,
+      "tokens_per_negative_number": {
+        "3": 1010,
+        "4": 276
+      },
+      "tokens_per_number": {
+        "2": 1010,
+        "3": 276
+      }
+    }
+  },
+  "passed": true,
+  "roundtrip": {
+    "(30 + (-16)) * (-77)": true,
+    "-12": true,
+    "-30/17": true,
+    "0.5": true,
+    "1/2": true,
+    "12": true,
+    "170459": true,
+    "3 + (-5)": true,
+    "4x + 7 = 31": true,
+    "Solve 3(x + 4) = 27. Show your work.": true,
+    "x = -3/4": true
+  },
+  "special_tokens": {
+    "[/answer]": 8,
+    "[/steps]": 6,
+    "[answer]": 7,
+    "[assistant]": 4,
+    "[bos]": 1,
+    "[eos]": 2,
+    "[pad]": 0,
+    "[steps]": 5,
+    "[user]": 3
+  },
+  "tokenizer_sha256": "739dc16f65ea94839d37f0602f3e2f84e51cb630428f90e6f71d663d4b30c9be",
+  "vocab_size": 8192
+}

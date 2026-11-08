@@ -1,0 +1,22 @@
+{
+  "chars": {
+    "train": 1670193136,
+    "val": 34156085
+  },
+  "dataset": "general_text",
+  "documents": {
+    "train": 426354,
+    "val": 8665
+  },
+  "rule": "val if int(sha256(text)[:8], 16) % 1000 < 20 else train",
+  "schema_version": 1,
+  "source_files": [
+    "409f601f1c8eb559ca1173816eb48f2b6f6a6ab3e562a7111e78a6229ca7e152",
+    "51db9b9e53540a67a9f88b8299504960feb29f7bfe39ccd728d6cdbdda0678ee",
+    "57d4ab3c6f8327f33c4da47afae7491cdd9ac18d103153fd630f8c7e81a485c8",
+    "bb0d51bf863f11feafb99ea9af56acec1b8b6837413f51a7498282c7e8f37381",
+    "c0c658bbe65657c4e03f4dd593e224ecf763c0a64a6dbe468b3cc3deacfc7a3c"
+  ],
+  "val_digest_set_sha256": "754d5dbc0fe76b7a085e85b0ed105b0f538324eee54924e69d4b1d979f4c2727",
+  "version": "v1"
+}
