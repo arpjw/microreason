@@ -8,7 +8,8 @@ The full design is in [MICROREASON_MASTER_SPEC.md](MICROREASON_MASTER_SPEC.md).
 
 ## Status
 
-**Phase 5 of 8 done: GPU pilot complete** (RTX 5090, ≈252k tok/s for the 43M model, ≈$1.03 total).
+**Stage 1 trained: v0-base and v1-math** (RTX 4090, ≈$0.64). On val, math mid-training lifts exact
+accuracy from 25.8% to 48.9% (paired +23.2 pts, 95% CI [+22.1, +24.3]); see `reports/stage1_v1.md`.
 Math training data: a 1.47M-problem training-only stream (≈70M tokens) excludes every frozen
 evaluation problem; see `reports/math_stream_v1.md`. No real training stage or evaluation has run yet. Every number in the spec is a target or estimate, not a measured result.
 
@@ -19,7 +20,8 @@ evaluation problem; see `reports/math_stream_v1.md`. No real training stage or e
 | 3 | Tokenizer and model | Done; see `reports/phase3_inspection_v1.md` |
 | 4 | Common training loop, resume, smoke tests | Done; see `reports/phase4_training_loop_v1.md` |
 | 5 | Authorized GPU pilot | Done; see `reports/phase5_pilot_v1.md` |
-| 6–8 | Training stages, branches, evaluation, report | Not started |
+| 6 | Base pretraining and math mid-training | Done (val only; test sealed) |
+| 7–8 | SFT, DPO/GRPO branches, final evaluation, report | Not started |
 
 ## Setup
 

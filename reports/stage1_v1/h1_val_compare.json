@@ -1,0 +1,17 @@
+{
+  "a": "runs/eval/v0-base_val_plain",
+  "accuracy_a": 0.25785714285714284,
+  "accuracy_b": 0.48942857142857144,
+  "b": "runs/eval/v1-math_val_plain",
+  "bootstrap95": [
+    0.22057142857142858,
+    0.24285714285714285
+  ],
+  "bootstrap_seed": 0,
+  "difference_b_minus_a": 0.23157142857142857,
+  "method": "paired bootstrap over prompt ids",
+  "prompt_format": "plain-v1",
+  "prompts": 7000,
+  "resamples": 10000,
+  "suite": "val"
+}
