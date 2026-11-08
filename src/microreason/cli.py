@@ -304,7 +304,7 @@ def _cmd_train(args: argparse.Namespace) -> int:
         print(f"error: invalid config {args.config}:\n{exc}", file=sys.stderr)
         return EXIT_CONFIG_ERROR
     stage = resolved.stage
-    if stage.stage not in CAUSAL_LM_STAGES:
+    if stage.stage not in (*CAUSAL_LM_STAGES, "sft"):
         print(f"error: stage '{stage.stage}' is not implemented yet.", file=sys.stderr)
         return EXIT_NOT_IMPLEMENTED
     chash = resolved.config_hash()
@@ -338,7 +338,12 @@ def _cmd_train(args: argparse.Namespace) -> int:
             return EXIT_CONFIG_ERROR
 
     try:
-        trainer = build_trainer(resolved, run_dir, device, guard)
+        if stage.stage == "sft":
+            from microreason.train.sft import build_sft_trainer
+
+            trainer = build_sft_trainer(resolved, run_dir, device, guard)
+        else:
+            trainer = build_trainer(resolved, run_dir, device, guard)
     except (ValueError, FileNotFoundError, NotImplementedError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return EXIT_CONFIG_ERROR

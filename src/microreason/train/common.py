@@ -33,6 +33,24 @@ class NonFiniteError(RuntimeError):
     pass
 
 
+def unpack_batch(b) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor | None]:
+    """A batch is either a token tensor (packed LM: every position after the first is a target)
+    or a dict with input_ids, labels and attention_mask (SFT: padded, prompt/padding masked)."""
+    if isinstance(b, torch.Tensor):
+        return b, b, None
+    return b["input_ids"], b["labels"], b.get("attention_mask")
+
+
+def count_targets(labels: torch.Tensor) -> int:
+    from microreason.prompts import IGNORE_INDEX
+
+    return int((labels[:, 1:] != IGNORE_INDEX).sum())
+
+
+def count_tokens(ids: torch.Tensor, mask: torch.Tensor | None) -> int:
+    return int(mask.sum()) if mask is not None else ids.numel()
+
+
 def lr_at(step: int, total_steps: int, peak: float, sched: SchedulerConfig) -> float:
     """Learning rate for optimizer update number `step` (0-based)."""
     warm = math.ceil(sched.warmup_fraction * total_steps) if sched.warmup_fraction > 0 else 0
@@ -157,6 +175,7 @@ class Trainer:
         )
         self.step = 0
         self.tokens = 0
+        self.examples = 0
         self.provenance = {
             "stage": self.stage.stage,
             "config_hash": resolved.config_hash(),
@@ -193,6 +212,7 @@ class Trainer:
             "total_steps": self.total_steps,
             "steps_completed": self.step,
             "tokens_processed": self.tokens,
+            "examples_processed": self.examples,
             "estimated_cost_usd": 0.0,
             "updated_at": datetime.now(UTC).isoformat(),
             **extra,
@@ -204,6 +224,7 @@ class Trainer:
         return {
             "step": self.step,
             "tokens": self.tokens,
+            "examples": self.examples,
             "stream": self.stream.state_dict(),
             "torch_rng": torch.get_rng_state(),
             "python_rng": random.getstate(),
@@ -230,6 +251,7 @@ class Trainer:
         self.stream.load_state_dict(state["stream"])
         self.step = state["step"]
         self.tokens = state["tokens"]
+        self.examples = state.get("examples", 0)
         torch.set_rng_state(state["torch_rng"])
         py = state["python_rng"]
         random.setstate((py[0], tuple(py[1]), py[2]))
@@ -245,10 +267,11 @@ class Trainer:
         for name, batches in self.eval_sets.items():
             total, n = 0.0, 0
             for b in batches:
-                b = b.to(self.device)
+                ids, labels, mask = (None if t is None else t.to(self.device)
+                                     for t in unpack_batch(b))  # fmt: skip
                 with _autocast(self.device, self.stage.precision):
-                    loss = self.model(b, labels=b).loss.float().item()
-                k = b.shape[0] * (b.shape[1] - 1)
+                    loss = self.model(ids, attention_mask=mask, labels=labels).loss.float().item()
+                k = count_targets(labels)
                 total += loss * k
                 n += k
             out[name] = total / n
@@ -263,17 +286,21 @@ class Trainer:
         Each micro-batch's mean loss is weighted by its share of the step's target tokens, so
         the accumulated gradient equals the gradient of the full batch's mean loss.
         """
-        batches = [self.stream.next_batch(self.micro) for _ in range(self.accum)]
-        n_targets = sum(b.shape[0] * (b.shape[1] - 1) for b in batches)
+        batches = [unpack_batch(self.stream.next_batch(self.micro)) for _ in range(self.accum)]
+        n_targets = sum(count_targets(labels) for _, labels, _ in batches)
         loss_sum = 0.0
-        for b in batches:
-            b = b.to(self.device)
+        n_tokens = 0
+        for ids, labels, mask in batches:
+            ids, labels = ids.to(self.device), labels.to(self.device)
+            mask = None if mask is None else mask.to(self.device)
             with _autocast(self.device, self.stage.precision):
-                loss = self.model(b, labels=b).loss
-            k = b.shape[0] * (b.shape[1] - 1)
+                loss = self.model(ids, attention_mask=mask, labels=labels).loss
+            k = count_targets(labels)
             (loss * (k / n_targets)).backward()
             loss_sum += loss.detach().float().item() * k
-        return loss_sum / n_targets, sum(b.numel() for b in batches)
+            n_tokens += count_tokens(ids, mask)
+        self.examples += sum(ids.shape[0] for ids, _, _ in batches)
+        return loss_sum / n_targets, n_tokens
 
     def train_step(self) -> dict:
         lr = lr_at(self.step, self.total_steps, self.stage.optimizer.peak_lr, self.stage.scheduler)

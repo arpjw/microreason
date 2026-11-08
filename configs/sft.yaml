@@ -1,0 +1,34 @@
+# Stage 3 supervised fine-tuning (spec §6). Proposal only; nothing here has been run.
+# 50,000 verified train records (fixed selection and 75/25 show-work/direct split, declared
+# before the run), 2 epochs (max_examples = 100,000), loss on assistant tokens only.
+stage: sft
+model: configs/model_43m.yaml
+tokenizer: artifacts/tokenizer/v1
+parent: artifacts/v1-math  # the v1-math checkpoint
+sft:
+  train_manifest: data/manifests/math_train_v1.json
+  val_manifest: data/manifests/math_val_v1.json
+  num_examples: 50000
+  show_work_fraction: 0.75
+  val_examples_per_format: 256
+seed: 44
+precision: bf16
+sequence_length: 256          # per-example cap; longest SFT example is ~90 tokens; never truncated
+effective_batch_tokens: 16384 # 64 examples per optimizer step
+micro_batch_size: 64
+max_examples: 100000          # 2 epochs over 50,000 examples -> 1,563 steps
+log_every_steps: 25
+eval_every_steps: 250
+checkpoint_every_steps: 500
+optimizer:
+  name: adamw
+  peak_lr: 0.00005
+  weight_decay: 0.1
+  grad_clip_norm: 1.0
+scheduler:
+  name: cosine
+  warmup_fraction: 0.02
+  min_lr_fraction: 0.1
+budget:
+  paid_compute_allowed: false
+  max_spend_usd: 0

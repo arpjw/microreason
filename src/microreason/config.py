@@ -168,6 +168,16 @@ class CurriculumPhase(_Strict):
     weights: dict[str, float]
 
 
+class SFTDataConfig(_Strict):
+    """Supervised fine-tuning examples (spec §6, Stage 3), built from verified math records."""
+
+    train_manifest: str = "data/manifests/math_train_v1.json"
+    val_manifest: str = "data/manifests/math_val_v1.json"
+    num_examples: PositiveInt = 50_000
+    show_work_fraction: float = Field(default=0.75, ge=0, le=1)
+    val_examples_per_format: PositiveInt = 256
+
+
 class ValidationItem(_Strict):
     dataset: str
     sequences: PositiveInt = 64
@@ -183,6 +193,7 @@ class StageConfig(_Strict):
     mixture: list[MixtureItem] = Field(default_factory=list)
     validation: list[ValidationItem] = Field(default_factory=list)
     curriculum: list[CurriculumPhase] | None = None
+    sft: SFTDataConfig | None = None
     parent: str | None = None
     seed: int = 42
     precision: Literal["bf16", "fp16", "fp32"] = "bf16"
@@ -209,6 +220,11 @@ class StageConfig(_Strict):
             raise ValueError(f"stage '{self.stage}' requires a parent checkpoint")
         if self.micro_batch_size is not None and self.sequences_per_step % self.micro_batch_size:
             raise ValueError("sequences per step must be a multiple of micro_batch_size")
+        if self.stage in ("sft", "extra_sft"):
+            if self.sft is None or self.max_examples is None:
+                raise ValueError(f"stage '{self.stage}' needs an sft section and max_examples")
+        elif self.sft is not None:
+            raise ValueError("an sft section is only valid for sft stages")
         if self.curriculum:
             fracs = [p.until_fraction for p in self.curriculum]
             if fracs != sorted(fracs) or len(set(fracs)) != len(fracs) or fracs[-1] != 1.0:
@@ -236,7 +252,9 @@ class StageConfig(_Strict):
             return self.max_steps
         if self.max_train_tokens is not None:
             return -(-self.max_train_tokens // self.effective_batch_tokens)  # ceil
-        raise ValueError("example-limited stages compute steps from their dataset")
+        # Example-limited (SFT): sequence_length is the per-example cap, and each optimizer
+        # step consumes sequences_per_step examples.
+        return -(-self.max_examples // self.sequences_per_step)
 
 
 class ResolvedConfig(_Strict):

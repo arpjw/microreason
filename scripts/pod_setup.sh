@@ -20,6 +20,12 @@ uv run microreason data split-text --out /tmp/general_text_split_v1.json
 uv run microreason data generate          # refuses to change the frozen evaluation suites
 uv run microreason data audit --report /tmp/data_audit_v1.json
 uv run microreason data freeze             # idempotent: verifies the frozen suite hashes
+if [[ "${SETUP_PROFILE:-full}" == "sft" ]]; then
+  # SFT and its evaluations need only the math splits (already rebuilt and audited above).
+  echo "== cross-machine determinism check (math manifests)"
+  uv run python scripts/check_fingerprints.py --only math
+  exit 0
+fi
 uv run microreason data generate-stream    # training-only math stream (excludes frozen suites)
 uv run microreason data audit-stream --report /tmp/data_stream_audit_v1.json
 uv run microreason data tokenize

@@ -157,9 +157,13 @@ def compare_runs(a_dir: str | Path, b_dir: str | Path, resamples: int = 10_000, 
 
     sa, a = load(a_dir)
     sb, b = load(b_dir)
-    for key in ("suite_sha256", "prompt_format", "decode", "limited_to"):
+    # The comparison uses greedy rows only, so only the greedy decode settings must match;
+    # either run may additionally carry sampled pass@k rows.
+    for key in ("suite_sha256", "prompt_format", "limited_to"):
         if sa.get(key) != sb.get(key):
             raise ValueError(f"runs differ in {key}; not a valid paired comparison")
+    if sa["decode"].get("greedy") != sb["decode"].get("greedy"):
+        raise ValueError("runs differ in greedy decode settings; not a valid paired comparison")
     result = paired_bootstrap(a, b, resamples, seed)
     result.update(a=str(a_dir), b=str(b_dir), suite=sa["suite"], prompt_format=sa["prompt_format"])
     return result

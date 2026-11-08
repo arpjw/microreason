@@ -41,6 +41,11 @@ def main() -> int:
         print(f"wrote {EXPECTED} ({len(fp)} entries)")
         return 0
     want = json.loads(EXPECTED.read_text())
+    if "--only" in sys.argv:
+        prefix = sys.argv[sys.argv.index("--only") + 1] + ":"
+        keep = {k for k in want if k.startswith(prefix) and k != "math:math_train_stream_v1"}
+        want = {k: want[k] for k in keep}
+        fp = {k: fp.get(k) for k in keep}
     bad = [k for k in sorted(set(want) | set(fp)) if want.get(k) != fp.get(k)]
     for k in bad:
         print(f"MISMATCH {k}: expected {want.get(k)} got {fp.get(k)}")

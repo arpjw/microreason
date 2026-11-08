@@ -177,9 +177,13 @@ def test_run_eval_end_to_end_and_compare(tmp_path, setup):
                                            "verifier_error"}  # fmt: skip
     assert all(r["suite_sha256"] == s["suite_sha256"] for r in rows)
 
-    run_eval("val", ckpt, "plain-v1", tmp_path / "e2", samples=2, **kw)
+    run_eval("val", ckpt, "plain-v1", tmp_path / "e2", **kw)  # no sampled rows this time
     cmp = compare_runs(tmp_path / "e1", tmp_path / "e2", resamples=200)
     assert cmp["difference_b_minus_a"] == 0  # same checkpoint, greedy: identical
+    kw_long = {**kw, "max_new_tokens": 7}
+    run_eval("val", ckpt, "plain-v1", tmp_path / "e4", **kw_long)
+    with pytest.raises(ValueError, match="greedy decode"):
+        compare_runs(tmp_path / "e1", tmp_path / "e4")
 
     with pytest.raises(FileExistsError):
         run_eval("val", ckpt, "plain-v1", tmp_path / "e1", **kw)

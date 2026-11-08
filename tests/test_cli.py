@@ -45,7 +45,7 @@ def test_train_refuses_unimplemented_stage(tmp_path):
     cfg.write_text(
         (CONFIGS / "smoke.yaml")
         .read_text()
-        .replace("stage: smoke", "stage: sft\nparent: artifacts/v1-math")
+        .replace("stage: smoke", "stage: dpo\nparent: artifacts/v2-sft")
         .replace("model: configs/model_smoke.yaml", f"model: {CONFIGS / 'model_smoke.yaml'}")
     )
     assert main(["train", "--config", str(cfg), "--run-dir", str(tmp_path / "r")]) == (

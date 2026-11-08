@@ -125,8 +125,8 @@ def test_requires_some_stopping_limit():
 
 def test_later_stages_require_parent():
     with pytest.raises(ValidationError, match="parent"):
-        _stage(stage="sft")
-    assert _stage(stage="sft", parent="artifacts/v1-math").parent == "artifacts/v1-math"
+        _stage(stage="midtrain")
+    assert _stage(stage="midtrain", parent="artifacts/v0-base").parent == "artifacts/v0-base"
 
 
 def test_sequence_length_cannot_exceed_model_context(tmp_path):

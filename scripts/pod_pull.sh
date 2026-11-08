@@ -10,12 +10,12 @@ out="runs/pod_results/$pod"
 mkdir -p "$out"
 # shellcheck disable=SC2016  # expanded on the pod, not locally
 ssh -p "$port" "$target" 'cd /root/microreason && {
-    ls -d reports/pilot reports/stage1 2>/dev/null
+    ls -d reports/pilot reports/stage1 reports/stage2 2>/dev/null
     for d in runs/*/; do
       for f in run_manifest.json metrics.jsonl budget_ledger.json latest.json; do
         [ -f "$d$f" ] && echo "$d$f"; done; done
     ls runs/eval/*/summary.json runs/eval/*/rows.jsonl 2>/dev/null
-    [ -f reports/stage1/final_checkpoints.txt ] && sed "s#^/root/microreason/##" reports/stage1/final_checkpoints.txt
+    cat reports/stage*/final_checkpoints.txt 2>/dev/null | sed "s#^/root/microreason/##"
   } | tar -cf - -T - ' | tar -x -C "$out"
 ssh -p "$port" "$target" 'cat /root/watchdog.log 2>/dev/null' > "$out/watchdog.log" || true
 echo "copied to $out:"
