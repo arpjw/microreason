@@ -255,6 +255,10 @@ def _code_revision() -> dict:
                                     text=True, check=True).stdout.strip())  # fmt: skip
         return {"git_commit": rev, "dirty": dirty}
     except (OSError, subprocess.CalledProcessError):
+        rev_file = Path("REVISION")
+        if rev_file.exists():  # written by scripts/pod_push.sh for git-less copies
+            return {"git_commit": rev_file.read_text().strip(), "dirty": False,
+                    "source": "REVISION file"}  # fmt: skip
         return {"git_commit": None, "dirty": None}
 
 

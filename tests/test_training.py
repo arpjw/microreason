@@ -312,12 +312,13 @@ def test_nonfinite_loss_stops_run(tmp_path, smoke_model_cfg, data):
     assert manifest["status"] == "failed"
 
 
-def test_paid_compute_refused(tmp_path, smoke_model_cfg, data):
+def test_paid_compute_requires_budget_guard(tmp_path, smoke_model_cfg, data):
     budget = {
         "paid_compute_allowed": True, "max_spend_usd": 5, "provider": "x", "gpu_type": "y",
-        "max_runtime_hours": 1, "shutdown_rule": "z", "approved_by": "a", "approved_at": "b",
+        "max_runtime_hours": 1, "hourly_rate_usd": 0.89, "shutdown_rule": "z",
+        "approved_by": "a", "approved_at": "b",
     }  # fmt: skip
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(ValueError, match="budget guard"):
         make_trainer(resolved(smoke_model_cfg, budget=budget), tmp_path / "run", data)
 
 

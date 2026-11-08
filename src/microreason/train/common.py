@@ -78,16 +78,36 @@ def _code_revision() -> dict:
         )
         return {"git_commit": rev, "dirty": dirty}
     except (OSError, subprocess.CalledProcessError):
+        rev_file = Path("REVISION")
+        if rev_file.exists():  # written by scripts/pod_push.sh for git-less copies
+            return {"git_commit": rev_file.read_text().strip(), "dirty": False,
+                    "source": "REVISION file"}  # fmt: skip
         return {"git_commit": None, "dirty": None}
 
 
 @dataclass
 class TrainResult:
     run_dir: Path
-    final_checkpoint: Path
+    final_checkpoint: Path | None
     steps: int
     tokens: int
     final_eval: dict
+    stop_reason: str | None = None
+
+
+def _sync(device: torch.device) -> None:
+    if device.type == "cuda":
+        torch.cuda.synchronize()
+    elif device.type == "mps":
+        torch.mps.synchronize()
+
+
+def peak_memory_gib(device: torch.device) -> float | None:
+    if device.type == "cuda":
+        return round(torch.cuda.max_memory_allocated(device) / 2**30, 3)
+    if device.type == "mps":
+        return round(torch.mps.driver_allocated_memory() / 2**30, 3)
+    return None
 
 
 class Trainer:
@@ -100,13 +120,17 @@ class Trainer:
         device: str | torch.device = "cpu",
         provenance: dict | None = None,
         model=None,
+        budget_guard=None,
     ):
         self.cfg = resolved
         self.stage = resolved.stage
-        if self.stage.budget.paid_compute_allowed:
-            raise NotImplementedError("paid compute runs are gated until an authorized pilot")
+        if self.stage.budget.paid_compute_allowed and budget_guard is None:
+            raise ValueError("paid compute runs need a budget guard")
+        self.guard = budget_guard
         self.run_dir = Path(run_dir)
         self.device = torch.device(device)
+        if self.device.type == "cuda":
+            torch.set_float32_matmul_precision("high")
         self.stream = stream
         self.eval_sets = eval_sets
         self.total_steps = self.stage.total_steps()
@@ -276,14 +300,37 @@ class Trainer:
         )  # fmt: skip
         last_ckpt, last_eval = None, {}
         t0, tok0 = time.time(), self.tokens
+        step_times: list[float] = []
+        steps_this_run = 0
+        stop_reason = None
+        if self.device.type == "cuda":
+            torch.cuda.reset_peak_memory_stats(self.device)
         try:
             while self.step < self.total_steps:
+                if self.guard is not None:
+                    est = sorted(step_times[-5:])[len(step_times[-5:]) // 2] if step_times else None
+                    stop_reason = self.guard.check(
+                        est, steps_this_run, self.total_steps - self.step
+                    )
+                    if stop_reason:
+                        log.warning("budget guard stopped the run: %s", stop_reason)
+                        break
+                s0 = time.time()
                 m = self.train_step()
+                _sync(self.device)
+                step_times.append(time.time() - s0)
+                steps_this_run += 1
                 done = self.step == self.total_steps
                 if self.step % self.stage.log_every_steps == 0 or done:
                     dt = time.time() - t0
                     tps = (self.tokens - tok0) / dt if dt > 0 else 0.0
-                    self._event("train", tokens_per_second=round(tps, 1), **m)
+                    self._event(
+                        "train",
+                        tokens_per_second=round(tps, 1),
+                        step_seconds=round(step_times[-1], 4),
+                        peak_memory_gib=peak_memory_gib(self.device),
+                        **m,
+                    )
                     log.info("step %d/%d loss %.4f gnorm %.3f lr %.2e %.0f tok/s",
                              self.step, self.total_steps, m["loss"], m["grad_norm"], m["lr"],
                              tps)  # fmt: skip
@@ -295,13 +342,32 @@ class Trainer:
                              {k: round(v, 4) for k, v in last_eval.items()})  # fmt: skip
                 if self.step % self.stage.checkpoint_every_steps == 0 or done:
                     last_ckpt = self.save()
+            if stop_reason and self.step > 0:
+                from microreason.checkpoint import checkpoint_dir
+
+                if not checkpoint_dir(self.run_dir, self.step).exists():
+                    last_ckpt = self.save()
+                else:
+                    last_ckpt = checkpoint_dir(self.run_dir, self.step)
         except BaseException as e:
             self._write_manifest("failed", error=f"{type(e).__name__}: {e}")
             raise
+        timing = {
+            "median_step_seconds": round(sorted(step_times)[len(step_times) // 2], 4)
+            if step_times
+            else None,
+            "peak_memory_gib": peak_memory_gib(self.device),
+        }
+        if self.guard is not None:
+            timing["budget_ledger"] = self.guard.write(
+                timing["median_step_seconds"], self.total_steps - self.step, stop_reason
+            )
         self._write_manifest(
-            "completed",
+            stop_reason or "completed",
             final_eval=last_eval,
             mixture=self.stream.mixture_report(),
             final_checkpoint=str(last_ckpt),
+            timing=timing,
+            estimated_cost_usd=round(self.guard.accrued_usd(), 4) if self.guard else 0.0,
         )
-        return TrainResult(self.run_dir, last_ckpt, self.step, self.tokens, last_eval)
+        return TrainResult(self.run_dir, last_ckpt, self.step, self.tokens, last_eval, stop_reason)

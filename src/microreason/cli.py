@@ -213,9 +213,20 @@ def _cmd_train(args: argparse.Namespace) -> int:
 
     try:
         resolved = load_stage_config(args.config)
-        if args.parent:
-            stage = resolved.stage.model_copy(update={"parent": args.parent})
-            resolved = resolved.model_copy(update={"stage": stage})
+        updates = {
+            k: v
+            for k, v in {
+                "parent": args.parent,
+                "micro_batch_size": args.micro_batch_size,
+                "max_steps": args.max_steps,
+            }.items()
+            if v is not None
+        }
+        if updates:
+            from microreason.config import ResolvedConfig, StageConfig
+
+            stage = StageConfig.model_validate({**resolved.stage.model_dump(), **updates})
+            resolved = ResolvedConfig(stage=stage, model=resolved.model)
     except (ValidationError, ValueError, OSError) as exc:
         print(f"error: invalid config {args.config}:\n{exc}", file=sys.stderr)
         return EXIT_CONFIG_ERROR
@@ -223,13 +234,28 @@ def _cmd_train(args: argparse.Namespace) -> int:
     if stage.stage not in CAUSAL_LM_STAGES:
         print(f"error: stage '{stage.stage}' is not implemented yet.", file=sys.stderr)
         return EXIT_NOT_IMPLEMENTED
-    if stage.budget.paid_compute_allowed:
-        print("error: paid compute is gated until an explicitly authorized pilot.", file=sys.stderr)
-        return EXIT_CONFIG_ERROR
-
     chash = resolved.config_hash()
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     run_dir = Path(args.run_dir or f"runs/{stage.stage}_{stamp}_{chash[7:15]}")
+
+    guard = None
+    if stage.budget.paid_compute_allowed:
+        import os
+
+        from microreason.train.budget import BudgetGuard
+
+        pod_id = args.pod_id or os.environ.get("RUNPOD_POD_ID")
+        start = args.billing_start or os.environ.get("MICROREASON_BILLING_START")
+        if not pod_id or not start:
+            print("error: paid runs need --pod-id and --billing-start (or RUNPOD_POD_ID and "
+                  "MICROREASON_BILLING_START).", file=sys.stderr)  # fmt: skip
+            return EXIT_CONFIG_ERROR
+        try:
+            started = datetime.fromisoformat(start.replace("Z", "+00:00")).timestamp()
+            guard = BudgetGuard(stage.budget, started, pod_id, run_dir / "budget_ledger.json")
+        except (ValueError, RuntimeError) as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return EXIT_CONFIG_ERROR
     device = args.device or default_device()
     resume = None
     if args.resume:
@@ -239,7 +265,7 @@ def _cmd_train(args: argparse.Namespace) -> int:
             return EXIT_CONFIG_ERROR
 
     try:
-        trainer = build_trainer(resolved, run_dir, device)
+        trainer = build_trainer(resolved, run_dir, device, guard)
     except (ValueError, FileNotFoundError, NotImplementedError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return EXIT_CONFIG_ERROR
@@ -252,13 +278,16 @@ def _cmd_train(args: argparse.Namespace) -> int:
         "planned_tokens": trainer.total_steps * stage.effective_batch_tokens,
         "tokenizer_sha256": trainer.provenance["tokenizer_sha256"],
         "train_datasets": trainer.provenance["train_datasets"],
-        "projected_spend_usd": 0.0,
         "paid_compute_allowed": stage.budget.paid_compute_allowed,
+        "accrued_spend_usd_so_far": round(guard.accrued_usd(), 4) if guard else 0.0,
+        "approved_max_usd": stage.budget.max_spend_usd,
+        "hard_stop_at_hours_after_billing_start": round(stage.budget.ceiling_hours(), 3),
         "resume_from": str(resume) if resume else None,
     }
     print(json.dumps(summary, indent=2, sort_keys=True))
     result = trainer.train(resume_from=resume)
     final = {
+        "stop_reason": result.stop_reason,
         "final_checkpoint": str(result.final_checkpoint),
         "steps": result.steps,
         "tokens": result.tokens,
@@ -347,6 +376,10 @@ def build_parser() -> argparse.ArgumentParser:
     tr.add_argument("--run-dir", default=None)
     tr.add_argument("--device", default=None, help="cpu, mps or cuda (default: best available).")
     tr.add_argument("--resume", default=None, help="Checkpoint path, or 'latest' in --run-dir.")
+    tr.add_argument("--micro-batch-size", type=int, default=None, help="Override the config.")
+    tr.add_argument("--max-steps", type=int, default=None, help="Override the config.")
+    tr.add_argument("--pod-id", default=None, help="Paid runs: provider pod id.")
+    tr.add_argument("--billing-start", default=None, help="Paid runs: ISO time billing began.")
     tr.set_defaults(func=_cmd_train)
 
     # eval / compare / serve

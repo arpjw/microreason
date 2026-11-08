@@ -54,7 +54,9 @@ def test_train_refuses_unimplemented_stage(tmp_path):
     assert not (tmp_path / "r").exists()
 
 
-def test_train_refuses_paid_compute(tmp_path):
+def test_paid_run_needs_pod_id_and_billing_start(tmp_path, monkeypatch):
+    monkeypatch.delenv("RUNPOD_POD_ID", raising=False)
+    monkeypatch.delenv("MICROREASON_BILLING_START", raising=False)
     cfg = tmp_path / "paid.yaml"
     paid = """budget:
   paid_compute_allowed: true
@@ -62,6 +64,7 @@ def test_train_refuses_paid_compute(tmp_path):
   provider: runpod
   gpu_type: RTX 4090
   max_runtime_hours: 1
+  hourly_rate_usd: 0.89
   shutdown_rule: terminate at cap
   approved_by: nobody
   approved_at: never"""

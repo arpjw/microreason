@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Literal, Self
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, PositiveInt, model_validator
+from pydantic import BaseModel, ConfigDict, Field, PositiveInt, field_validator, model_validator
 
 
 class _Strict(BaseModel):
@@ -98,9 +98,20 @@ class BudgetConfig(_Strict):
     provider: str | None = None
     gpu_type: str | None = None
     max_runtime_hours: float | None = Field(default=None, gt=0)
+    hourly_rate_usd: float | None = Field(default=None, gt=0)
     shutdown_rule: str | None = None
     approved_by: str | None = None
     approved_at: str | None = None
+    # Time held back from the ceilings to write a final checkpoint and copy results off.
+    reserve_minutes: float = Field(default=10.0, ge=0)
+
+    @field_validator("approved_at", mode="before")
+    @classmethod
+    def _date_to_str(cls, v: object) -> object:
+        # YAML parses an unquoted 2026-11-07 as a date; store approvals as ISO strings.
+        import datetime as _dt
+
+        return v.isoformat() if isinstance(v, _dt.date) else v
 
     @model_validator(mode="after")
     def _check_authorization(self) -> Self:
@@ -112,6 +123,7 @@ class BudgetConfig(_Strict):
             "provider": self.provider,
             "gpu_type": self.gpu_type,
             "max_runtime_hours": self.max_runtime_hours,
+            "hourly_rate_usd": self.hourly_rate_usd,
             "shutdown_rule": self.shutdown_rule,
             "approved_by": self.approved_by,
             "approved_at": self.approved_at,
@@ -121,7 +133,22 @@ class BudgetConfig(_Strict):
             raise ValueError(f"paid compute requires these budget fields: {', '.join(missing)}")
         if self.max_spend_usd <= 0:
             raise ValueError("paid compute requires a positive max_spend_usd")
+        placeholders = {"PENDING", "TBD", "TODO", "CHANGEME"}
+        unapproved = [
+            k for k in ("approved_by", "approved_at")
+            if str(getattr(self, k)).strip().upper() in placeholders
+        ]  # fmt: skip
+        if unapproved:
+            raise ValueError(
+                f"paid compute is not authorized: {', '.join(unapproved)} still a placeholder"
+            )
         return self
+
+    def ceiling_hours(self) -> float:
+        """The tighter of the runtime limit and the dollar cap at the listed rate."""
+        if not self.paid_compute_allowed:
+            return 0.0
+        return min(self.max_runtime_hours, self.max_spend_usd / self.hourly_rate_usd)
 
 
 Stage = Literal["smoke", "pretrain", "midtrain", "sft", "extra_sft", "dpo", "grpo"]

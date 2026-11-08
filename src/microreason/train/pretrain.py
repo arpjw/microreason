@@ -32,7 +32,9 @@ def _dataset(path: str, tok: MicroTokenizer, expected_split: str) -> TokenizedDa
     return ds
 
 
-def build_trainer(resolved: ResolvedConfig, run_dir: str | Path, device: str) -> Trainer:
+def build_trainer(
+    resolved: ResolvedConfig, run_dir: str | Path, device: str, budget_guard=None
+) -> Trainer:
     stage = resolved.stage
     if stage.stage not in CAUSAL_LM_STAGES:
         raise NotImplementedError(f"stage '{stage.stage}' is not a causal-LM stage")
@@ -72,4 +74,4 @@ def build_trainer(resolved: ResolvedConfig, run_dir: str | Path, device: str) ->
         "parent_config_hash": parent_manifest["config_hash"] if parent_manifest else None,
         "parent_step": parent_manifest["step"] if parent_manifest else None,
     }
-    return Trainer(resolved, run_dir, stream, eval_sets, device, provenance, model)
+    return Trainer(resolved, run_dir, stream, eval_sets, device, provenance, model, budget_guard)

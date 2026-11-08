@@ -103,6 +103,7 @@ def test_paid_compute_accepted_when_fully_specified():
         provider="runpod",
         gpu_type="RTX 4090",
         max_runtime_hours=10,
+        hourly_rate_usd=0.89,
         shutdown_rule="terminate at cap",
         approved_by="owner",
         approved_at="2026-11-07",

@@ -17,7 +17,7 @@ exists; no real training stage or evaluation has run yet. Every number in the sp
 | 2 | Data generators, splits, manifests, answer verifier | Done; eval suites frozen (`data/manifests/math_eval_frozen_v1.json`) |
 | 3 | Tokenizer and model | Done; see `reports/phase3_inspection_v1.md` |
 | 4 | Common training loop, resume, smoke tests | Done; see `reports/phase4_training_loop_v1.md` |
-| 5 | Authorized GPU pilot | Not started (needs explicit approval) |
+| 5 | Authorized GPU pilot | Tooling built and dry-run locally; awaiting approval (`scripts/PILOT_RUNBOOK.md`) |
 | 6–8 | Training stages, branches, evaluation, report | Not started |
 
 ## Setup
@@ -70,3 +70,9 @@ phase that will implement them.
 The config schema defaults to `paid_compute_allowed: false` and `max_spend_usd: 0`. Enabling paid
 compute requires a provider, dollar cap, runtime cap, and shutdown rule in the config **and** a separate
 explicit approval from the project owner. Nothing in this repository authorizes spending on its own.
+
+Paid runs additionally need an hourly rate, a pod id and the billing start time. A budget guard
+stops training before the tighter of the runtime and dollar ceilings (minus a reserve), saves a
+checkpoint, and keeps an atomic ledger in `budget_ledger.json`. An on-pod watchdog terminates the
+pod at the hard deadline. `configs/pilot_43m.yaml` stays invalid until its approval fields are
+filled in.
