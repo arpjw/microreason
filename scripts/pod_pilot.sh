@@ -20,7 +20,8 @@ uv run microreason config validate --config configs/pilot_43m.yaml >/dev/null \
 
 mkdir -p reports/pilot
 echo "== tests on CUDA"
-uv run pytest -q -p no:cacheprovider -rN 2>&1 | tail -3 | tee reports/pilot/tests.txt
+echo "threads capped at OMP_NUM_THREADS=${OMP_NUM_THREADS:-unset}"
+timeout 900 uv run pytest -q -p no:cacheprovider -rN 2>&1 | tail -3 | tee reports/pilot/tests.txt
 
 echo "== smoke run and resume on CUDA"
 uv run microreason train --config configs/smoke.yaml --device cuda --run-dir runs/pod_smoke_a
