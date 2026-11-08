@@ -1,0 +1,41 @@
+{
+  "hypothesis": "H4: exact-outcome GRPO improves held-out correctness beyond SFT and equal-cost continued SFT",
+  "rule": "both differences >= 0.02 and both paired 95% intervals > 0",
+  "v4_grpo_r2_vs_v2_sft": {
+    "compare": "reports/rl_v2/v4-grpo-r2_vs_v2-sft_test_heldout_template_sft-show-work-v1_compare.json",
+    "a": "runs/rl2/eval/v2-sft_test_heldout_template_sft-show-work-v1",
+    "b": "runs/rl2/eval/v4-grpo-r2_test_heldout_template_sft-show-work-v1",
+    "accuracy_a": 0.0016666666666666668,
+    "accuracy_b": 0.0006666666666666666,
+    "difference_b_minus_a": -0.001,
+    "bootstrap95": [
+      -0.002,
+      -0.00016666666666666666
+    ],
+    "prompts": 6000,
+    "resamples": 10000,
+    "bootstrap_seed": 0,
+    "meets_threshold": false,
+    "interval_excludes_zero": false,
+    "passes": false
+  },
+  "v4_grpo_r2_vs_v2_extra_sft_r2": {
+    "compare": "reports/rl_v2/v4-grpo-r2_vs_v2-extra-sft-r2_test_heldout_template_sft-show-work-v1_compare.json",
+    "a": "runs/rl2/eval/v2-extra-sft-r2_test_heldout_template_sft-show-work-v1",
+    "b": "runs/rl2/eval/v4-grpo-r2_test_heldout_template_sft-show-work-v1",
+    "accuracy_a": 0.002,
+    "accuracy_b": 0.0006666666666666666,
+    "difference_b_minus_a": -0.0013333333333333333,
+    "bootstrap95": [
+      -0.0025,
+      -0.0003333333333333333
+    ],
+    "prompts": 6000,
+    "resamples": 10000,
+    "bootstrap_seed": 0,
+    "meets_threshold": false,
+    "interval_excludes_zero": false,
+    "passes": false
+  },
+  "h4_supported": false
+}

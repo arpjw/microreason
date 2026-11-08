@@ -1,0 +1,23 @@
+{
+  "rule": "highest val greedy show-work exact accuracy; ties -> lower LR (listed first)",
+  "candidates": [
+    {
+      "name": "v4-grpo-v2-lr1e-5",
+      "summary": "reports/rl_v2/v4-grpo-v2-lr1e-5_val_sft-show-work-v1_summary.json",
+      "checkpoint": "runs/rl2/v4-grpo-v2-lr1e-5/checkpoints/step_0000300",
+      "val_exact_accuracy": 0.8811428571428571,
+      "numerator": 6168,
+      "denominator": 7000
+    },
+    {
+      "name": "v4-grpo-v2-lr3e-5",
+      "summary": "reports/rl_v2/v4-grpo-v2-lr3e-5_val_sft-show-work-v1_summary.json",
+      "checkpoint": "runs/rl2/v4-grpo-v2-lr3e-5/checkpoints/step_0000300",
+      "val_exact_accuracy": 0.583,
+      "numerator": 4081,
+      "denominator": 7000
+    }
+  ],
+  "selected": "v4-grpo-v2-lr1e-5",
+  "selected_checkpoint": "runs/rl2/v4-grpo-v2-lr1e-5/checkpoints/step_0000300"
+}

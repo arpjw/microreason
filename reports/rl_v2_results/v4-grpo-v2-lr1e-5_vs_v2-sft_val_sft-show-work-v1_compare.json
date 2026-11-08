@@ -1,0 +1,17 @@
+{
+  "a": "runs/rl2/eval/v2-sft_val_sft-show-work-v1",
+  "accuracy_a": 0.8987142857142857,
+  "accuracy_b": 0.8811428571428571,
+  "b": "runs/rl2/eval/v4-grpo-v2-lr1e-5_val_sft-show-work-v1",
+  "bootstrap95": [
+    -0.024285714285714285,
+    -0.010857142857142857
+  ],
+  "bootstrap_seed": 0,
+  "difference_b_minus_a": -0.01757142857142857,
+  "method": "paired bootstrap over prompt ids",
+  "prompt_format": "sft-show-work-v1",
+  "prompts": 7000,
+  "resamples": 10000,
+  "suite": "val"
+}

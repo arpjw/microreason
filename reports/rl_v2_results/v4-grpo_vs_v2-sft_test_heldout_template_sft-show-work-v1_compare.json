@@ -1,0 +1,17 @@
+{
+  "a": "runs/rl2/eval/v2-sft_test_heldout_template_sft-show-work-v1",
+  "accuracy_a": 0.0016666666666666668,
+  "accuracy_b": 0.0013333333333333333,
+  "b": "runs/rl2/eval/v4-grpo_test_heldout_template_sft-show-work-v1",
+  "bootstrap95": [
+    -0.0016666666666666668,
+    0.0008333333333333334
+  ],
+  "bootstrap_seed": 0,
+  "difference_b_minus_a": -0.0003333333333333333,
+  "method": "paired bootstrap over prompt ids",
+  "prompt_format": "sft-show-work-v1",
+  "prompts": 6000,
+  "resamples": 10000,
+  "suite": "test_heldout_template"
+}

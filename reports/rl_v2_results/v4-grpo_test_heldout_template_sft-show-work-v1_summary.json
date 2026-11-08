@@ -1,0 +1,87 @@
+{
+  "checkpoint": "artifacts/rl1/v4-grpo",
+  "checkpoint_id": "sha256:74c203aaa8f0679f7ba7f1ba1debe01f8758e4a38ba98b3848d27d549e45cc46",
+  "checkpoint_step": 300,
+  "decode": {
+    "greedy": {
+      "max_new_tokens": 128
+    }
+  },
+  "device": "cuda",
+  "greedy": {
+    "accuracy_by_difficulty": {
+      "5": {
+        "denominator": 6000,
+        "numerator": 8,
+        "value": 0.0013333333333333333,
+        "wilson95": [
+          0.0006757826935772911,
+          0.0026290112382384044
+        ]
+      }
+    },
+    "accuracy_by_family": {
+      "linear_equation": {
+        "denominator": 2000,
+        "numerator": 8,
+        "value": 0.004,
+        "wilson95": [
+          0.0020282466069651696,
+          0.007873464296037741
+        ]
+      },
+      "multi_step_arithmetic": {
+        "denominator": 2000,
+        "numerator": 0,
+        "value": 0.0,
+        "wilson95": [
+          1.0842021724855044e-19,
+          0.001917047281252934
+        ]
+      },
+      "parentheses": {
+        "denominator": 2000,
+        "numerator": 0,
+        "value": 0.0,
+        "wilson95": [
+          1.0842021724855044e-19,
+          0.001917047281252934
+        ]
+      }
+    },
+    "exact_accuracy": {
+      "denominator": 6000,
+      "numerator": 8,
+      "value": 0.0013333333333333333,
+      "wilson95": [
+        0.0006757826935772911,
+        0.0026290112382384044
+      ]
+    },
+    "generated_tokens": {
+      "max": 62,
+      "mean": 45.30383333333333,
+      "median": 46
+    },
+    "prompts": 6000,
+    "status_counts": {
+      "correct": 8,
+      "wrong": 5992
+    },
+    "valid_format_rate": {
+      "denominator": 6000,
+      "numerator": 6000,
+      "value": 1.0,
+      "wilson95": [
+        0.9993601665122168,
+        0.9999999999999999
+      ]
+    }
+  },
+  "greedy_seconds": 94.348,
+  "limited_to": null,
+  "prompt_format": "sft-show-work-v1",
+  "protocol": "eval-v1",
+  "suite": "test_heldout_template",
+  "suite_sha256": "cdcd21099b04b97d446529b37aff3bd69bb5fe988b23f9c726e15b4b6ea3e084"
+}

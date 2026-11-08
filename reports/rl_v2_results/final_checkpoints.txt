@@ -1,0 +1,2 @@
+runs/rl2/v4-grpo-v2-lr1e-5/checkpoints/step_0000300
+runs/rl2/v2-extra-sft-r2/checkpoints/step_0016690

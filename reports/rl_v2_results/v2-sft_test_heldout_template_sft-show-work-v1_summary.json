@@ -1,0 +1,114 @@
+{
+  "checkpoint": "artifacts/p2-v2-sft",
+  "checkpoint_id": "sha256:1ec3ff35f8697140e8018d57e1cd6bf21ea2b23f782e532742a8325ecde2a904",
+  "checkpoint_step": 1563,
+  "decode": {
+    "greedy": {
+      "max_new_tokens": 128
+    },
+    "sampled": {
+      "max_new_tokens": 128,
+      "samples": 4,
+      "seed": 0,
+      "temperature": 0.8
+    }
+  },
+  "device": "cuda",
+  "greedy": {
+    "accuracy_by_difficulty": {
+      "5": {
+        "denominator": 6000,
+        "numerator": 10,
+        "value": 0.0016666666666666668,
+        "wilson95": [
+          0.0009055737915231786,
+          0.0030654602513006625
+        ]
+      }
+    },
+    "accuracy_by_family": {
+      "linear_equation": {
+        "denominator": 2000,
+        "numerator": 10,
+        "value": 0.005,
+        "wilson95": [
+          0.0027181808584985597,
+          0.009179695949941846
+        ]
+      },
+      "multi_step_arithmetic": {
+        "denominator": 2000,
+        "numerator": 0,
+        "value": 0.0,
+        "wilson95": [
+          1.0842021724855044e-19,
+          0.001917047281252934
+        ]
+      },
+      "parentheses": {
+        "denominator": 2000,
+        "numerator": 0,
+        "value": 0.0,
+        "wilson95": [
+          1.0842021724855044e-19,
+          0.001917047281252934
+        ]
+      }
+    },
+    "exact_accuracy": {
+      "denominator": 6000,
+      "numerator": 10,
+      "value": 0.0016666666666666668,
+      "wilson95": [
+        0.0009055737915231786,
+        0.0030654602513006625
+      ]
+    },
+    "generated_tokens": {
+      "max": 63,
+      "mean": 48.2305,
+      "median": 49
+    },
+    "prompts": 6000,
+    "status_counts": {
+      "correct": 10,
+      "wrong": 5990
+    },
+    "valid_format_rate": {
+      "denominator": 6000,
+      "numerator": 6000,
+      "value": 1.0,
+      "wilson95": [
+        0.9993601665122168,
+        0.9999999999999999
+      ]
+    }
+  },
+  "greedy_seconds": 95.798,
+  "limited_to": null,
+  "prompt_format": "sft-show-work-v1",
+  "protocol": "eval-v1",
+  "sampled": {
+    "pass@4": {
+      "denominator": 6000,
+      "numerator": 18,
+      "value": 0.003,
+      "wilson95": [
+        0.001898538117990902,
+        0.004737456368865516
+      ]
+    },
+    "sampled_pass@1": {
+      "denominator": 24000,
+      "numerator": 32,
+      "value": 0.0013333333333333333,
+      "wilson95": [
+        0.0009446672298658575,
+        0.0018816078451915318
+      ]
+    },
+    "samples_per_prompt": 4
+  },
+  "suite": "test_heldout_template",
+  "suite_sha256": "cdcd21099b04b97d446529b37aff3bd69bb5fe988b23f9c726e15b4b6ea3e084"
+}

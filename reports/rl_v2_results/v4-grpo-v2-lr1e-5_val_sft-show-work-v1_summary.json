@@ -1,0 +1,177 @@
+{
+  "checkpoint": "runs/rl2/v4-grpo-v2-lr1e-5/checkpoints/step_0000300",
+  "checkpoint_id": "sha256:24a280c8bf7da2095ea042bcee3fd50a09fd2a54a0c22d3ebbe7b9f3c8c71f3f",
+  "checkpoint_step": 300,
+  "decode": {
+    "greedy": {
+      "max_new_tokens": 128
+    },
+    "sampled": {
+      "max_new_tokens": 128,
+      "samples": 4,
+      "seed": 0,
+      "temperature": 0.8
+    }
+  },
+  "device": "cuda",
+  "greedy": {
+    "accuracy_by_difficulty": {
+      "1": {
+        "denominator": 1500,
+        "numerator": 1461,
+        "value": 0.974,
+        "wilson95": [
+          0.9646556618268805,
+          0.9809227378503875
+        ]
+      },
+      "2": {
+        "denominator": 2000,
+        "numerator": 1884,
+        "value": 0.942,
+        "wilson95": [
+          0.9308834016573861,
+          0.9514219285459862
+        ]
+      },
+      "3": {
+        "denominator": 1500,
+        "numerator": 1099,
+        "value": 0.7326666666666667,
+        "wilson95": [
+          0.7096964576066622,
+          0.75444821396488
+        ]
+      },
+      "4": {
+        "denominator": 2000,
+        "numerator": 1724,
+        "value": 0.862,
+        "wilson95": [
+          0.8461889566710127,
+          0.8764231010973601
+        ]
+      }
+    },
+    "accuracy_by_family": {
+      "arithmetic": {
+        "denominator": 1500,
+        "numerator": 1461,
+        "value": 0.974,
+        "wilson95": [
+          0.9646556618268805,
+          0.9809227378503875
+        ]
+      },
+      "division": {
+        "denominator": 500,
+        "numerator": 489,
+        "value": 0.978,
+        "wilson95": [
+          0.9610391387886836,
+          0.9876719917300725
+        ]
+      },
+      "linear_equation": {
+        "denominator": 1500,
+        "numerator": 1354,
+        "value": 0.9026666666666666,
+        "wilson95": [
+          0.8866217869805335,
+          0.9166543781461469
+        ]
+      },
+      "multi_step_arithmetic": {
+        "denominator": 1000,
+        "numerator": 620,
+        "value": 0.62,
+        "wilson95": [
+          0.5895108843206113,
+          0.6495706936428555
+        ]
+      },
+      "one_step_equation": {
+        "denominator": 1000,
+        "numerator": 948,
+        "value": 0.948,
+        "wilson95": [
+          0.93244426068072,
+          0.9601269637162226
+        ]
+      },
+      "order_of_operations": {
+        "denominator": 500,
+        "numerator": 447,
+        "value": 0.894,
+        "wilson95": [
+          0.8639490699892671,
+          0.9180429497270297
+        ]
+      },
+      "parentheses": {
+        "denominator": 1000,
+        "numerator": 849,
+        "value": 0.849,
+        "wilson95": [
+          0.8254750432083057,
+          0.8698538793687768
+        ]
+      }
+    },
+    "exact_accuracy": {
+      "denominator": 7000,
+      "numerator": 6168,
+      "value": 0.8811428571428571,
+      "wilson95": [
+        0.8733518589190501,
+        0.8885157577843232
+      ]
+    },
+    "generated_tokens": {
+      "max": 61,
+      "mean": 33.932857142857145,
+      "median": 34
+    },
+    "prompts": 7000,
+    "status_counts": {
+      "correct": 6168,
+      "wrong": 832
+    },
+    "valid_format_rate": {
+      "denominator": 7000,
+      "numerator": 7000,
+      "value": 1.0,
+      "wilson95": [
+        0.9994515211625962,
+        0.9999999999999999
+      ]
+    }
+  },
+  "greedy_seconds": 63.439,
+  "limited_to": null,
+  "prompt_format": "sft-show-work-v1",
+  "protocol": "eval-v1",
+  "sampled": {
+    "pass@4": {
+      "denominator": 7000,
+      "numerator": 6459,
+      "value": 0.9227142857142857,
+      "wilson95": [
+        0.9162240635461293,
+        0.928740808202477
+      ]
+    },
+    "sampled_pass@1": {
+      "denominator": 28000,
+      "numerator": 23722,
+      "value": 0.8472142857142857,
+      "wilson95": [
+        0.842952554264232,
+        0.8513807581347888
+      ]
+    },
+    "samples_per_prompt": 4
+  },
+  "suite": "val",
+  "suite_sha256": "7b2f36797924777ae611c92ba6d49d2aa4d5fba33d49abc4b436cbe57d393124"
+}

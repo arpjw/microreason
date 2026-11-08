@@ -1,0 +1,87 @@
+{
+  "checkpoint": "artifacts/rl1/v2-extra-sft",
+  "checkpoint_id": "sha256:9e2d075083c1267487a08f6ee4322ecd43ccca7d4b5fdeedd128e9ac8a46ae47",
+  "checkpoint_step": 5517,
+  "decode": {
+    "greedy": {
+      "max_new_tokens": 128
+    }
+  },
+  "device": "cuda",
+  "greedy": {
+    "accuracy_by_difficulty": {
+      "5": {
+        "denominator": 6000,
+        "numerator": 12,
+        "value": 0.002,
+        "wilson95": [
+          0.0011444832418497902,
+          0.0034927909119821946
+        ]
+      }
+    },
+    "accuracy_by_family": {
+      "linear_equation": {
+        "denominator": 2000,
+        "numerator": 12,
+        "value": 0.006,
+        "wilson95": [
+          0.003435594376936234,
+          0.010458448336941664
+        ]
+      },
+      "multi_step_arithmetic": {
+        "denominator": 2000,
+        "numerator": 0,
+        "value": 0.0,
+        "wilson95": [
+          1.0842021724855044e-19,
+          0.001917047281252934
+        ]
+      },
+      "parentheses": {
+        "denominator": 2000,
+        "numerator": 0,
+        "value": 0.0,
+        "wilson95": [
+          1.0842021724855044e-19,
+          0.001917047281252934
+        ]
+      }
+    },
+    "exact_accuracy": {
+      "denominator": 6000,
+      "numerator": 12,
+      "value": 0.002,
+      "wilson95": [
+        0.0011444832418497902,
+        0.0034927909119821946
+      ]
+    },
+    "generated_tokens": {
+      "max": 62,
+      "mean": 48.7115,
+      "median": 49
+    },
+    "prompts": 6000,
+    "status_counts": {
+      "correct": 12,
+      "wrong": 5988
+    },
+    "valid_format_rate": {
+      "denominator": 6000,
+      "numerator": 6000,
+      "value": 1.0,
+      "wilson95": [
+        0.9993601665122168,
+        0.9999999999999999
+      ]
+    }
+  },
+  "greedy_seconds": 95.871,
+  "limited_to": null,
+  "prompt_format": "sft-show-work-v1",
+  "protocol": "eval-v1",
+  "suite": "test_heldout_template",
+  "suite_sha256": "cdcd21099b04b97d446529b37aff3bd69bb5fe988b23f9c726e15b4b6ea3e084"
+}

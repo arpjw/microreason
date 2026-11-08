@@ -1,0 +1,17 @@
+{
+  "a": "runs/rl2/eval/v2-sft_val_sft-direct-v1",
+  "accuracy_a": 0.38185714285714284,
+  "accuracy_b": 0.22471428571428573,
+  "b": "runs/rl2/eval/v4-grpo-v2-lr3e-5_val_sft-direct-v1",
+  "bootstrap95": [
+    -0.1667142857142857,
+    -0.14757142857142858
+  ],
+  "bootstrap_seed": 0,
+  "difference_b_minus_a": -0.15714285714285714,
+  "method": "paired bootstrap over prompt ids",
+  "prompt_format": "sft-direct-v1",
+  "prompts": 7000,
+  "resamples": 10000,
+  "suite": "val"
+}

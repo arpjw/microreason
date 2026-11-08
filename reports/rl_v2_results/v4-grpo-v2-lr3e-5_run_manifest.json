@@ -1,0 +1,142 @@
+{
+  "completions": 305152,
+  "device": "cuda",
+  "estimated_cost_usd": 0.8617,
+  "final_checkpoint": "runs/rl2/v4-grpo-v2-lr3e-5/checkpoints/step_0000300",
+  "optimizer_updates": 600,
+  "provenance": {
+    "code_revision": {
+      "dirty": false,
+      "git_commit": "4e239eb1f54dce4da5475a530584a03d67f3692d",
+      "source": "REVISION file"
+    },
+    "config_hash": "sha256:51e1809b54f6832384c3c24666d04364741a585cbd93f1cbe4272024e1a7e4fd",
+    "objective": "GRPO, clipped ratio, k3 KL to frozen parent, sequence-mean tokens",
+    "parent": "artifacts/p2-v2-sft",
+    "parent_checkpoint_id": "sha256:1ec3ff35f8697140e8018d57e1cd6bf21ea2b23f782e532742a8325ecde2a904",
+    "parent_config_hash": "sha256:c1d74fdf3f23b128ca49bafebe6f1e136df0645b38ce4bc757e5e84c900c71b9",
+    "pool": {
+      "manifest": "data/manifests/math_train_stream_rl1.json",
+      "partition": "grpo",
+      "prompts_used": 38144,
+      "sha256": "5c18caa1153f238fbcdbf43ac3b6ddbc3948e126dfd9753b5a45d29de48ed358"
+    },
+    "stage": "grpo",
+    "tokenizer_sha256": "739dc16f65ea94839d37f0602f3e2f84e51cb630428f90e6f71d663d4b30c9be"
+  },
+  "resolved_config": {
+    "model": {
+      "bias": false,
+      "d_model": 512,
+      "dropout": 0.0,
+      "head_dim": 64,
+      "max_seq_len": 2048,
+      "mlp": "swiglu",
+      "mlp_hidden": 1408,
+      "n_heads": 8,
+      "n_kv_heads": 8,
+      "n_layers": 12,
+      "name": "microreason-43m",
+      "norm": "rmsnorm",
+      "position": "rope",
+      "rope_theta": 10000.0,
+      "tie_embeddings": true,
+      "vocab_size": 8192
+    },
+    "schema_version": 1,
+    "stage": {
+      "adv_eps": 1e-06,
+      "betas": [
+        0.9,
+        0.95
+      ],
+      "budget": {
+        "approved_at": "2026-11-08",
+        "approved_by": "project owner (approval in chat for rl-v2 and the confirmatory test evaluation)",
+        "gpu_type": "NVIDIA RTX 6000 Ada Generation (Secure Cloud)",
+        "hourly_rate_usd": 0.99,
+        "max_runtime_hours": 3.5,
+        "max_spend_usd": 4.0,
+        "paid_compute_allowed": true,
+        "provider": "runpod",
+        "reserve_minutes": 15.0,
+        "shutdown_rule": "Copy reports, metrics, rollout records, eval rows, budget ledgers and the final GRPO v2 and v2-extra-sft-r2 checkpoints off the pod, then terminate (delete) it when the session finishes, at either ceiling, or on any failure; the pod also deletes itself 45 minutes after finishing if not collected."
+      },
+      "checkpoint_every_steps": 100,
+      "clip_eps": 0.2,
+      "dynamic_sampling": true,
+      "gate": {
+        "max_malformed_fraction": 0.1,
+        "max_pass_at_1": 0.95,
+        "min_mixed_group_fraction": 0.2,
+        "min_pass_at_1": 0.05,
+        "prompts": 512
+      },
+      "grad_clip_norm": 1.0,
+      "kl_beta": 0.04,
+      "log_every_steps": 5,
+      "lr": 3e-05,
+      "max_sample_rounds": 8,
+      "minibatches_per_step": 2,
+      "model": "configs/model_43m.yaml",
+      "parent": "artifacts/p2-v2-sft",
+      "pool_manifest": "data/manifests/math_train_stream_rl1.json",
+      "precision": "bf16",
+      "prompts_per_step": 32,
+      "sample_chunk_prompts": 64,
+      "sampling": {
+        "generation_batch_size": 256,
+        "group_size": 8,
+        "kv_cache": true,
+        "max_new_tokens": 128,
+        "temperature": 0.8
+      },
+      "seed": 45,
+      "stage": "grpo",
+      "steps": 300,
+      "tokenizer": "artifacts/tokenizer/v1",
+      "warmup_steps": 10,
+      "weight_decay": 0.0
+    }
+  },
+  "rollouts_sha256": "45a28fb9af69e996e3f7301967b4327ccd5bed2500cd3532a01bb246526dce1d",
+  "software": {
+    "python": "3.13.11",
+    "torch": "2.15.0+cu132"
+  },
+  "started_at": "2026-11-08T22:14:38.161935+00:00",
+  "status": "completed",
+  "steps_completed": 300,
+  "timing": {
+    "budget_ledger": {
+      "approved_at": "2026-11-08",
+      "approved_by": "project owner (approval in chat for rl-v2 and the confirmatory test evaluation)",
+      "approved_max_runtime_hours": 3.5,
+      "approved_max_usd": 4.0,
+      "billing_start": "2026-11-08T21:36:07+00:00",
+      "ceiling_at": "2026-11-09T01:06:07+00:00",
+      "elapsed_hours": 0.8704,
+      "estimated_accrued_usd": 0.8617,
+      "gpu_type": "NVIDIA RTX 6000 Ada Generation (Secure Cloud)",
+      "hourly_rate_usd": 0.99,
+      "measured_step_seconds": 2.527,
+      "note": "GPU time at the listed rate only; storage and other charges are excluded.",
+      "pod_id": "tzjzi4mv71cp51",
+      "projected_total_usd": 1.1092,
+      "provider": "runpod",
+      "reserve_minutes": 15.0,
+      "shutdown_rule": "Copy reports, metrics, rollout records, eval rows, budget ledgers and the final GRPO v2 and v2-extra-sft-r2 checkpoints off the pod, then terminate (delete) it when the session finishes, at either ceiling, or on any failure; the pod also deletes itself 45 minutes after finishing if not collected.",
+      "steps_remaining": 0,
+      "stop_reason": null,
+      "updated_at": "2026-11-08T22:28:20.291671+00:00"
+    },
+    "median_step_seconds": 2.527,
+    "peak_memory_gib": 8.937,
+    "rollout_seconds": 746.63,
+    "train_wall_seconds": 821.85,
+    "update_seconds": 71.32
+  },
+  "total_steps": 300,
+  "trained_completions": 76800,
+  "updated_at": "2026-11-08T22:28:20.292883+00:00"
+}

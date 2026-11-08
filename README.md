@@ -17,7 +17,13 @@ see `reports/stage2_v1.md`.
 
 **RL stage v1 (≈$1.75, val only):** v4-grpo 88.4% (−1.5 vs v2-sft), equal-compute v2-extra-sft
 93.9% (+4.1), v3-dpo 84.5% (−5.4); the reward-variance gate passed (mixed groups 0.28). See
-`reports/rl_v1.md` and `reports/rl_protocol_v1.md`. Test suites remain sealed.
+`reports/rl_v1.md` and `reports/rl_protocol_v1.md`.
+**RL stage v2 + confirmatory test (≈$2.31):** GRPO v2 (KV-cache rollouts, mixed-group sampling,
+group 8) val 88.1% (−1.8) vs time-matched v2-extra-sft-r2 94.4% (+4.5). **H4 not supported** on
+the held-out-template test: every model is near 0% there (v4-grpo-r2 0.07%, v2-sft 0.17%,
+v2-extra-sft-r2 0.20%), and near 0% on number extrapolation; `test_id` 87.8 / 90.2 / 94.3%.
+See `reports/rl_v2.md`, `reports/rl_protocol_v2.md` and `reports/confirmatory_plan_v1.md`.
+The test suites have now been used once; any later test evaluation is post-hoc.
 Math training data: a 1.47M-problem training-only stream (≈70M tokens) excludes every frozen
 evaluation problem; see `reports/math_stream_v1.md`. No real training stage or evaluation has run yet. Every number in the spec is a target or estimate, not a measured result.
 

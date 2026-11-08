@@ -1,0 +1,87 @@
+{
+  "checkpoint": "runs/rl2/v2-extra-sft-r2/checkpoints/step_0016690",
+  "checkpoint_id": "sha256:3b85d7fc8bcc1490d5bde55dea45d419382d4e86e96f4e930a3ed55ac55840fd",
+  "checkpoint_step": 16690,
+  "decode": {
+    "greedy": {
+      "max_new_tokens": 128
+    }
+  },
+  "device": "cuda",
+  "greedy": {
+    "accuracy_by_difficulty": {
+      "5": {
+        "denominator": 6000,
+        "numerator": 34,
+        "value": 0.005666666666666667,
+        "wilson95": [
+          0.004058063575294137,
+          0.007907851799627438
+        ]
+      }
+    },
+    "accuracy_by_family": {
+      "linear_equation": {
+        "denominator": 2000,
+        "numerator": 34,
+        "value": 0.017,
+        "wilson95": [
+          0.012190680521843938,
+          0.023661187151846397
+        ]
+      },
+      "multi_step_arithmetic": {
+        "denominator": 2000,
+        "numerator": 0,
+        "value": 0.0,
+        "wilson95": [
+          1.0842021724855044e-19,
+          0.001917047281252934
+        ]
+      },
+      "parentheses": {
+        "denominator": 2000,
+        "numerator": 0,
+        "value": 0.0,
+        "wilson95": [
+          1.0842021724855044e-19,
+          0.001917047281252934
+        ]
+      }
+    },
+    "exact_accuracy": {
+      "denominator": 6000,
+      "numerator": 34,
+      "value": 0.005666666666666667,
+      "wilson95": [
+        0.004058063575294137,
+        0.007907851799627438
+      ]
+    },
+    "generated_tokens": {
+      "max": 8,
+      "mean": 5.677,
+      "median": 6
+    },
+    "prompts": 6000,
+    "status_counts": {
+      "correct": 34,
+      "wrong": 5966
+    },
+    "valid_format_rate": {
+      "denominator": 6000,
+      "numerator": 6000,
+      "value": 1.0,
+      "wilson95": [
+        0.9993601665122168,
+        0.9999999999999999
+      ]
+    }
+  },
+  "greedy_seconds": 7.676,
+  "limited_to": null,
+  "prompt_format": "sft-direct-v1",
+  "protocol": "eval-v1",
+  "suite": "test_heldout_template",
+  "suite_sha256": "cdcd21099b04b97d446529b37aff3bd69bb5fe988b23f9c726e15b4b6ea3e084"
+}
