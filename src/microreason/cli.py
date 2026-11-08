@@ -45,6 +45,57 @@ def _cmd_config_validate(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _cmd_data_generate(args: argparse.Namespace) -> int:
+    from microreason.data import build
+
+    try:
+        cfg = build.load_data_config(args.config)
+    except (ValidationError, ValueError, OSError) as exc:
+        print(f"error: invalid data config {args.config}:\n{exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    updates = {}
+    if args.out:
+        updates["out_dir"] = args.out
+    if args.manifest_dir:
+        updates["manifest_dir"] = args.manifest_dir
+    cfg = cfg.model_copy(update=updates)
+    try:
+        result = build.build_dataset(cfg)
+        build.guard_against_frozen(cfg, result)
+    except (build.CapacityError, ValueError, FileNotFoundError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    for path in build.write_dataset(cfg, result):
+        log.info("wrote %s", path)
+    print(json.dumps(build.summarize(result), indent=2, sort_keys=True))
+    return EXIT_OK
+
+
+def _cmd_data_audit(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from microreason.data import build
+
+    report = build.audit(args.manifest_dir, args.version)
+    Path(args.report).parent.mkdir(parents=True, exist_ok=True)
+    Path(args.report).write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
+    print(json.dumps({"passed": report["passed"], "failures": report["failures"],
+                      "report": args.report}, indent=2))  # fmt: skip
+    return EXIT_OK if report["passed"] else EXIT_CONFIG_ERROR
+
+
+def _cmd_data_freeze(args: argparse.Namespace) -> int:
+    from microreason.data import build
+
+    try:
+        path = build.freeze(args.manifest_dir, args.version)
+    except (ValueError, OSError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    print(path)
+    return EXIT_OK
+
+
 def _cmd_data_fetch(args: argparse.Namespace) -> int:
     from pathlib import Path
 
@@ -131,13 +182,20 @@ def build_parser() -> argparse.ArgumentParser:
     # data
     data = sub.add_parser("data", help="Generate and audit datasets (Phase 2).")
     data_sub = data.add_subparsers(dest="data_command", required=True, metavar="SUBCOMMAND")
-    dg = data_sub.add_parser("generate", help="Generate synthetic math data.")
-    dg.add_argument("--config", required=True)
-    dg.add_argument("--out", required=True)
-    dg.set_defaults(func=_not_implemented(2, "data generate"))
-    da = data_sub.add_parser("audit", help="Audit a data manifest for splits and overlap.")
-    da.add_argument("--manifest", required=True)
-    da.set_defaults(func=_not_implemented(2, "data audit"))
+    dg = data_sub.add_parser("generate", help="Generate synthetic math data and manifests.")
+    dg.add_argument("--config", default="configs/data.yaml")
+    dg.add_argument("--out", default=None, help="Override out_dir from the config.")
+    dg.add_argument("--manifest-dir", default=None, help="Override manifest_dir.")
+    dg.set_defaults(func=_cmd_data_generate)
+    da = data_sub.add_parser("audit", help="Audit manifests: hashes, checks, split overlap.")
+    da.add_argument("--manifest-dir", default="data/manifests")
+    da.add_argument("--version", default="v1")
+    da.add_argument("--report", default="reports/data_audit_v1.json")
+    da.set_defaults(func=_cmd_data_audit)
+    dz = data_sub.add_parser("freeze", help="Freeze evaluation suite hashes after review.")
+    dz.add_argument("--manifest-dir", default="data/manifests")
+    dz.add_argument("--version", default="v1")
+    dz.set_defaults(func=_cmd_data_freeze)
     df = data_sub.add_parser("fetch-sources", help="Download pinned text sources; verify sha256.")
     df.add_argument("--config", default="configs/data_sources.yaml")
     df.add_argument("--out", default="data/raw")

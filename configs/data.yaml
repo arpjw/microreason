@@ -1,0 +1,19 @@
+# Generated math dataset v1 (spec §4). Counts are per template.
+dataset: math
+version: v1
+root_seed: 20261107
+counts:
+  train: 4000
+  val: 500
+  test_id: 500
+  test_extrapolation: 500
+  test_heldout_template: 2000
+count_overrides: {}
+overgenerate: 1.5
+max_attempts_factor: 60
+corpus_scan:
+  enabled: true
+  sources_config: configs/data_sources.yaml
+  raw_dir: data/raw
+out_dir: data/generated/math_v1
+manifest_dir: data/manifests

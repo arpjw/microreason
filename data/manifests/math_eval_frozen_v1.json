@@ -1,0 +1,22 @@
+{
+  "dataset": "math",
+  "suites": {
+    "test_extrapolation": {
+      "record_count": 7000,
+      "sha256": "e7840ddf5f23c6adc81b2a01dbbc8adbc20502b497886a34febefafc087d2565"
+    },
+    "test_heldout_template": {
+      "record_count": 6000,
+      "sha256": "cdcd21099b04b97d446529b37aff3bd69bb5fe988b23f9c726e15b4b6ea3e084"
+    },
+    "test_id": {
+      "record_count": 7000,
+      "sha256": "18f17620ff66223bb4c7e625a0948cf80d09f8951d50ef3d719e758b5a394510"
+    },
+    "val": {
+      "record_count": 7000,
+      "sha256": "7b2f36797924777ae611c92ba6d49d2aa4d5fba33d49abc4b436cbe57d393124"
+    }
+  },
+  "version": "v1"
+}

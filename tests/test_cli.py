@@ -46,8 +46,6 @@ def test_train_validates_then_refuses():
 @pytest.mark.parametrize(
     "argv",
     [
-        ["data", "generate", "--config", "x", "--out", "y"],
-        ["data", "audit", "--manifest", "x"],
         ["tokenizer", "train", "--config", "x"],
         ["eval", "--suite", "x", "--checkpoint", "y"],
         ["compare", "--runs", "x"],

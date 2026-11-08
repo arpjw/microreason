@@ -5,9 +5,11 @@ description = "Small from-scratch decoder LM experiment for arithmetic and basic
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "pyahocorasick>=2.3.1",
     "pyarrow>=26.0.1",
     "pydantic>=2.7",
     "pyyaml>=6.0",
+    "sympy>=1.14.0",
 ]
 
 [project.scripts]

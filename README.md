@@ -8,13 +8,13 @@ The full design is in [MICROREASON_MASTER_SPEC.md](MICROREASON_MASTER_SPEC.md).
 
 ## Status
 
-**Phase 1 of 8: repository scaffold only.** No tokenizer, model, dataset, training run, checkpoint,
-or evaluation exists yet. Every number in the spec is a target or estimate, not a measured result.
+**Phase 2 of 8 done: data and verifier built, evaluation suites frozen.** No tokenizer, model,
+training run, checkpoint, or evaluation exists yet. Every number in the spec is a target or estimate, not a measured result.
 
 | Phase | Scope | Status |
 | --- | --- | --- |
 | 1 | Package, typed config schema, logging, CLI skeleton, tests | Done (local tests green) |
-| 2 | Data generators, splits, manifests, answer verifier | Not started |
+| 2 | Data generators, splits, manifests, answer verifier | Done; eval suites frozen (`data/manifests/math_eval_frozen_v1.json`) |
 | 3 | Tokenizer and model | Not started |
 | 4 | Common training loop, resume, smoke tests | Not started |
 | 5 | Authorized GPU pilot | Not started (needs explicit approval) |
@@ -37,7 +37,19 @@ uv run microreason config validate --config configs/pretrain.yaml   # validate a
 uv run microreason model inspect --config configs/model_43m.yaml    # analytic parameter count
 ```
 
-All other subcommands (`data`, `tokenizer`, `train`, `eval`, `compare`, `serve`) are placeholders that
+Data pipeline:
+
+```bash
+uv run microreason data fetch-sources   # download pinned Cosmopedia files (~1.2 GB), verify sha256
+uv run microreason data generate        # build math splits + manifests, scan corpus for overlap
+uv run microreason data audit           # re-verify every record, check cross-split leakage
+uv run microreason data freeze          # lock evaluation suite hashes (only after review)
+```
+
+Generated JSONL lives in `data/generated/` (not tracked; rebuilt deterministically). Manifests with
+hashes and counts are tracked in `data/manifests/`; the audit report is in `reports/`.
+
+The remaining subcommands (`tokenizer`, `train`, `eval`, `compare`, `serve`) are placeholders that
 exit with an error naming the phase that will implement them.
 
 ## Spending
