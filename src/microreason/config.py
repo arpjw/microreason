@@ -127,6 +127,18 @@ class BudgetConfig(_Strict):
 Stage = Literal["smoke", "pretrain", "midtrain", "sft", "extra_sft", "dpo", "grpo"]
 
 
+class MixtureItem(_Strict):
+    """A pre-tokenized dataset directory and its share of processed tokens."""
+
+    dataset: str
+    weight: float = Field(gt=0)
+
+
+class ValidationItem(_Strict):
+    dataset: str
+    sequences: PositiveInt = 64
+
+
 class StageConfig(_Strict):
     """One training stage (spec §6). `model` is a path to a ModelConfig YAML file."""
 
@@ -134,15 +146,18 @@ class StageConfig(_Strict):
     model: str
     tokenizer: str | None = None
     data_manifest: str | None = None
-    validation_manifests: list[str] = Field(default_factory=list)
+    mixture: list[MixtureItem] = Field(default_factory=list)
+    validation: list[ValidationItem] = Field(default_factory=list)
     parent: str | None = None
     seed: int = 42
     precision: Literal["bf16", "fp16", "fp32"] = "bf16"
     sequence_length: PositiveInt
     effective_batch_tokens: PositiveInt
+    micro_batch_size: PositiveInt | None = None  # sequences per forward pass; None = whole batch
     max_train_tokens: PositiveInt | None = None
     max_steps: PositiveInt | None = None
     max_examples: PositiveInt | None = None
+    log_every_steps: PositiveInt = 10
     eval_every_steps: PositiveInt = 250
     checkpoint_every_steps: PositiveInt = 500
     optimizer: OptimizerConfig
@@ -157,7 +172,24 @@ class StageConfig(_Strict):
             raise ValueError("set at least one of max_train_tokens, max_steps, max_examples")
         if self.stage in ("midtrain", "sft", "extra_sft", "dpo", "grpo") and self.parent is None:
             raise ValueError(f"stage '{self.stage}' requires a parent checkpoint")
+        if self.micro_batch_size is not None and self.sequences_per_step % self.micro_batch_size:
+            raise ValueError("sequences per step must be a multiple of micro_batch_size")
         return self
+
+    @property
+    def sequences_per_step(self) -> int:
+        return self.effective_batch_tokens // self.sequence_length
+
+    @property
+    def grad_accum_steps(self) -> int:
+        return self.sequences_per_step // (self.micro_batch_size or self.sequences_per_step)
+
+    def total_steps(self) -> int:
+        if self.max_steps is not None:
+            return self.max_steps
+        if self.max_train_tokens is not None:
+            return -(-self.max_train_tokens // self.effective_batch_tokens)  # ceil
+        raise ValueError("example-limited stages compute steps from their dataset")
 
 
 class ResolvedConfig(_Strict):

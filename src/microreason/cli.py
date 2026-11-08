@@ -96,6 +96,33 @@ def _cmd_data_freeze(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _cmd_data_tokenize(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from microreason.data.tokenized import MANIFEST_FILE, tokenize_general_text, tokenize_math
+    from microreason.tokenizer import MicroTokenizer
+
+    tok = MicroTokenizer.load(args.tokenizer)
+    jobs = {
+        "general_text_train_v1": lambda d: tokenize_general_text(tok, "train", d),
+        "general_text_val_v1": lambda d: tokenize_general_text(tok, "val", d),
+        "math_train_v1": lambda d: tokenize_math(tok, "train", d),
+        "math_val_v1": lambda d: tokenize_math(tok, "val", d),
+    }
+    out = {}
+    for name, job in jobs.items():
+        d = Path(args.out) / name
+        if (d / MANIFEST_FILE).exists():
+            log.info("exists, skipping %s", d)
+            m = json.loads((d / MANIFEST_FILE).read_text())
+        else:
+            log.info("tokenizing %s", name)
+            m = job(d)
+        out[name] = {"documents": m["documents"], "tokens": m["tokens"]}
+    print(json.dumps(out, indent=2, sort_keys=True))
+    return EXIT_OK
+
+
 def _cmd_data_split_text(args: argparse.Namespace) -> int:
     from microreason.data.text_split import build_text_split_manifest
 
@@ -178,20 +205,67 @@ def _cmd_model_inspect(args: argparse.Namespace) -> int:
 
 
 def _cmd_train(args: argparse.Namespace) -> int:
+    from datetime import UTC, datetime
+    from pathlib import Path
+
+    from microreason.checkpoint import latest_checkpoint
+    from microreason.train.pretrain import CAUSAL_LM_STAGES, build_trainer, default_device
+
     try:
         resolved = load_stage_config(args.config)
+        if args.parent:
+            stage = resolved.stage.model_copy(update={"parent": args.parent})
+            resolved = resolved.model_copy(update={"stage": stage})
     except (ValidationError, ValueError, OSError) as exc:
         print(f"error: invalid config {args.config}:\n{exc}", file=sys.stderr)
         return EXIT_CONFIG_ERROR
-    budget = resolved.stage.budget
-    log.info("stage=%s config_hash=%s", resolved.stage.stage, resolved.config_hash())
-    log.info(
-        "paid_compute_allowed=%s max_spend_usd=%.2f",
-        budget.paid_compute_allowed,
-        budget.max_spend_usd,
-    )
-    print("error: training is not implemented yet (planned for Phase 4).", file=sys.stderr)
-    return EXIT_NOT_IMPLEMENTED
+    stage = resolved.stage
+    if stage.stage not in CAUSAL_LM_STAGES:
+        print(f"error: stage '{stage.stage}' is not implemented yet.", file=sys.stderr)
+        return EXIT_NOT_IMPLEMENTED
+    if stage.budget.paid_compute_allowed:
+        print("error: paid compute is gated until an explicitly authorized pilot.", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+
+    chash = resolved.config_hash()
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+    run_dir = Path(args.run_dir or f"runs/{stage.stage}_{stamp}_{chash[7:15]}")
+    device = args.device or default_device()
+    resume = None
+    if args.resume:
+        resume = latest_checkpoint(run_dir) if args.resume == "latest" else Path(args.resume)
+        if resume is None:
+            print(f"error: no checkpoint to resume in {run_dir}", file=sys.stderr)
+            return EXIT_CONFIG_ERROR
+
+    try:
+        trainer = build_trainer(resolved, run_dir, device)
+    except (ValueError, FileNotFoundError, NotImplementedError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    summary = {
+        "run_dir": str(run_dir),
+        "config_hash": chash,
+        "parent": stage.parent,
+        "device": device,
+        "total_steps": trainer.total_steps,
+        "planned_tokens": trainer.total_steps * stage.effective_batch_tokens,
+        "tokenizer_sha256": trainer.provenance["tokenizer_sha256"],
+        "train_datasets": trainer.provenance["train_datasets"],
+        "projected_spend_usd": 0.0,
+        "paid_compute_allowed": stage.budget.paid_compute_allowed,
+        "resume_from": str(resume) if resume else None,
+    }
+    print(json.dumps(summary, indent=2, sort_keys=True))
+    result = trainer.train(resume_from=resume)
+    final = {
+        "final_checkpoint": str(result.final_checkpoint),
+        "steps": result.steps,
+        "tokens": result.tokens,
+        "final_eval": result.final_eval,
+    }
+    print(json.dumps(final, indent=2))
+    return EXIT_OK
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -236,6 +310,10 @@ def build_parser() -> argparse.ArgumentParser:
     da.add_argument("--version", default="v1")
     da.add_argument("--report", default="reports/data_audit_v1.json")
     da.set_defaults(func=_cmd_data_audit)
+    dt = data_sub.add_parser("tokenize", help="Pre-tokenize train/val text and math datasets.")
+    dt.add_argument("--tokenizer", default="artifacts/tokenizer/v1")
+    dt.add_argument("--out", default="data/tokenized")
+    dt.set_defaults(func=_cmd_data_tokenize)
     ds = data_sub.add_parser("split-text", help="Hash-split general text into train/val.")
     ds.add_argument("--sources", default="configs/data_sources.yaml")
     ds.add_argument("--raw-dir", default="data/raw")
@@ -263,9 +341,12 @@ def build_parser() -> argparse.ArgumentParser:
     ti.set_defaults(func=_cmd_tokenizer_inspect)
 
     # train
-    tr = sub.add_parser("train", help="Run a training stage (Phase 4+).")
+    tr = sub.add_parser("train", help="Run a causal-LM training stage locally.")
     tr.add_argument("--config", required=True)
-    tr.add_argument("--parent", default=None)
+    tr.add_argument("--parent", default=None, help="Parent checkpoint directory.")
+    tr.add_argument("--run-dir", default=None)
+    tr.add_argument("--device", default=None, help="cpu, mps or cuda (default: best available).")
+    tr.add_argument("--resume", default=None, help="Checkpoint path, or 'latest' in --run-dir.")
     tr.set_defaults(func=_cmd_train)
 
     # eval / compare / serve

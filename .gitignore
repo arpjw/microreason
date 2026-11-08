@@ -17,6 +17,7 @@ runs/*
 !runs/.gitkeep
 data/raw/
 data/generated/
+data/tokenized/
 *.pt
 *.safetensors
 *.bin

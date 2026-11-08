@@ -1,0 +1,307 @@
+"""The common training loop shared by every causal-LM stage (spec §6, Stage 0).
+
+Features: AdamW with a declared weight-decay policy, linear warmup plus cosine decay, gradient
+accumulation weighted by target tokens, global-norm clipping, periodic evaluation, structured
+metrics, atomic checkpoints and exact resume.
+"""
+
+from __future__ import annotations
+
+import contextlib
+import json
+import math
+import platform
+import random
+import time
+from dataclasses import dataclass
+from datetime import UTC, datetime
+from pathlib import Path
+
+import torch
+
+from microreason.checkpoint import load_checkpoint, save_checkpoint
+from microreason.config import ResolvedConfig, SchedulerConfig
+from microreason.logging_utils import get_logger
+from microreason.train.data import PackedStream
+
+log = get_logger("microreason.train")
+
+WEIGHT_DECAY_POLICY = "decay all Linear weights; no decay on RMSNorm weights or the embedding"
+
+
+class NonFiniteError(RuntimeError):
+    pass
+
+
+def lr_at(step: int, total_steps: int, peak: float, sched: SchedulerConfig) -> float:
+    """Learning rate for optimizer update number `step` (0-based)."""
+    warm = math.ceil(sched.warmup_fraction * total_steps) if sched.warmup_fraction > 0 else 0
+    if step < warm:
+        return peak * (step + 1) / warm
+    if sched.name == "constant":
+        return peak
+    lo = peak * sched.min_lr_fraction
+    progress = (step - warm) / max(1, total_steps - warm - 1)
+    return lo + (peak - lo) * 0.5 * (1 + math.cos(math.pi * min(1.0, progress)))
+
+
+def param_groups(model: torch.nn.Module, weight_decay: float) -> list[dict]:
+    decay, no_decay = [], []
+    embed = model.get_input_embeddings().weight
+    for p in model.parameters():
+        (no_decay if p.ndim < 2 or p is embed else decay).append(p)
+    return [
+        {"params": decay, "weight_decay": weight_decay},
+        {"params": no_decay, "weight_decay": 0.0},
+    ]
+
+
+def _autocast(device: torch.device, precision: str):
+    if precision == "fp32":
+        return contextlib.nullcontext()
+    if precision == "bf16" and device.type in ("cuda", "mps"):
+        return torch.autocast(device_type=device.type, dtype=torch.bfloat16)
+    raise ValueError(f"precision {precision} is not supported on {device.type}")
+
+
+def _code_revision() -> dict:
+    import subprocess
+
+    try:
+        rev = subprocess.run(
+            ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
+        ).stdout.strip()
+        dirty = bool(
+            subprocess.run(
+                ["git", "status", "--porcelain"], capture_output=True, text=True, check=True
+            ).stdout.strip()
+        )
+        return {"git_commit": rev, "dirty": dirty}
+    except (OSError, subprocess.CalledProcessError):
+        return {"git_commit": None, "dirty": None}
+
+
+@dataclass
+class TrainResult:
+    run_dir: Path
+    final_checkpoint: Path
+    steps: int
+    tokens: int
+    final_eval: dict
+
+
+class Trainer:
+    def __init__(
+        self,
+        resolved: ResolvedConfig,
+        run_dir: str | Path,
+        stream: PackedStream,
+        eval_sets: dict[str, list[torch.Tensor]],
+        device: str | torch.device = "cpu",
+        provenance: dict | None = None,
+        model=None,
+    ):
+        self.cfg = resolved
+        self.stage = resolved.stage
+        if self.stage.budget.paid_compute_allowed:
+            raise NotImplementedError("paid compute runs are gated until an authorized pilot")
+        self.run_dir = Path(run_dir)
+        self.device = torch.device(device)
+        self.stream = stream
+        self.eval_sets = eval_sets
+        self.total_steps = self.stage.total_steps()
+        self.micro = self.stage.micro_batch_size or self.stage.sequences_per_step
+        self.accum = self.stage.grad_accum_steps
+
+        torch.manual_seed(self.stage.seed)
+        random.seed(self.stage.seed)
+        if model is None:
+            from microreason.model import build_model
+
+            model = build_model(resolved.model)
+        self.model = model.to(self.device)
+        opt = self.stage.optimizer
+        self.optimizer = torch.optim.AdamW(
+            param_groups(self.model, opt.weight_decay),
+            lr=opt.peak_lr,
+            betas=opt.betas,
+            eps=opt.eps,
+            foreach=False,
+        )
+        self.step = 0
+        self.tokens = 0
+        self.provenance = {
+            "stage": self.stage.stage,
+            "config_hash": resolved.config_hash(),
+            "parent": self.stage.parent,
+            "code_revision": _code_revision(),
+            "weight_decay_policy": WEIGHT_DECAY_POLICY,
+            "packing_policy": "bos/eos-separated documents concatenated; attention crosses docs",
+            **(provenance or {}),
+        }
+
+    # ------------------------------------------------------------------ io
+
+    def _event(self, kind: str, **data) -> None:
+        self.run_dir.mkdir(parents=True, exist_ok=True)
+        row = {"event": kind, "step": self.step, "tokens": self.tokens, **data}
+        with (self.run_dir / "metrics.jsonl").open("a") as f:
+            f.write(json.dumps(row, sort_keys=True) + "\n")
+
+    def _write_manifest(self, status: str, **extra) -> None:
+        self.run_dir.mkdir(parents=True, exist_ok=True)
+        path = self.run_dir / "run_manifest.json"
+        prev = json.loads(path.read_text()) if path.exists() else {}
+        manifest = {
+            **prev,
+            "status": status,
+            "resolved_config": self.cfg.model_dump(mode="json"),
+            "provenance": self.provenance,
+            "device": str(self.device),
+            "software": {
+                "python": platform.python_version(),
+                "torch": torch.__version__,
+                "platform": platform.platform(),
+            },
+            "total_steps": self.total_steps,
+            "steps_completed": self.step,
+            "tokens_processed": self.tokens,
+            "estimated_cost_usd": 0.0,
+            "updated_at": datetime.now(UTC).isoformat(),
+            **extra,
+        }
+        manifest.setdefault("started_at", manifest["updated_at"])
+        path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+
+    def _state(self) -> dict:
+        return {
+            "step": self.step,
+            "tokens": self.tokens,
+            "stream": self.stream.state_dict(),
+            "torch_rng": torch.get_rng_state(),
+            "python_rng": random.getstate(),
+        }
+
+    def save(self) -> Path:
+        path = save_checkpoint(
+            self.run_dir,
+            self.step,
+            self.model,
+            self.optimizer,
+            self._state(),
+            {**self.provenance, "tokens": self.tokens, "stream_digest": self.stream.digest},
+        )
+        self._event("checkpoint", path=str(path))
+        return path
+
+    def resume(self, checkpoint: str | Path) -> None:
+        model, state, manifest = load_checkpoint(checkpoint, "cpu")
+        if manifest["config_hash"] != self.provenance["config_hash"]:
+            raise ValueError("checkpoint was written under a different config; refusing to resume")
+        self.model.load_state_dict(model.state_dict())
+        self.optimizer.load_state_dict(state["optimizer"])
+        self.stream.load_state_dict(state["stream"])
+        self.step = state["step"]
+        self.tokens = state["tokens"]
+        torch.set_rng_state(state["torch_rng"])
+        py = state["python_rng"]
+        random.setstate((py[0], tuple(py[1]), py[2]))
+        self._event("resume", checkpoint=str(checkpoint))
+        log.info("resumed from %s at step %d (%d tokens)", checkpoint, self.step, self.tokens)
+
+    # ------------------------------------------------------------------ eval
+
+    @torch.no_grad()
+    def evaluate(self) -> dict:
+        self.model.eval()
+        out = {}
+        for name, batches in self.eval_sets.items():
+            total, n = 0.0, 0
+            for b in batches:
+                b = b.to(self.device)
+                with _autocast(self.device, self.stage.precision):
+                    loss = self.model(b, labels=b).loss.float().item()
+                k = b.shape[0] * (b.shape[1] - 1)
+                total += loss * k
+                n += k
+            out[name] = total / n
+        self.model.train()
+        return out
+
+    # ------------------------------------------------------------------ loop
+
+    def accumulate_gradients(self) -> tuple[float, int]:
+        """Forward/backward over one optimizer step's micro-batches.
+
+        Each micro-batch's mean loss is weighted by its share of the step's target tokens, so
+        the accumulated gradient equals the gradient of the full batch's mean loss.
+        """
+        batches = [self.stream.next_batch(self.micro) for _ in range(self.accum)]
+        n_targets = sum(b.shape[0] * (b.shape[1] - 1) for b in batches)
+        loss_sum = 0.0
+        for b in batches:
+            b = b.to(self.device)
+            with _autocast(self.device, self.stage.precision):
+                loss = self.model(b, labels=b).loss
+            k = b.shape[0] * (b.shape[1] - 1)
+            (loss * (k / n_targets)).backward()
+            loss_sum += loss.detach().float().item() * k
+        return loss_sum / n_targets, sum(b.numel() for b in batches)
+
+    def train_step(self) -> dict:
+        lr = lr_at(self.step, self.total_steps, self.stage.optimizer.peak_lr, self.stage.scheduler)
+        for g in self.optimizer.param_groups:
+            g["lr"] = lr
+        train_loss, n_tokens = self.accumulate_gradients()
+        grad_norm = torch.nn.utils.clip_grad_norm_(
+            self.model.parameters(), self.stage.optimizer.grad_clip_norm
+        ).item()
+        if not (math.isfinite(train_loss) and math.isfinite(grad_norm)):
+            raise NonFiniteError(f"step {self.step}: loss={train_loss} grad_norm={grad_norm}")
+        self.optimizer.step()
+        self.optimizer.zero_grad(set_to_none=True)
+        self.step += 1
+        self.tokens += n_tokens
+        return {"loss": train_loss, "grad_norm": grad_norm, "lr": lr}
+
+    def train(self, resume_from: str | Path | None = None) -> TrainResult:
+        if resume_from is not None:
+            self.resume(resume_from)
+        self.model.train()
+        self._write_manifest("running")
+        log.info(
+            "stage=%s steps=%d micro_batch=%d accum=%d seq=%d device=%s",
+            self.stage.stage, self.total_steps, self.micro, self.accum,
+            self.stage.sequence_length, self.device,
+        )  # fmt: skip
+        last_ckpt, last_eval = None, {}
+        t0, tok0 = time.time(), self.tokens
+        try:
+            while self.step < self.total_steps:
+                m = self.train_step()
+                done = self.step == self.total_steps
+                if self.step % self.stage.log_every_steps == 0 or done:
+                    dt = time.time() - t0
+                    tps = (self.tokens - tok0) / dt if dt > 0 else 0.0
+                    self._event("train", tokens_per_second=round(tps, 1), **m)
+                    log.info("step %d/%d loss %.4f gnorm %.3f lr %.2e %.0f tok/s",
+                             self.step, self.total_steps, m["loss"], m["grad_norm"], m["lr"],
+                             tps)  # fmt: skip
+                    t0, tok0 = time.time(), self.tokens
+                if self.step % self.stage.eval_every_steps == 0 or done:
+                    last_eval = self.evaluate()
+                    self._event("eval", **{f"val_loss/{k}": v for k, v in last_eval.items()})
+                    log.info("eval step %d %s", self.step,
+                             {k: round(v, 4) for k, v in last_eval.items()})  # fmt: skip
+                if self.step % self.stage.checkpoint_every_steps == 0 or done:
+                    last_ckpt = self.save()
+        except BaseException as e:
+            self._write_manifest("failed", error=f"{type(e).__name__}: {e}")
+            raise
+        self._write_manifest(
+            "completed",
+            final_eval=last_eval,
+            mixture=self.stream.mixture_report(),
+            final_checkpoint=str(last_ckpt),
+        )
+        return TrainResult(self.run_dir, last_ckpt, self.step, self.tokens, last_eval)

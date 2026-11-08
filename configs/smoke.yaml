@@ -1,13 +1,20 @@
-# Local smoke-test stage on CPU/MPS. Paths are placeholders until Phases 2-3 produce them.
+# Local smoke-test stage on CPU/MPS with the 3.3M-parameter model and real tokenized data.
 stage: smoke
 model: configs/model_smoke.yaml
 tokenizer: artifacts/tokenizer/v1
-data_manifest: data/manifests/smoke_train_v1.json
+mixture:
+  - {dataset: data/tokenized/general_text_train_v1, weight: 0.7}
+  - {dataset: data/tokenized/math_train_v1, weight: 0.3}
+validation:
+  - {dataset: data/tokenized/general_text_val_v1, sequences: 64}
+  - {dataset: data/tokenized/math_val_v1, sequences: 64}
 seed: 42
 precision: fp32
 sequence_length: 256
 effective_batch_tokens: 4096
-max_steps: 200
+micro_batch_size: 16
+max_steps: 300
+log_every_steps: 10
 eval_every_steps: 50
 checkpoint_every_steps: 100
 optimizer:

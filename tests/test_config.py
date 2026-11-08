@@ -133,6 +133,7 @@ def test_sequence_length_cannot_exceed_model_context(tmp_path):
         .read_text()
         .replace("model: configs/model_smoke.yaml", f"model: {CONFIGS / 'model_smoke.yaml'}")
         .replace("sequence_length: 256", "sequence_length: 1024")
+        .replace("micro_batch_size: 16", "micro_batch_size: 4")
     )
     with pytest.raises(ValidationError, match="max_seq_len"):
         load_stage_config(cfg)

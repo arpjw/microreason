@@ -2,14 +2,19 @@
 stage: pretrain
 model: configs/model_43m.yaml
 tokenizer: artifacts/tokenizer/v1
-data_manifest: data/manifests/base_train_v1.json
-validation_manifests:
-  - data/manifests/general_val_v1.json
-  - data/manifests/math_val_v1.json
+# 70/30 general/math by processed tokens (spec §4 proposal). The math source must be replaced by
+# a larger training-only stream before the real run; see reports/phase3_inspection_v1.md.
+mixture:
+  - {dataset: data/tokenized/general_text_train_v1, weight: 0.7}
+  - {dataset: data/tokenized/math_train_v1, weight: 0.3}
+validation:
+  - {dataset: data/tokenized/general_text_val_v1, sequences: 256}
+  - {dataset: data/tokenized/math_val_v1, sequences: 256}
 seed: 42
 precision: bf16
 sequence_length: 1024
 effective_batch_tokens: 65536
+micro_batch_size: 16  # 4 accumulation steps; estimated ~4.3 GiB at seq 1024
 max_train_tokens: 120000000
 eval_every_steps: 250
 checkpoint_every_steps: 500

@@ -39,8 +39,40 @@ def test_model_inspect(capsys):
     assert out["parameter_count_instantiated"] == out["parameter_count_analytic"] == 3_344_064
 
 
-def test_train_validates_then_refuses():
-    assert main(["train", "--config", str(CONFIGS / "smoke.yaml")]) == EXIT_NOT_IMPLEMENTED
+def test_train_refuses_unimplemented_stage(tmp_path):
+    # Must never launch a real run from the test suite: use a stage that is not built yet.
+    cfg = tmp_path / "sft.yaml"
+    cfg.write_text(
+        (CONFIGS / "smoke.yaml")
+        .read_text()
+        .replace("stage: smoke", "stage: sft\nparent: artifacts/v1-math")
+        .replace("model: configs/model_smoke.yaml", f"model: {CONFIGS / 'model_smoke.yaml'}")
+    )
+    assert main(["train", "--config", str(cfg), "--run-dir", str(tmp_path / "r")]) == (
+        EXIT_NOT_IMPLEMENTED
+    )
+    assert not (tmp_path / "r").exists()
+
+
+def test_train_refuses_paid_compute(tmp_path):
+    cfg = tmp_path / "paid.yaml"
+    paid = """budget:
+  paid_compute_allowed: true
+  max_spend_usd: 5
+  provider: runpod
+  gpu_type: RTX 4090
+  max_runtime_hours: 1
+  shutdown_rule: terminate at cap
+  approved_by: nobody
+  approved_at: never"""
+    text = (CONFIGS / "smoke.yaml").read_text()
+    text = text[: text.index("budget:")] + paid + "\n"
+    cfg.write_text(text.replace("model: configs/model_smoke.yaml",
+                                f"model: {CONFIGS / 'model_smoke.yaml'}"))  # fmt: skip
+    assert main(["train", "--config", str(cfg), "--run-dir", str(tmp_path / "r")]) == (
+        EXIT_CONFIG_ERROR
+    )
+    assert not (tmp_path / "r").exists()
 
 
 @pytest.mark.parametrize(

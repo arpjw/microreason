@@ -8,15 +8,15 @@ The full design is in [MICROREASON_MASTER_SPEC.md](MICROREASON_MASTER_SPEC.md).
 
 ## Status
 
-**Phase 3 of 8 done: tokenizer and model built and inspected.** No training run, checkpoint, or
-evaluation exists yet. Every number in the spec is a target or estimate, not a measured result.
+**Phase 4 of 8 done: training loop built and proven locally.** Only a 3.3M-parameter smoke run
+exists; no real training stage or evaluation has run yet. Every number in the spec is a target or estimate, not a measured result.
 
 | Phase | Scope | Status |
 | --- | --- | --- |
 | 1 | Package, typed config schema, logging, CLI skeleton, tests | Done (local tests green) |
 | 2 | Data generators, splits, manifests, answer verifier | Done; eval suites frozen (`data/manifests/math_eval_frozen_v1.json`) |
 | 3 | Tokenizer and model | Done; see `reports/phase3_inspection_v1.md` |
-| 4 | Common training loop, resume, smoke tests | Not started |
+| 4 | Common training loop, resume, smoke tests | Done; see `reports/phase4_training_loop_v1.md` |
 | 5 | Authorized GPU pilot | Not started (needs explicit approval) |
 | 6–8 | Training stages, branches, evaluation, report | Not started |
 
@@ -52,8 +52,18 @@ uv run microreason data freeze          # lock evaluation suite hashes (only aft
 Generated JSONL lives in `data/generated/` (not tracked; rebuilt deterministically). Manifests with
 hashes and counts are tracked in `data/manifests/`; the audit report is in `reports/`.
 
-The remaining subcommands (`train`, `eval`, `compare`, `serve`) are placeholders that
-exit with an error naming the phase that will implement them.
+Training (local, $0):
+
+```bash
+uv run microreason data tokenize                                    # pre-tokenize train/val datasets
+uv run microreason train --config configs/smoke.yaml --run-dir runs/smoke_v1_a
+uv run microreason train --config configs/smoke.yaml --run-dir runs/smoke_v1_b \
+    --resume runs/smoke_v1_a/checkpoints/step_0000100                  # exact resume
+```
+
+Runs and checkpoints live in `runs/` (not tracked). SFT, DPO and GRPO stages and the
+`eval`, `compare` and `serve` commands are placeholders that exit with an error naming the
+phase that will implement them.
 
 ## Spending
 
