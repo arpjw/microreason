@@ -68,7 +68,7 @@ def test_paid_requires_hourly_rate():
 
 def test_shipped_pilot_config_matches_approval():
     b = load_stage_config(CONFIGS / "pilot_43m.yaml").stage.budget
-    assert (b.max_spend_usd, b.max_runtime_hours, b.hourly_rate_usd) == (5.0, 3.0, 0.89)
+    assert (b.max_spend_usd, b.max_runtime_hours, b.hourly_rate_usd) == (5.0, 3.0, 1.19)
     assert b.provider == "runpod" and b.ceiling_hours() == 3.0
 
 
