@@ -1,0 +1,99 @@
+{
+  "achieved": {
+    "a_paren_x_plus_b_equals_c": 751945,
+    "a_times_paren_diff": 1600000,
+    "add_ab": 18900,
+    "add_mul_abc": 1520000,
+    "ax_equals_b": 6918,
+    "ax_plus_b_equals_c": 900000,
+    "ax_plus_b_equals_cx_plus_d": 1000000,
+    "div_ab": 38402,
+    "mul_ab": 18900,
+    "mul_sub_mul": 1080000,
+    "paren_sum_times_diff": 1120000,
+    "sub_ab": 38601,
+    "sub_mul_add": 1080000,
+    "x_plus_a_equals_b": 38402
+  },
+  "build_rejections": {
+    "duplicate": 17392107,
+    "sampler:equal_coefficients": 54732
+  },
+  "by_difficulty": {
+    "1": 76401,
+    "2": 1603722,
+    "3": 3060000,
+    "4": 4471945
+  },
+  "capacity_limited": [
+    "add_ab",
+    "ax_equals_b",
+    "div_ab",
+    "mul_ab",
+    "sub_ab",
+    "x_plus_a_equals_b"
+  ],
+  "code_revision": {
+    "dirty": false,
+    "git_commit": "7ede1c89deeb4a5e10a84f8f36b883e3d1f4e441",
+    "source": "REVISION file"
+  },
+  "cross_template_duplicates_dropped": {
+    "a_paren_x_plus_b_equals_c": 148055
+  },
+  "dataset": "math",
+  "excluded_fingerprints": 27000,
+  "excluded_frozen_suites": {
+    "test_extrapolation": "e7840ddf5f23c6adc81b2a01dbbc8adbc20502b497886a34febefafc087d2565",
+    "test_heldout_template": "cdcd21099b04b97d446529b37aff3bd69bb5fe988b23f9c726e15b4b6ea3e084",
+    "test_id": "18f17620ff66223bb4c7e625a0948cf80d09f8951d50ef3d719e758b5a394510",
+    "val": "7b2f36797924777ae611c92ba6d49d2aa4d5fba33d49abc4b436cbe57d393124"
+  },
+  "file": "data/generated/math_v1/train_stream_v2/train_stream.jsonl",
+  "generated_before_merge": {
+    "a_paren_x_plus_b_equals_c": 900000,
+    "a_times_paren_diff": 1600000,
+    "add_ab": 18900,
+    "add_mul_abc": 1520000,
+    "ax_equals_b": 6918,
+    "ax_plus_b_equals_c": 900000,
+    "ax_plus_b_equals_cx_plus_d": 1000000,
+    "div_ab": 38402,
+    "mul_ab": 18900,
+    "mul_sub_mul": 1080000,
+    "paren_sum_times_diff": 1120000,
+    "sub_ab": 38601,
+    "sub_mul_add": 1080000,
+    "x_plus_a_equals_b": 38402
+  },
+  "generation_mode": "parallel per template (12 workers), merged in config order with global de-duplication",
+  "generator_version": "1.0",
+  "record_count": 9212068,
+  "root_seed": 20261108,
+  "schema_version": 1,
+  "sha256": "9f1e56bbf5d290431da1fd8e63a1c727cdcb622432c8be1e6977bb5f37bf68ad",
+  "shards": {
+    "a": 5877272,
+    "b": 3334796,
+    "rule": "sha256(id) bucket < 0.638 -> a, else b"
+  },
+  "split": "train_stream",
+  "stream_config_hash": "sha256:883fbae0956e3a3d28a8bc0da39826a4cb707e26cba17bed2d01793d27c7041c",
+  "targets": {
+    "a_paren_x_plus_b_equals_c": 900000,
+    "a_times_paren_diff": 1600000,
+    "add_ab": 20000,
+    "add_mul_abc": 1520000,
+    "ax_equals_b": 9000,
+    "ax_plus_b_equals_c": 900000,
+    "ax_plus_b_equals_cx_plus_d": 1000000,
+    "div_ab": 40000,
+    "mul_ab": 20000,
+    "mul_sub_mul": 1080000,
+    "paren_sum_times_diff": 1120000,
+    "sub_ab": 40000,
+    "sub_mul_add": 1080000,
+    "x_plus_a_equals_b": 40000
+  },
+  "version": "v2"
+}

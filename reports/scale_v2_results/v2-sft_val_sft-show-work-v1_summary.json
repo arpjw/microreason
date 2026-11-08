@@ -1,0 +1,177 @@
+{
+  "checkpoint": "runs/p2/v2-sft/checkpoints/step_0001563",
+  "checkpoint_id": "sha256:1ec3ff35f8697140e8018d57e1cd6bf21ea2b23f782e532742a8325ecde2a904",
+  "checkpoint_step": 1563,
+  "decode": {
+    "greedy": {
+      "max_new_tokens": 128
+    },
+    "sampled": {
+      "max_new_tokens": 128,
+      "samples": 4,
+      "seed": 0,
+      "temperature": 0.8
+    }
+  },
+  "device": "cuda",
+  "greedy": {
+    "accuracy_by_difficulty": {
+      "1": {
+        "denominator": 1500,
+        "numerator": 1490,
+        "value": 0.9933333333333333,
+        "wilson95": [
+          0.9877715110569365,
+          0.9963747839658177
+        ]
+      },
+      "2": {
+        "denominator": 2000,
+        "numerator": 1922,
+        "value": 0.961,
+        "wilson95": [
+          0.9515939149560816,
+          0.968638567450603
+        ]
+      },
+      "3": {
+        "denominator": 1500,
+        "numerator": 1094,
+        "value": 0.7293333333333333,
+        "wilson95": [
+          0.7062841314812321,
+          0.7512109029617778
+        ]
+      },
+      "4": {
+        "denominator": 2000,
+        "numerator": 1785,
+        "value": 0.8925,
+        "wilson95": [
+          0.8781646699770789,
+          0.9053304479071373
+        ]
+      }
+    },
+    "accuracy_by_family": {
+      "arithmetic": {
+        "denominator": 1500,
+        "numerator": 1490,
+        "value": 0.9933333333333333,
+        "wilson95": [
+          0.9877715110569365,
+          0.9963747839658177
+        ]
+      },
+      "division": {
+        "denominator": 500,
+        "numerator": 491,
+        "value": 0.982,
+        "wilson95": [
+          0.9661483290912607,
+          0.990501806703803
+        ]
+      },
+      "linear_equation": {
+        "denominator": 1500,
+        "numerator": 1396,
+        "value": 0.9306666666666666,
+        "wilson95": [
+          0.9166809850866336,
+          0.9424521319197167
+        ]
+      },
+      "multi_step_arithmetic": {
+        "denominator": 1000,
+        "numerator": 600,
+        "value": 0.6,
+        "wilson95": [
+          0.5693094295142662,
+          0.6299252187886226
+        ]
+      },
+      "one_step_equation": {
+        "denominator": 1000,
+        "numerator": 972,
+        "value": 0.972,
+        "wilson95": [
+          0.9598298168024069,
+          0.9805577231872291
+        ]
+      },
+      "order_of_operations": {
+        "denominator": 500,
+        "numerator": 459,
+        "value": 0.918,
+        "wilson95": [
+          0.8906451408426114,
+          0.9389809105315311
+        ]
+      },
+      "parentheses": {
+        "denominator": 1000,
+        "numerator": 883,
+        "value": 0.883,
+        "wilson95": [
+          0.8615970906192936,
+          0.9014716123807713
+        ]
+      }
+    },
+    "exact_accuracy": {
+      "denominator": 7000,
+      "numerator": 6291,
+      "value": 0.8987142857142857,
+      "wilson95": [
+        0.8914263588076619,
+        0.9055648399251397
+      ]
+    },
+    "generated_tokens": {
+      "max": 61,
+      "mean": 33.949285714285715,
+      "median": 34
+    },
+    "prompts": 7000,
+    "status_counts": {
+      "correct": 6291,
+      "wrong": 709
+    },
+    "valid_format_rate": {
+      "denominator": 7000,
+      "numerator": 7000,
+      "value": 1.0,
+      "wilson95": [
+        0.9994515211625962,
+        0.9999999999999999
+      ]
+    }
+  },
+  "greedy_seconds": 31.442,
+  "limited_to": null,
+  "prompt_format": "sft-show-work-v1",
+  "protocol": "eval-v1",
+  "sampled": {
+    "pass@4": {
+      "denominator": 7000,
+      "numerator": 6552,
+      "value": 0.936,
+      "wilson95": [
+        0.9300238550630415,
+        0.9414978713907425
+      ]
+    },
+    "sampled_pass@1": {
+      "denominator": 28000,
+      "numerator": 24140,
+      "value": 0.8621428571428571,
+      "wilson95": [
+        0.858055085954136,
+        0.8661312736144784
+      ]
+    },
+    "samples_per_prompt": 4
+  },
+  "suite": "val",
+  "suite_sha256": "7b2f36797924777ae611c92ba6d49d2aa4d5fba33d49abc4b436cbe57d393124"
+}

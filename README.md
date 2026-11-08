@@ -12,6 +12,8 @@ The full design is in [MICROREASON_MASTER_SPEC.md](MICROREASON_MASTER_SPEC.md).
 accuracy from 25.8% to 48.9% (paired +23.2 pts, 95% CI [+22.1, +24.3]); see `reports/stage1_v1.md`.
 **v2-sft trained** (≈$0.44): val show-work 50.0%, direct 21.8%, 100% valid format, pass@4 60.5%;
 see `reports/stage2_v1.md`.
+**Protocol v2 (scaled: 1B base + 200M mid tokens, ≈$2.19):** val accuracy v0-base 88.1%, v1-math
+93.9%, v2-sft show-work 89.9% (pass@4 93.6%); see `reports/scale_v2.md` and `reports/protocol_v2.md`.
 Math training data: a 1.47M-problem training-only stream (≈70M tokens) excludes every frozen
 evaluation problem; see `reports/math_stream_v1.md`. No real training stage or evaluation has run yet. Every number in the spec is a target or estimate, not a measured result.
 

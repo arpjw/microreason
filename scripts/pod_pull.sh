@@ -15,7 +15,7 @@ ssh -p "$port" "$target" 'cd /root/microreason && {
       for f in run_manifest.json metrics.jsonl budget_ledger.json latest.json; do
         [ -f "$d$f" ] && echo "$d$f"; done; done
     ls runs/eval/*/summary.json runs/eval/*/rows.jsonl runs/p2/eval/*/summary.json runs/p2/eval/*/rows.jsonl 2>/dev/null
-    cat reports/stage*/final_checkpoints.txt 2>/dev/null | sed "s#^/root/microreason/##"
+    cat reports/stage*/final_checkpoints.txt reports/scale_*/final_checkpoints.txt 2>/dev/null | sed "s#^/root/microreason/##"
   } | tar -cf - -T - ' | tar -x -C "$out"
 ssh -p "$port" "$target" 'cat /root/watchdog.log 2>/dev/null' > "$out/watchdog.log" || true
 echo "copied to $out:"

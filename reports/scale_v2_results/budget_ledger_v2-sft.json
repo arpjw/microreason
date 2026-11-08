@@ -1,0 +1,22 @@
+{
+  "approved_at": "2026-11-08",
+  "approved_by": "project owner (pre-approval in chat for the scaled redo)",
+  "approved_max_runtime_hours": 4.5,
+  "approved_max_usd": 8.0,
+  "billing_start": "2026-11-08T06:57:33.528000+00:00",
+  "ceiling_at": "2026-11-08T11:27:33.528000+00:00",
+  "elapsed_hours": 1.6019,
+  "estimated_accrued_usd": 1.9063,
+  "gpu_type": "NVIDIA GeForce RTX 5090 (Secure Cloud)",
+  "hourly_rate_usd": 1.19,
+  "measured_step_seconds": 0.0222,
+  "note": "GPU time at the listed rate only; storage and other charges are excluded.",
+  "pod_id": "60s4fcs1xvk7mh",
+  "projected_total_usd": 2.3029,
+  "provider": "runpod",
+  "reserve_minutes": 20.0,
+  "shutdown_rule": "Copy reports, metrics, eval rows, budget ledgers and the final v0-base, v1-math and v2-sft checkpoints off the pod, then terminate (delete) it when the session finishes, at either ceiling, or on any failure; the pod also deletes itself 45 minutes after finishing if not collected.",
+  "steps_remaining": 0,
+  "stop_reason": null,
+  "updated_at": "2026-11-08T08:33:40.370939+00:00"
+}
