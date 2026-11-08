@@ -1,11 +1,12 @@
 # Budget for the RL-stage branches (gate, v4-grpo, v2-extra-sft, v3-dpo, val evaluations), one pod.
 # Owner approved in chat on 2026-11-08 ("take care of all of it ... get the code running on the
 # pod") after a quoted estimate of roughly $1-3; Claude set these bounds.
-# hourly_rate_usd must equal the live rate of the pod actually created.
+# hourly_rate_usd must equal the live rate of the pod actually created. RTX 5090 and 4090 had no
+# Secure stock at launch; the RTX 6000 Ada (48 GB, Ada) was used at its listed $0.99/h.
 paid_compute_allowed: true
 provider: runpod
-gpu_type: NVIDIA GeForce RTX 5090 (Secure Cloud)
-hourly_rate_usd: 1.19
+gpu_type: NVIDIA RTX 6000 Ada Generation (Secure Cloud)
+hourly_rate_usd: 0.99
 max_spend_usd: 5.0
 max_runtime_hours: 3.5
 reserve_minutes: 15

@@ -114,5 +114,5 @@ confirmatory analysis plan must be written before any test suite is opened.
 
 - **Approval:** the owner approved this work in chat on 2026-11-08, after an estimate of about
   $1–3.
-- **Bounds** (`configs/budget_rl_v1.yaml`): one RunPod Secure pod (RTX 5090), a $5 cap, a
+- **Bounds** (`configs/budget_rl_v1.yaml`): one RunPod Secure pod (RTX 6000 Ada at $0.99/h, since the RTX 5090 and 4090 had no stock), a $5 cap, a
   3.5-hour limit, a watchdog with self-termination, and termination at the end.
