@@ -8,8 +8,8 @@ The full design is in [MICROREASON_MASTER_SPEC.md](MICROREASON_MASTER_SPEC.md).
 
 ## Status
 
-**Phase 4 of 8 done: training loop built and proven locally.** Only a 3.3M-parameter smoke run
-exists; no real training stage or evaluation has run yet. Every number in the spec is a target or estimate, not a measured result.
+**Phase 5 of 8 done: GPU pilot complete** (RTX 5090, ≈252k tok/s for the 43M model, ≈$1.03 total).
+No real training stage or evaluation has run yet. Every number in the spec is a target or estimate, not a measured result.
 
 | Phase | Scope | Status |
 | --- | --- | --- |
@@ -17,7 +17,7 @@ exists; no real training stage or evaluation has run yet. Every number in the sp
 | 2 | Data generators, splits, manifests, answer verifier | Done; eval suites frozen (`data/manifests/math_eval_frozen_v1.json`) |
 | 3 | Tokenizer and model | Done; see `reports/phase3_inspection_v1.md` |
 | 4 | Common training loop, resume, smoke tests | Done; see `reports/phase4_training_loop_v1.md` |
-| 5 | Authorized GPU pilot | Tooling built and dry-run locally; awaiting approval (`scripts/PILOT_RUNBOOK.md`) |
+| 5 | Authorized GPU pilot | Done; see `reports/phase5_pilot_v1.md` |
 | 6–8 | Training stages, branches, evaluation, report | Not started |
 
 ## Setup

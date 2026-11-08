@@ -1,0 +1,22 @@
+{
+  "approved_at": "2026-11-07",
+  "approved_by": "project owner (chat approval)",
+  "approved_max_runtime_hours": 3.0,
+  "approved_max_usd": 5.0,
+  "billing_start": "2026-11-08T01:11:26.945000+00:00",
+  "ceiling_at": "2026-11-08T04:11:26.945000+00:00",
+  "elapsed_hours": 0.8094,
+  "estimated_accrued_usd": 0.9632,
+  "gpu_type": "NVIDIA GeForce RTX 5090 (Secure Cloud)",
+  "hourly_rate_usd": 1.19,
+  "measured_step_seconds": 0.2592,
+  "note": "GPU time at the listed rate only; storage and other charges are excluded.",
+  "pod_id": "n4jju3kt4fza5f",
+  "projected_total_usd": 1.1615,
+  "provider": "runpod",
+  "reserve_minutes": 10.0,
+  "shutdown_rule": "Copy reports, metrics and the budget ledger off the pod, then terminate (delete) the pod when the pilot finishes, on either ceiling, or on any failure. Never leave it stopped or idle.",
+  "steps_remaining": 0,
+  "stop_reason": null,
+  "updated_at": "2026-11-08T02:00:00.857670+00:00"
+}

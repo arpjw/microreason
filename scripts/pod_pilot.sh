@@ -21,7 +21,9 @@ uv run microreason config validate --config configs/pilot_43m.yaml >/dev/null \
 mkdir -p reports/pilot
 echo "== tests on CUDA"
 echo "threads capped at OMP_NUM_THREADS=${OMP_NUM_THREADS:-unset}"
-timeout 900 uv run pytest -q -p no:cacheprovider -rN 2>&1 | tail -3 | tee reports/pilot/tests.txt
+# No extra -q: pyproject already sets it, and -qq hides the "N passed" summary line.
+timeout 900 uv run pytest -p no:cacheprovider -rN 2>&1 | tee reports/pilot/tests_full.txt | tail -1 \
+  | tee reports/pilot/tests.txt
 
 echo "== smoke run and resume on CUDA"
 uv run microreason train --config configs/smoke.yaml --device cuda --run-dir runs/pod_smoke_a

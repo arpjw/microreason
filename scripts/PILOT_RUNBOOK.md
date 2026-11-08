@@ -70,6 +70,13 @@ volume disk. Confirm with a pod listing that it is gone. Terminate on any failur
 Results land in `runs/pod_results/<pod_id>/`. The summary is `reports/pilot/pilot_v1.json`
 inside it.
 
+## Lessons from pilot v1 (2026-11-08)
+
+- RTX 4090 Secure Cloud capacity was scarce. Get approval for fallback GPUs and regions up front.
+- The container sees all host CPUs. `pod_env.sh` caps thread pools at the cgroup quota; without
+  the cap, pytest stalled for more than 30 minutes.
+- Use micro-batch 16 for the 43M model. It was the fastest setting, at 7.6 GiB.
+
 ## Known limits
 
 - The ledger counts GPU time at the listed rate only. Storage and other charges are excluded,
