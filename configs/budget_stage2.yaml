@@ -1,6 +1,7 @@
 # Budget for the SFT session (v2-sft and its val evaluations), applied with
-# `microreason train --budget configs/budget_stage2.yaml`. NOT AUTHORIZED until the approval
-# fields below are filled in from an explicit owner approval in chat.
+# `microreason train --budget configs/budget_stage2.yaml`. Approved by the project owner in chat on
+# 2026-11-08: RTX 4090 Secure at $0.89/h (re-checked before creation), $2 cap, 1.5 h limit,
+# terminate at the end.
 paid_compute_allowed: true
 provider: runpod
 gpu_type: NVIDIA GeForce RTX 4090 (Secure Cloud)
@@ -12,5 +13,5 @@ shutdown_rule: >-
   Copy reports, metrics, eval rows, budget ledgers and the final v2-sft checkpoint off the pod,
   then terminate (delete) it when the session finishes, at either ceiling, or on any failure.
   Never leave it stopped or idle.
-approved_by: PENDING
-approved_at: PENDING
+approved_by: project owner (chat approval)
+approved_at: "2026-11-08"
