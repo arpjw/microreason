@@ -1,6 +1,6 @@
 # Phase 5 GPU pilot: full 43M model, real batch size, short run to measure throughput, memory and
-# cost. NOT AUTHORIZED: approved_by / approved_at are placeholders, so this config fails
-# validation until the project owner approves a specific provider, GPU, rate and limits.
+# cost. Authorized by the project owner in chat on 2026-11-07: RunPod, 1x RTX 4090 Secure Cloud
+# (EU-RO-1), listed $0.89/h re-checked before creation, $5 cap, 3 h limit, terminate at the end.
 stage: pretrain
 model: configs/model_43m.yaml
 tokenizer: artifacts/tokenizer/v1
@@ -39,5 +39,5 @@ budget:
   shutdown_rule: >-
     Copy reports, metrics and the budget ledger off the pod, then terminate (delete) the pod when
     the pilot finishes, on either ceiling, or on any failure. Never leave it stopped or idle.
-  approved_by: PENDING
-  approved_at: PENDING
+  approved_by: project owner (chat approval)
+  approved_at: "2026-11-07"
