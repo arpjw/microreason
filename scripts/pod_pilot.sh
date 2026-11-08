@@ -7,7 +7,8 @@
 # under the budget guard; the pod watchdog must already be armed.
 set -euo pipefail
 cd /root/microreason
-export PATH="$HOME/.local/bin:$PATH"
+# shellcheck source=scripts/pod_env.sh
+source scripts/pod_env.sh
 : "${MICROREASON_BILLING_START:?set MICROREASON_BILLING_START}"
 : "${RUNPOD_POD_ID:?RUNPOD_POD_ID is not set}"
 if ! { [[ -f /root/watchdog.pid ]] && kill -0 "$(cat /root/watchdog.pid)"; }; then

@@ -18,6 +18,18 @@ Edit `configs/pilot_43m.yaml`: set `hourly_rate_usd`, `max_spend_usd`, `max_runt
 `approved_by` and `approved_at` to the approved values, then commit. Until then the config fails
 validation, and every paid run refuses to start.
 
+## 1b. Watchdog key (first attempt finding)
+
+In the first pilot attempt (2026-11-08, pod `5gqf57qzyj9ck6`, about 3 minutes, roughly $0.05) the
+pod's built-in `RUNPOD_API_KEY` was refused with 403, even for reading its own pod. The pod was
+therefore deleted before any work, as this runbook requires. The pod also ships runpodctl 1.14,
+which uses different commands; the watchdog now installs the checksum-verified v2.15.0.
+
+Self-termination needs a key that can manage pods, available inside the pod. The owner creates
+it in the RunPod console and stores it as a RunPod Secret. Its value never passes through the
+agent, a config file or a log. The pod is created with
+`env: {"MICROREASON_WATCHDOG_KEY": "{{ RUNPOD_SECRET_<name> }}"}` and the watchdog uses it.
+
 ## 2. Create the pod
 
 On-demand, 1× the approved GPU, the approved cloud, SSH enabled, an official RunPod PyTorch image
