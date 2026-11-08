@@ -133,3 +133,39 @@ def test_shards_are_disjoint_and_complete(tmp_path, frozen_eval):
     assert len(da) == len(a) and len(da) + len(db) == len(ids)
     assert da.manifest["split"] == db.manifest["split"] == "train"
     assert da.manifest["tokenizer_sha256"] == tok.sha256
+
+
+# ----------------------------------------------------------------------------- parallel (v2)
+
+PAR_TARGETS = {"add_ab": 300, "ax_plus_b_equals_c": 300, "a_paren_x_plus_b_equals_c": 300,
+               "mul_sub_mul": 200}  # fmt: skip
+
+
+def test_parallel_stream_is_deterministic_leak_free_and_audits(tmp_path, frozen_eval):
+    from microreason.data.stream import build_stream_parallel, generate_stream
+
+    a = build_stream_parallel(stream_cfg(tmp_path, frozen_eval, "pa", targets=PAR_TARGETS,
+                                         parallel_workers=2))  # fmt: skip
+    cfg_b = stream_cfg(tmp_path, frozen_eval, "pb", targets=PAR_TARGETS, parallel_workers=3)
+    b = generate_stream(cfg_b)  # dispatches to the parallel path
+    assert a["sha256"] == b["sha256"]  # independent of worker count and scheduling
+    assert a["record_count"] == sum(a["achieved"].values())
+    # a(x + b) = c can collide with ax + b' = c (b' = ab): dropped at merge, never duplicated
+    assert sum(a["generated_before_merge"].values()) - a["record_count"] == sum(
+        a["cross_template_duplicates_dropped"].values()
+    )
+    fps, prompts = eval_keys(frozen_eval)
+    recs = list(iter_stream(b))
+    assert not {r.semantic_fingerprint for r in recs} & fps
+    assert not {normalize_prompt(r.prompt) for r in recs} & prompts
+    assert len({r.semantic_fingerprint for r in recs}) == len(recs)
+    assert audit_stream(cfg_b, sample_fraction=0.2)["passed"]
+    assert not list((Path(cfg_b.out_path).parent / "parts").glob("*.jsonl"))
+
+
+def test_serial_mode_still_reproduces_v1_semantics(tmp_path, frozen_eval):
+    from microreason.data.stream import generate_stream
+
+    serial = generate_stream(stream_cfg(tmp_path, frozen_eval, "s1"))
+    assert serial["sha256"] == build_stream(stream_cfg(tmp_path, frozen_eval, "s2"))["sha256"]
+    assert "generation_mode" not in serial

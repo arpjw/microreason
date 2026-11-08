@@ -161,7 +161,7 @@ def tokenize_math_stream(
     """Tokenize one disjoint shard of the training-only math stream (plain-text format).
 
     `levels` keeps only those difficulty levels (curriculum buckets)."""
-    from microreason.data.stream import iter_stream, shard_of
+    from microreason.data.stream import iter_stream_dicts, shard_of
     from microreason.tokenizer import math_plain_text
 
     manifest = json.loads(Path(manifest_path).read_text())
@@ -169,9 +169,9 @@ def tokenize_math_stream(
 
     def gen():
         buf: list[str] = []
-        for r in iter_stream(manifest):
-            if shard_of(r.id, frac) == shard and (levels is None or r.difficulty in levels):
-                buf.append(math_plain_text(r.model_dump()))
+        for r in iter_stream_dicts(manifest):
+            if shard_of(r["id"], frac) == shard and (levels is None or r["difficulty"] in levels):
+                buf.append(math_plain_text(r))
                 if len(buf) == 8192:
                     yield from tok.encode_batch(buf)
                     buf = []

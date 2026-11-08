@@ -127,10 +127,10 @@ def _cmd_compare(args: argparse.Namespace) -> int:
 
 
 def _cmd_data_generate_stream(args: argparse.Namespace) -> int:
-    from microreason.data.stream import build_stream, load_stream_config
+    from microreason.data.stream import generate_stream, load_stream_config
 
     try:
-        m = build_stream(load_stream_config(args.config))
+        m = generate_stream(load_stream_config(args.config))
     except (ValidationError, ValueError, OSError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return EXIT_CONFIG_ERROR
@@ -149,6 +149,34 @@ def _cmd_data_audit_stream(args: argparse.Namespace) -> int:
     Path(args.report).write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
     print(json.dumps(report, indent=2, sort_keys=True))
     return EXIT_OK if report["passed"] else EXIT_CONFIG_ERROR
+
+
+def _cmd_data_tokenize_stream(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from microreason.data.stream import load_stream_config
+    from microreason.data.tokenized import MANIFEST_FILE, tokenize_math_stream
+    from microreason.tokenizer import MicroTokenizer
+
+    cfg = load_stream_config(args.config)
+    tok = MicroTokenizer.load(args.tokenizer)
+    pre, ver = cfg.tokenized_prefix, cfg.version
+    jobs = {
+        f"{pre}_a_{ver}": ("a", None),
+        f"{pre}_b_easy_{ver}": ("b", (1, 2)),
+        f"{pre}_b_hard_{ver}": ("b", (3, 4)),
+    }
+    out = {}
+    for name, (shard, levels) in jobs.items():
+        d = Path(args.out) / name
+        if (d / MANIFEST_FILE).exists():
+            m = json.loads((d / MANIFEST_FILE).read_text())
+        else:
+            log.info("tokenizing %s", name)
+            m = tokenize_math_stream(tok, cfg.manifest_path, shard, d, levels, name)
+        out[name] = {"documents": m["documents"], "tokens": m["tokens"]}
+    print(json.dumps(out, indent=2, sort_keys=True))
+    return EXIT_OK
 
 
 def _cmd_data_tokenize(args: argparse.Namespace) -> int:
@@ -178,6 +206,13 @@ def _cmd_data_tokenize(args: argparse.Namespace) -> int:
                 tokenize_math_stream(tok, stream_manifest, "b", d, lv, f"math_stream_b_{b}")
             )
     out = {}
+    if args.datasets:
+        wanted = set(args.datasets.split(","))
+        unknown = wanted - set(jobs)
+        if unknown:
+            print(f"error: unknown datasets {sorted(unknown)}", file=sys.stderr)
+            return EXIT_CONFIG_ERROR
+        jobs = {k: v for k, v in jobs.items() if k in wanted}
     for name, job in jobs.items():
         d = Path(args.out) / name
         if (d / MANIFEST_FILE).exists():
@@ -428,7 +463,13 @@ def build_parser() -> argparse.ArgumentParser:
     dt = data_sub.add_parser("tokenize", help="Pre-tokenize train/val text and math datasets.")
     dt.add_argument("--tokenizer", default="artifacts/tokenizer/v1")
     dt.add_argument("--out", default="data/tokenized")
+    dt.add_argument("--datasets", default=None, help="Comma-separated subset of dataset names.")
     dt.set_defaults(func=_cmd_data_tokenize)
+    dts = data_sub.add_parser("tokenize-stream", help="Tokenize a stream's shards and buckets.")
+    dts.add_argument("--config", required=True)
+    dts.add_argument("--tokenizer", default="artifacts/tokenizer/v1")
+    dts.add_argument("--out", default="data/tokenized")
+    dts.set_defaults(func=_cmd_data_tokenize_stream)
     ds = data_sub.add_parser("split-text", help="Hash-split general text into train/val.")
     ds.add_argument("--sources", default="configs/data_sources.yaml")
     ds.add_argument("--raw-dir", default="data/raw")

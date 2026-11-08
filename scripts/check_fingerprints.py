@@ -41,6 +41,9 @@ def main() -> int:
         print(f"wrote {EXPECTED} ({len(fp)} entries)")
         return 0
     want = json.loads(EXPECTED.read_text())
+    if "--skip-stream" in sys.argv:  # stream v1 is not rebuilt on scaled (v2) pods
+        want = {k: v for k, v in want.items() if "stream" not in k}
+        fp = {k: v for k, v in fp.items() if "stream" not in k}
     if "--only" in sys.argv:
         prefix = sys.argv[sys.argv.index("--only") + 1] + ":"
         keep = {k for k in want if k.startswith(prefix) and k != "math:math_train_stream_v1"}

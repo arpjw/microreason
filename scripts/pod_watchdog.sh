@@ -65,8 +65,22 @@ case "${1:-}" in
     echo $! > /root/watchdog.pid
     echo "armed: pod $RUNPOD_POD_ID terminates at $(date -u -d "@$deadline" +%FT%TZ) (pid $(cat /root/watchdog.pid))"
     ;;
+  grace)
+    # After a session ends: terminate in <seconds> unless results were collected
+    # (/root/collected is created by the local machine once pod_pull.sh succeeds).
+    secs="${2:?usage: pod_watchdog.sh grace <seconds>}"
+    key="${MICROREASON_WATCHDOG_KEY:-${RUNPOD_API_KEY:-}}"
+    nohup env RUNPOD_API_KEY="$key" bash -c "
+      sleep $secs
+      if [ ! -f /root/collected ]; then
+        echo \"\$(date -u +%FT%TZ) grace period over, results not collected; terminating\" >> $log
+        /root/rpctl/runpodctl pod delete $RUNPOD_POD_ID >> $log 2>&1
+      fi
+    " >/dev/null 2>&1 &
+    echo "grace armed: pod terminates in ${secs}s unless /root/collected exists"
+    ;;
   *)
-    echo "usage: pod_watchdog.sh check | arm <deadline_epoch>" >&2
+    echo "usage: pod_watchdog.sh check | arm <deadline_epoch> | grace <seconds>" >&2
     exit 2
     ;;
 esac

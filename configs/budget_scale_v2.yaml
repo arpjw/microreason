@@ -1,0 +1,16 @@
+# Budget for the protocol-v2 scaled redo (base 1 B tokens, mid 200 M, SFT, val evaluations), one pod.
+# Owner pre-approved GPU work for this redo in chat on 2026-11-08; Claude set these bounds.
+# hourly_rate_usd must equal the live rate of the pod actually created (RTX 5090 $1.19 or 4090 $0.89).
+paid_compute_allowed: true
+provider: runpod
+gpu_type: NVIDIA GeForce RTX 5090 (Secure Cloud)
+hourly_rate_usd: 1.19
+max_spend_usd: 8.0
+max_runtime_hours: 4.5
+reserve_minutes: 20
+shutdown_rule: >-
+  Copy reports, metrics, eval rows, budget ledgers and the final v0-base, v1-math and v2-sft
+  checkpoints off the pod, then terminate (delete) it when the session finishes, at either ceiling,
+  or on any failure; the pod also deletes itself 45 minutes after finishing if not collected.
+approved_by: project owner (pre-approval in chat for the scaled redo)
+approved_at: "2026-11-08"
