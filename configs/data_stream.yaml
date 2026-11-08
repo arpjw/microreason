@@ -1,0 +1,30 @@
+# Training-only math stream v1 for base pretraining and math mid-training (~70 M tokens).
+# Frozen evaluation problems are excluded. Capacity-limited single-operation templates take every
+# unique in-distribution problem they have (targets above their capacity). The large templates
+# get roughly equal token shares (~8 M tokens each at their measured tokens per problem).
+version: v1
+root_seed: 20261107
+max_attempts_factor: 20
+# Shard a (base pretraining, ~36 M tokens) and shard b (mid-training, ~34 M) are disjoint.
+shard_a_fraction: 0.514
+targets:
+  # level 1-2, capacity-limited (in-distribution operands |n| <= 99)
+  add_ab: 20000
+  sub_ab: 40000
+  mul_ab: 20000
+  div_ab: 40000
+  x_plus_a_equals_b: 40000
+  ax_equals_b: 9000
+  # level 2-4, effectively unlimited
+  add_mul_abc: 196000
+  mul_sub_mul: 140000
+  sub_mul_add: 140000
+  ax_plus_b_equals_c: 186000
+  paren_sum_times_diff: 146000
+  a_times_paren_diff: 204000
+  a_paren_x_plus_b_equals_c: 172000
+  ax_plus_b_equals_cx_plus_d: 130000
+eval_manifest_dir: data/manifests
+eval_version: v1
+out_path: data/generated/math_v1/train_stream/train_stream.jsonl
+manifest_path: data/manifests/math_train_stream_v1.json

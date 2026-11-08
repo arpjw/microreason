@@ -148,3 +148,37 @@ def tokenize_math(tok, split: str, out_dir: str | Path) -> dict:
             "format": "math_plain_text (prompt, numbered steps, 'Answer: x')",
         },
     )
+
+
+def tokenize_math_stream(tok, manifest_path: str | Path, shard: str, out_dir: str | Path) -> dict:
+    """Tokenize one disjoint shard of the training-only math stream (plain-text format)."""
+    from microreason.data.stream import iter_stream, shard_of
+    from microreason.tokenizer import math_plain_text
+
+    manifest = json.loads(Path(manifest_path).read_text())
+    frac = float(manifest["shards"]["rule"].split("<")[1].split("->")[0])
+
+    def gen():
+        buf: list[str] = []
+        for r in iter_stream(manifest):
+            if shard_of(r.id, frac) == shard:
+                buf.append(math_plain_text(r.model_dump()))
+                if len(buf) == 8192:
+                    yield from tok.encode_batch(buf)
+                    buf = []
+        if buf:
+            yield from tok.encode_batch(buf)
+
+    return write_tokenized(
+        out_dir,
+        gen(),
+        {
+            "name": f"math_stream_{shard}",
+            "source": "math",
+            "split": "train",
+            "stream_shard": shard,
+            "math_manifest_sha256": manifest["sha256"],
+            "tokenizer_sha256": tok.sha256,
+            "format": "math_plain_text (prompt, numbered steps, 'Answer: x')",
+        },
+    )

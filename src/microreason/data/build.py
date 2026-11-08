@@ -112,8 +112,18 @@ class BuildState:
 
 
 def _generate(
-    cfg: DataBuildConfig, split: Split, t: Template, n: int, state: BuildState
+    cfg: DataBuildConfig,
+    split: Split,
+    t: Template,
+    n: int,
+    state: BuildState,
+    allow_partial: bool = False,
 ) -> list[Candidate]:
+    """Generate up to n unique, verified problems. `cfg` needs root_seed and max_attempts_factor.
+
+    With allow_partial, a template whose unique-problem space runs out returns what it found
+    instead of raising, which is how capacity-limited templates fill a large training stream.
+    """
     out: list[Candidate] = []
     limit = n * cfg.max_attempts_factor + 1000
     nr = number_range_for(split)
@@ -141,6 +151,8 @@ def _generate(
         out.append(Candidate(t, split, seed, p, fp, normalize_math(p.math_text)))
         if len(out) == n:
             return out
+    if allow_partial:
+        return out
     raise CapacityError(
         f"{t.template_id}/{split}: only {len(out)} of {n} unique valid problems after "
         f"{limit} attempts; lower the count or widen the ranges"

@@ -19,6 +19,9 @@ uv run microreason data fetch-sources
 uv run microreason data split-text --out /tmp/general_text_split_v1.json
 uv run microreason data generate          # refuses to change the frozen evaluation suites
 uv run microreason data audit --report /tmp/data_audit_v1.json
+uv run microreason data freeze             # idempotent: verifies the frozen suite hashes
+uv run microreason data generate-stream    # training-only math stream (excludes frozen suites)
+uv run microreason data audit-stream --report /tmp/data_stream_audit_v1.json
 uv run microreason data tokenize
 
 echo "== cross-machine determinism check"

@@ -6,7 +6,9 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, PositiveInt
 
-Split = Literal["train", "val", "test_id", "test_extrapolation", "test_heldout_template"]
+Split = Literal[
+    "train", "train_stream", "val", "test_id", "test_extrapolation", "test_heldout_template"
+]
 EVAL_SPLITS: tuple[Split, ...] = ("test_heldout_template", "test_extrapolation", "test_id", "val")
 ALL_SPLITS: tuple[Split, ...] = (*EVAL_SPLITS, "train")
 

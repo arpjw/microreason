@@ -349,3 +349,12 @@ def test_builder_enforces_splits_and_tokenizer(tmp_path, smoke_model_cfg):
         build_trainer(cfg(train, train), tmp_path / "b", "cpu")  # train data used for eval
     with pytest.raises(ValueError, match="different tokenizer"):
         build_trainer(cfg(wrong, val), tmp_path / "c", "cpu")
+
+
+def test_bf16_refused_on_mps_and_cpu():
+    from microreason.train.common import _autocast
+
+    for dev in ("mps", "cpu"):
+        with pytest.raises(ValueError):
+            _autocast(torch.device(dev), "bf16")
+    assert _autocast(torch.device("cpu"), "fp32") is not None

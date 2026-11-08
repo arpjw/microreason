@@ -1,0 +1,78 @@
+{
+  "achieved": {
+    "a_paren_x_plus_b_equals_c": 172000,
+    "a_times_paren_diff": 204000,
+    "add_ab": 18900,
+    "add_mul_abc": 196000,
+    "ax_equals_b": 6918,
+    "ax_plus_b_equals_c": 186000,
+    "ax_plus_b_equals_cx_plus_d": 130000,
+    "div_ab": 38402,
+    "mul_ab": 18899,
+    "mul_sub_mul": 140000,
+    "paren_sum_times_diff": 146000,
+    "sub_ab": 38601,
+    "sub_mul_add": 140000,
+    "x_plus_a_equals_b": 38402
+  },
+  "build_rejections": {
+    "duplicate": 3412571,
+    "sampler:equal_coefficients": 6283
+  },
+  "by_difficulty": {
+    "1": 76400,
+    "2": 279722,
+    "3": 466000,
+    "4": 652000
+  },
+  "capacity_limited": [
+    "add_ab",
+    "ax_equals_b",
+    "div_ab",
+    "mul_ab",
+    "sub_ab",
+    "x_plus_a_equals_b"
+  ],
+  "code_revision": {
+    "dirty": true,
+    "git_commit": "359972350e41e84618a6cb79ff78913074f84aec"
+  },
+  "dataset": "math",
+  "excluded_fingerprints": 27000,
+  "excluded_frozen_suites": {
+    "test_extrapolation": "e7840ddf5f23c6adc81b2a01dbbc8adbc20502b497886a34febefafc087d2565",
+    "test_heldout_template": "cdcd21099b04b97d446529b37aff3bd69bb5fe988b23f9c726e15b4b6ea3e084",
+    "test_id": "18f17620ff66223bb4c7e625a0948cf80d09f8951d50ef3d719e758b5a394510",
+    "val": "7b2f36797924777ae611c92ba6d49d2aa4d5fba33d49abc4b436cbe57d393124"
+  },
+  "file": "data/generated/math_v1/train_stream/train_stream.jsonl",
+  "generator_version": "1.0",
+  "record_count": 1474122,
+  "root_seed": 20261107,
+  "schema_version": 1,
+  "sha256": "1227ed698570c7089d78db2e4a467c2e353e4735ce3e80c10dced923686f2958",
+  "shards": {
+    "a": 758140,
+    "b": 715982,
+    "rule": "sha256(id) bucket < 0.514 -> a, else b"
+  },
+  "split": "train_stream",
+  "stream_config_hash": "sha256:94397b6533c2ef3c5876f269d82c7a34ee61515e493987ca0d1f69e2887c2974",
+  "targets": {
+    "a_paren_x_plus_b_equals_c": 172000,
+    "a_times_paren_diff": 204000,
+    "add_ab": 20000,
+    "add_mul_abc": 196000,
+    "ax_equals_b": 9000,
+    "ax_plus_b_equals_c": 186000,
+    "ax_plus_b_equals_cx_plus_d": 130000,
+    "div_ab": 40000,
+    "mul_ab": 20000,
+    "mul_sub_mul": 140000,
+    "paren_sum_times_diff": 146000,
+    "sub_ab": 40000,
+    "sub_mul_add": 140000,
+    "x_plus_a_equals_b": 40000
+  },
+  "version": "v1"
+}

@@ -96,6 +96,31 @@ def _cmd_data_freeze(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _cmd_data_generate_stream(args: argparse.Namespace) -> int:
+    from microreason.data.stream import build_stream, load_stream_config
+
+    try:
+        m = build_stream(load_stream_config(args.config))
+    except (ValidationError, ValueError, OSError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    keys = ("record_count", "achieved", "capacity_limited", "by_difficulty", "shards", "sha256")
+    print(json.dumps({k: m[k] for k in keys}, indent=2, sort_keys=True))
+    return EXIT_OK
+
+
+def _cmd_data_audit_stream(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from microreason.data.stream import audit_stream, load_stream_config
+
+    report = audit_stream(load_stream_config(args.config), args.sample)
+    Path(args.report).parent.mkdir(parents=True, exist_ok=True)
+    Path(args.report).write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
+    print(json.dumps(report, indent=2, sort_keys=True))
+    return EXIT_OK if report["passed"] else EXIT_CONFIG_ERROR
+
+
 def _cmd_data_tokenize(args: argparse.Namespace) -> int:
     from pathlib import Path
 
@@ -109,6 +134,14 @@ def _cmd_data_tokenize(args: argparse.Namespace) -> int:
         "math_train_v1": lambda d: tokenize_math(tok, "train", d),
         "math_val_v1": lambda d: tokenize_math(tok, "val", d),
     }
+    stream_manifest = Path("data/manifests/math_train_stream_v1.json")
+    if stream_manifest.exists():
+        from microreason.data.tokenized import tokenize_math_stream
+
+        for shard in ("a", "b"):
+            jobs[f"math_stream_{shard}_v1"] = lambda d, sh=shard: tokenize_math_stream(
+                tok, stream_manifest, sh, d
+            )
     out = {}
     for name, job in jobs.items():
         d = Path(args.out) / name
@@ -339,6 +372,14 @@ def build_parser() -> argparse.ArgumentParser:
     da.add_argument("--version", default="v1")
     da.add_argument("--report", default="reports/data_audit_v1.json")
     da.set_defaults(func=_cmd_data_audit)
+    dgs = data_sub.add_parser("generate-stream", help="Build the training-only math stream.")
+    dgs.add_argument("--config", default="configs/data_stream.yaml")
+    dgs.set_defaults(func=_cmd_data_generate_stream)
+    das = data_sub.add_parser("audit-stream", help="Leakage check + sampled re-verification.")
+    das.add_argument("--config", default="configs/data_stream.yaml")
+    das.add_argument("--sample", type=float, default=0.02)
+    das.add_argument("--report", default="reports/data_stream_audit_v1.json")
+    das.set_defaults(func=_cmd_data_audit_stream)
     dt = data_sub.add_parser("tokenize", help="Pre-tokenize train/val text and math datasets.")
     dt.add_argument("--tokenizer", default="artifacts/tokenizer/v1")
     dt.add_argument("--out", default="data/tokenized")

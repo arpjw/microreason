@@ -59,8 +59,11 @@ def param_groups(model: torch.nn.Module, weight_decay: float) -> list[dict]:
 def _autocast(device: torch.device, precision: str):
     if precision == "fp32":
         return contextlib.nullcontext()
-    if precision == "bf16" and device.type in ("cuda", "mps"):
-        return torch.autocast(device_type=device.type, dtype=torch.bfloat16)
+    if precision == "bf16" and device.type == "cuda":
+        return torch.autocast(device_type="cuda", dtype=torch.bfloat16)
+    if precision == "bf16" and device.type == "mps":
+        # Measured 2026-11-08: a full 43M bf16 step on MPS did not finish in 10 minutes.
+        raise ValueError("bf16 autocast on MPS is impractically slow; use precision fp32 locally")
     raise ValueError(f"precision {precision} is not supported on {device.type}")
 
 

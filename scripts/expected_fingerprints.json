@@ -3,6 +3,7 @@
   "math:math_test_extrapolation_v1": "e7840ddf5f23c6adc81b2a01dbbc8adbc20502b497886a34febefafc087d2565",
   "math:math_test_heldout_template_v1": "cdcd21099b04b97d446529b37aff3bd69bb5fe988b23f9c726e15b4b6ea3e084",
   "math:math_test_id_v1": "18f17620ff66223bb4c7e625a0948cf80d09f8951d50ef3d719e758b5a394510",
+  "math:math_train_stream_v1": "1227ed698570c7089d78db2e4a467c2e353e4735ce3e80c10dced923686f2958",
   "math:math_train_v1": "ccb92e250b82c88b22a76d6cb1115e5f5bdc1b7bc9bd5ad622e1b263537c3402",
   "math:math_val_v1": "7b2f36797924777ae611c92ba6d49d2aa4d5fba33d49abc4b436cbe57d393124",
   "tokenized:general_text_train_v1": {
@@ -18,6 +19,20 @@
       "tokens.bin": "e91617d4543300281aea9f3788a3ae64ac6b4b03a4e740336047becb5585e99c"
     },
     "tokens": 7867899
+  },
+  "tokenized:math_stream_a_v1": {
+    "files": {
+      "offsets.npy": "52f495a8eb40301879ba896c4f6985500f8e325820be336dd8a04a34eb67140b",
+      "tokens.bin": "85b35f95ff70b9cafc6a71fbb4c588136f245f71c0ada53edb6af46e6a48f9cd"
+    },
+    "tokens": 36091910
+  },
+  "tokenized:math_stream_b_v1": {
+    "files": {
+      "offsets.npy": "a8df33369e00f4ef47a8aa1c0eb48a7e712976b30ac836446c9f187628b13e66",
+      "tokens.bin": "7f24c052412cbd6e5da8f3207c729b9d288e144df24f939a79039a84497177a6"
+    },
+    "tokens": 34096147
   },
   "tokenized:math_train_v1": {
     "files": {

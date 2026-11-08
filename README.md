@@ -9,7 +9,8 @@ The full design is in [MICROREASON_MASTER_SPEC.md](MICROREASON_MASTER_SPEC.md).
 ## Status
 
 **Phase 5 of 8 done: GPU pilot complete** (RTX 5090, ≈252k tok/s for the 43M model, ≈$1.03 total).
-No real training stage or evaluation has run yet. Every number in the spec is a target or estimate, not a measured result.
+Math training data: a 1.47M-problem training-only stream (≈70M tokens) excludes every frozen
+evaluation problem; see `reports/math_stream_v1.md`. No real training stage or evaluation has run yet. Every number in the spec is a target or estimate, not a measured result.
 
 | Phase | Scope | Status |
 | --- | --- | --- |
@@ -46,6 +47,8 @@ uv run microreason data fetch-sources   # download pinned Cosmopedia files (~1.2
 uv run microreason data split-text      # hash-split general text into train/val
 uv run microreason data generate        # build math splits + manifests, scan corpus for overlap
 uv run microreason data audit           # re-verify every record, check cross-split leakage
+uv run microreason data generate-stream # ~1.47M-problem training-only math stream (2 disjoint shards)
+uv run microreason data audit-stream    # stream vs frozen suites: full overlap check + sampled re-verify
 uv run microreason data freeze          # lock evaluation suite hashes (only after review)
 ```
 
