@@ -64,7 +64,9 @@ def test_unknown_keys_rejected():
         _stage(learning_rate=1e-3)
 
 
-@pytest.mark.parametrize("name", ["smoke.yaml", "pretrain.yaml", "midtrain.yaml"])
+@pytest.mark.parametrize(
+    "name", ["smoke.yaml", "pretrain.yaml", "midtrain.yaml", "midtrain_uniform.yaml"]
+)
 def test_shipped_stage_configs_validate_and_disallow_spend(name):
     resolved = load_stage_config(CONFIGS / name)
     assert resolved.stage.budget.paid_compute_allowed is False

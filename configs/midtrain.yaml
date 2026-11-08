@@ -1,14 +1,34 @@
-# Stage 2 math mid-training (spec §6). Proposal only; nothing here has been run.
-# 85/15 math/general replay by processed tokens. Math comes from shard b of the training-only
-# stream (34.1 M tokens), disjoint from the base-pretraining shard. The easy-to-hard curriculum
-# sampler and its uniform-sampling ablation are not implemented yet; this config samples uniformly.
+# Stage 2 math mid-training with an easy-to-hard curriculum (spec §6). Proposal only; nothing here
+# has been run. Uniform-sampling ablation: configs/midtrain_uniform.yaml.
+#
+# Overall 85/15 math/general replay by processed tokens. Math comes from shard b of the
+# training-only stream, split into curriculum buckets: easy = levels 1-2 (5.97 M tokens) and
+# hard = levels 3-4 (28.13 M tokens). Planned use over 40 M tokens: easy ~8.1 M (~1.3 passes),
+# hard ~25.9 M (<1 pass), general ~6 M. Phase changes are logged in the run manifest.
 stage: midtrain
 model: configs/model_43m.yaml
 tokenizer: artifacts/tokenizer/v1
 parent: runs/pretrain_v1/checkpoints/FINAL  # replace with the v0-base checkpoint path
 mixture:
-  - {dataset: data/tokenized/math_stream_b_v1, weight: 0.85}
+  - {dataset: data/tokenized/math_stream_b_easy_v1, weight: 0.2}
+  - {dataset: data/tokenized/math_stream_b_hard_v1, weight: 0.65}
   - {dataset: data/tokenized/general_text_train_v1, weight: 0.15}
+curriculum:
+  - until_fraction: 0.25
+    weights:
+      data/tokenized/math_stream_b_easy_v1: 0.45
+      data/tokenized/math_stream_b_hard_v1: 0.40
+      data/tokenized/general_text_train_v1: 0.15
+  - until_fraction: 0.60
+    weights:
+      data/tokenized/math_stream_b_easy_v1: 0.20
+      data/tokenized/math_stream_b_hard_v1: 0.65
+      data/tokenized/general_text_train_v1: 0.15
+  - until_fraction: 1.0
+    weights:
+      data/tokenized/math_stream_b_easy_v1: 0.05
+      data/tokenized/math_stream_b_hard_v1: 0.80
+      data/tokenized/general_text_train_v1: 0.15
 validation:
   - {dataset: data/tokenized/general_text_val_v1, sequences: 256}
   - {dataset: data/tokenized/math_val_v1, sequences: 256}

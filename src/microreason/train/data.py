@@ -31,7 +31,22 @@ class Source:
 
 
 class PackedStream:
-    def __init__(self, sources: list[Source], seq_len: int, seed: int, bos_id: int, eos_id: int):
+    """Packed mixture stream; optionally follows a curriculum.
+
+    A curriculum is a list of phases (until_tokens, weights), one weight per source in source
+    order. Within a phase the deficit rule tracks that phase's weights using only tokens drawn
+    during the phase. Phase changes are recorded in `phase_log` (and in saved state).
+    """
+
+    def __init__(
+        self,
+        sources: list[Source],
+        seq_len: int,
+        seed: int,
+        bos_id: int,
+        eos_id: int,
+        schedule: list[tuple[int, list[float]]] | None = None,
+    ):
         if not sources:
             raise ValueError("need at least one source")
         if any(s.weight <= 0 for s in sources) or any(len(s.dataset) == 0 for s in sources):
@@ -39,6 +54,18 @@ class PackedStream:
         total = sum(s.weight for s in sources)
         self.sources = sources
         self.targets = [s.weight / total for s in sources]
+        self.schedule = None
+        if schedule:
+            bounds = [u for u, _ in schedule]
+            if bounds != sorted(bounds) or len(set(bounds)) != len(bounds):
+                raise ValueError("curriculum phases must have increasing token bounds")
+            for _, w in schedule:
+                if len(w) != len(sources) or any(x < 0 for x in w) or sum(w) <= 0:
+                    raise ValueError("each phase needs one non-negative weight per source")
+            self.schedule = [(u, [x / sum(w) for x in w]) for u, w in schedule]
+        self.phase = 0
+        self.phase_tokens = [0] * len(sources)
+        self.phase_log: list[dict] = []
         self.seq_len = seq_len
         self.seed = seed
         self.bos, self.eos = bos_id, eos_id
@@ -61,11 +88,22 @@ class PackedStream:
             self._perm_cache[key] = order
         return self._perm_cache[key]
 
+    def _current_targets(self) -> tuple[list[float], list[int]]:
+        if self.schedule is None:
+            return self.targets, self.tokens
+        processed = sum(self.tokens)
+        while self.phase < len(self.schedule) - 1 and processed >= self.schedule[self.phase][0]:
+            self.phase += 1
+            self.phase_tokens = [0] * len(self.sources)
+            self.phase_log.append({"phase": self.phase, "at_tokens": processed})
+        return self.schedule[self.phase][1], self.phase_tokens
+
     def _pick_source(self) -> int:
-        total = sum(self.tokens)
+        targets, counts = self._current_targets()
+        total = sum(counts)
         if total == 0:
-            return max(range(len(self.sources)), key=lambda k: (self.targets[k], -k))
-        deficits = [self.targets[k] - self.tokens[k] / total for k in range(len(self.sources))]
+            return max(range(len(self.sources)), key=lambda k: (targets[k], -k))
+        deficits = [targets[k] - counts[k] / total for k in range(len(self.sources))]
         return max(range(len(self.sources)), key=lambda k: (deficits[k], -k))
 
     def _next_document(self) -> list[int]:
@@ -78,6 +116,7 @@ class PackedStream:
             self.pos[k] = 0
         toks = [self.bos, *src.dataset.doc(idx).tolist(), self.eos]
         self.tokens[k] += len(toks)
+        self.phase_tokens[k] += len(toks)
         self.docs[k] += 1
         self.digest = hashlib.sha256(f"{self.digest}|{src.name}:{idx}".encode()).hexdigest()
         return toks
@@ -95,7 +134,7 @@ class PackedStream:
 
     def mixture_report(self) -> dict:
         total = sum(self.tokens) or 1
-        return {
+        report: dict = {
             s.name: {
                 "target": round(self.targets[k], 4),
                 "actual": round(self.tokens[k] / total, 4),
@@ -104,12 +143,27 @@ class PackedStream:
             }
             for k, s in enumerate(self.sources)
         }
+        if self.schedule is not None:
+            report["curriculum"] = {
+                "phases": [
+                    {"until_tokens": u, "weights": {s.name: round(w[k], 4)
+                                                    for k, s in enumerate(self.sources)}}
+                    for u, w in self.schedule
+                ],
+                "current_phase": self.phase,
+                "phase_log": self.phase_log,
+            }  # fmt: skip
+        return report
 
     # ------------------------------------------------------------------ state
 
     def state_dict(self) -> dict:
         return {
-            "version": 1,
+            "version": 2,
+            "schedule": [[u, list(w)] for u, w in self.schedule] if self.schedule else None,
+            "phase": self.phase,
+            "phase_tokens": list(self.phase_tokens),
+            "phase_log": list(self.phase_log),
             "sources": [
                 {"name": s.name, "fingerprint": s.dataset.fingerprint, "weight": s.weight}
                 for s in self.sources
@@ -133,6 +187,7 @@ class PackedStream:
             state["sources"] != mine
             or state["seq_len"] != self.seq_len
             or state["seed"] != self.seed
+            or state.get("schedule") != self._schedule_state()
         ):
             raise ValueError("stream state does not match this stream's sources or settings")
         self.epoch = list(state["epoch"])
@@ -141,7 +196,13 @@ class PackedStream:
         self.docs = list(state["docs"])
         self.buffer = list(state["buffer"])
         self.digest = state["digest"]
+        self.phase = state.get("phase", 0)
+        self.phase_tokens = list(state.get("phase_tokens", [0] * len(self.sources)))
+        self.phase_log = list(state.get("phase_log", []))
         self._perm_cache = {}
+
+    def _schedule_state(self) -> list | None:
+        return [[u, list(w)] for u, w in self.schedule] if self.schedule else None
 
 
 def fixed_eval_batches(

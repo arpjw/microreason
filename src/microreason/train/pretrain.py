@@ -50,7 +50,16 @@ def build_trainer(
         Source(Path(m.dataset).name, _dataset(m.dataset, tok, "train"), m.weight)
         for m in stage.mixture
     ]
-    stream = PackedStream(sources, stage.sequence_length, stage.seed, tok.bos_id, tok.eos_id)
+    schedule = None
+    if stage.curriculum:
+        planned = stage.total_steps() * stage.effective_batch_tokens
+        schedule = [
+            (round(p.until_fraction * planned), [p.weights[m.dataset] for m in stage.mixture])
+            for p in stage.curriculum
+        ]
+    stream = PackedStream(
+        sources, stage.sequence_length, stage.seed, tok.bos_id, tok.eos_id, schedule
+    )
     micro = stage.micro_batch_size or stage.sequences_per_step
     eval_sets = {}
     for v in stage.validation:

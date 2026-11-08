@@ -64,9 +64,22 @@ uv run microreason train --config configs/smoke.yaml --run-dir runs/smoke_v1_b \
     --resume runs/smoke_v1_a/checkpoints/step_0000100                  # exact resume
 ```
 
-Runs and checkpoints live in `runs/` (not tracked). SFT, DPO and GRPO stages and the
-`eval`, `compare` and `serve` commands are placeholders that exit with an error naming the
-phase that will implement them.
+Evaluation (frozen suites only; test suites are sealed unless `--allow-test` is passed):
+
+```bash
+uv run microreason eval --suite val --checkpoint runs/<run>/checkpoints/step_N \
+    --format plain-v1 --out runs/eval/<name> [--samples 4]       # rows.jsonl + summary.json
+uv run microreason compare --a runs/eval/<a> --b runs/eval/<b>    # paired bootstrap, b - a
+```
+
+Prompt formats: `plain-v1` for base and mid-trained checkpoints (continues to `Answer: x`),
+`sft-show-work-v1` and `sft-direct-v1` for later stages. Math mid-training follows an easy-to-hard
+curriculum (`configs/midtrain.yaml`), with uniform sampling kept as an ablation
+(`configs/midtrain_uniform.yaml`).
+
+Runs and checkpoints live in `runs/` (not tracked). Heavy jobs (training, evaluation of real
+checkpoints) run on rented GPUs, not locally. SFT, DPO and GRPO stages and `serve` are
+placeholders that exit with an error naming the phase that will implement them.
 
 ## Spending
 

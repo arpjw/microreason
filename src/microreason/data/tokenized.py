@@ -150,8 +150,17 @@ def tokenize_math(tok, split: str, out_dir: str | Path) -> dict:
     )
 
 
-def tokenize_math_stream(tok, manifest_path: str | Path, shard: str, out_dir: str | Path) -> dict:
-    """Tokenize one disjoint shard of the training-only math stream (plain-text format)."""
+def tokenize_math_stream(
+    tok,
+    manifest_path: str | Path,
+    shard: str,
+    out_dir: str | Path,
+    levels: tuple[int, ...] | None = None,
+    name: str | None = None,
+) -> dict:
+    """Tokenize one disjoint shard of the training-only math stream (plain-text format).
+
+    `levels` keeps only those difficulty levels (curriculum buckets)."""
     from microreason.data.stream import iter_stream, shard_of
     from microreason.tokenizer import math_plain_text
 
@@ -161,7 +170,7 @@ def tokenize_math_stream(tok, manifest_path: str | Path, shard: str, out_dir: st
     def gen():
         buf: list[str] = []
         for r in iter_stream(manifest):
-            if shard_of(r.id, frac) == shard:
+            if shard_of(r.id, frac) == shard and (levels is None or r.difficulty in levels):
                 buf.append(math_plain_text(r.model_dump()))
                 if len(buf) == 8192:
                     yield from tok.encode_batch(buf)
@@ -173,10 +182,11 @@ def tokenize_math_stream(tok, manifest_path: str | Path, shard: str, out_dir: st
         out_dir,
         gen(),
         {
-            "name": f"math_stream_{shard}",
+            "name": name or f"math_stream_{shard}",
             "source": "math",
             "split": "train",
             "stream_shard": shard,
+            "difficulty_levels": list(levels) if levels else None,
             "math_manifest_sha256": manifest["sha256"],
             "tokenizer_sha256": tok.sha256,
             "format": "math_plain_text (prompt, numbered steps, 'Answer: x')",

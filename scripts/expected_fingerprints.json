@@ -27,6 +27,20 @@
     },
     "tokens": 36091910
   },
+  "tokenized:math_stream_b_easy_v1": {
+    "files": {
+      "offsets.npy": "e9cfc9446fa55701a744ae345f8e11331e65a673735666667dcf63f256367857",
+      "tokens.bin": "6eeb685dbc958598aba6d4fe697b6eff7bed1d2380d9e1fab27217dd95e33cf9"
+    },
+    "tokens": 5969837
+  },
+  "tokenized:math_stream_b_hard_v1": {
+    "files": {
+      "offsets.npy": "946bfb000970ee86f0500fa37af2ac5408be8ee0dacbcd0d16a85c6e247efe29",
+      "tokens.bin": "c2baae402c26072d8b0b580f22b41d99cedf2eea0bfba46a796537fcf169273b"
+    },
+    "tokens": 28126310
+  },
   "tokenized:math_stream_b_v1": {
     "files": {
       "offsets.npy": "a8df33369e00f4ef47a8aa1c0eb48a7e712976b30ac836446c9f187628b13e66",

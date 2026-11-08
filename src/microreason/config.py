@@ -161,6 +161,13 @@ class MixtureItem(_Strict):
     weight: float = Field(gt=0)
 
 
+class CurriculumPhase(_Strict):
+    """Source weights for the stretch of training up to `until_fraction` of planned tokens."""
+
+    until_fraction: float = Field(gt=0, le=1)
+    weights: dict[str, float]
+
+
 class ValidationItem(_Strict):
     dataset: str
     sequences: PositiveInt = 64
@@ -175,6 +182,7 @@ class StageConfig(_Strict):
     data_manifest: str | None = None
     mixture: list[MixtureItem] = Field(default_factory=list)
     validation: list[ValidationItem] = Field(default_factory=list)
+    curriculum: list[CurriculumPhase] | None = None
     parent: str | None = None
     seed: int = 42
     precision: Literal["bf16", "fp16", "fp32"] = "bf16"
@@ -201,6 +209,18 @@ class StageConfig(_Strict):
             raise ValueError(f"stage '{self.stage}' requires a parent checkpoint")
         if self.micro_batch_size is not None and self.sequences_per_step % self.micro_batch_size:
             raise ValueError("sequences per step must be a multiple of micro_batch_size")
+        if self.curriculum:
+            fracs = [p.until_fraction for p in self.curriculum]
+            if fracs != sorted(fracs) or len(set(fracs)) != len(fracs) or fracs[-1] != 1.0:
+                raise ValueError("curriculum until_fraction values must increase and end at 1.0")
+            names = {m.dataset for m in self.mixture}
+            for p in self.curriculum:
+                if set(p.weights) != names:
+                    raise ValueError(
+                        "each curriculum phase must weight exactly the mixture datasets"
+                    )
+                if any(w < 0 for w in p.weights.values()) or sum(p.weights.values()) <= 0:
+                    raise ValueError("curriculum weights must be non-negative with a positive sum")
         return self
 
     @property

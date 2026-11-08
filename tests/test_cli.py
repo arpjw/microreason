@@ -81,8 +81,6 @@ def test_paid_run_needs_pod_id_and_billing_start(tmp_path, monkeypatch):
 @pytest.mark.parametrize(
     "argv",
     [
-        ["eval", "--suite", "x", "--checkpoint", "y"],
-        ["compare", "--runs", "x"],
         ["serve", "--checkpoint", "x"],
     ],
 )

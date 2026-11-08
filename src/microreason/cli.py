@@ -96,6 +96,36 @@ def _cmd_data_freeze(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _cmd_eval(args: argparse.Namespace) -> int:
+    from microreason.eval.report import SealedSuiteError, run_eval
+    from microreason.train.pretrain import default_device
+
+    try:
+        summary = run_eval(
+            args.suite, args.checkpoint, args.format, args.out,
+            tokenizer_dir=args.tokenizer, allow_test=args.allow_test, samples=args.samples,
+            temperature=args.temperature, seed=args.seed, max_new_tokens=args.max_new_tokens,
+            batch_size=args.batch_size, limit=args.limit, device=args.device or default_device(),
+        )  # fmt: skip
+    except (SealedSuiteError, ValueError, FileExistsError, OSError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    print(json.dumps(summary, indent=2, sort_keys=True))
+    return EXIT_OK
+
+
+def _cmd_compare(args: argparse.Namespace) -> int:
+    from microreason.eval.report import compare_runs
+
+    try:
+        result = compare_runs(args.a, args.b, args.resamples, args.seed)
+    except (ValueError, OSError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return EXIT_OK
+
+
 def _cmd_data_generate_stream(args: argparse.Namespace) -> int:
     from microreason.data.stream import build_stream, load_stream_config
 
@@ -141,6 +171,11 @@ def _cmd_data_tokenize(args: argparse.Namespace) -> int:
         for shard in ("a", "b"):
             jobs[f"math_stream_{shard}_v1"] = lambda d, sh=shard: tokenize_math_stream(
                 tok, stream_manifest, sh, d
+            )
+        # Curriculum buckets of the mid-training shard.
+        for bucket, levels in (("easy", (1, 2)), ("hard", (3, 4))):
+            jobs[f"math_stream_b_{bucket}_v1"] = lambda d, lv=levels, b=bucket: (
+                tokenize_math_stream(tok, stream_manifest, "b", d, lv, f"math_stream_b_{b}")
             )
     out = {}
     for name, job in jobs.items():
@@ -425,13 +460,27 @@ def build_parser() -> argparse.ArgumentParser:
 
     # eval / compare / serve
     ev = sub.add_parser("eval", help="Evaluate a checkpoint on a frozen suite.")
-    ev.add_argument("--suite", required=True)
+    ev.add_argument("--suite", required=True, help="val, test_id, test_extrapolation, ...")
     ev.add_argument("--checkpoint", required=True)
-    ev.set_defaults(func=_not_implemented(8, "eval"))
+    ev.add_argument("--format", required=True, help="plain-v1, sft-show-work-v1, sft-direct-v1")
+    ev.add_argument("--out", required=True)
+    ev.add_argument("--allow-test", action="store_true", help="Unseal a test suite.")
+    ev.add_argument("--samples", type=int, default=0, help="Sampled pass@k with this many.")
+    ev.add_argument("--temperature", type=float, default=0.8)
+    ev.add_argument("--seed", type=int, default=0)
+    ev.add_argument("--max-new-tokens", type=int, default=128)
+    ev.add_argument("--batch-size", type=int, default=64)
+    ev.add_argument("--limit", type=int, default=None, help="First N prompts (smoke only).")
+    ev.add_argument("--device", default=None)
+    ev.add_argument("--tokenizer", default="artifacts/tokenizer/v1")
+    ev.set_defaults(func=_cmd_eval)
 
-    cmp_ = sub.add_parser("compare", help="Compare runs with paired intervals.")
-    cmp_.add_argument("--runs", required=True)
-    cmp_.set_defaults(func=_not_implemented(8, "compare"))
+    cmp_ = sub.add_parser("compare", help="Paired bootstrap between two eval runs (b - a).")
+    cmp_.add_argument("--a", required=True)
+    cmp_.add_argument("--b", required=True)
+    cmp_.add_argument("--resamples", type=int, default=10_000)
+    cmp_.add_argument("--seed", type=int, default=0)
+    cmp_.set_defaults(func=_cmd_compare)
 
     sv = sub.add_parser("serve", help="Serve a checkpoint locally (loopback by default).")
     sv.add_argument("--checkpoint", required=True)

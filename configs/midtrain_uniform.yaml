@@ -1,0 +1,34 @@
+# Stage 2 math mid-training, UNIFORM-SAMPLING ABLATION (spec §4: compare curriculum to uniform
+# sampling only after the baseline stages fit the budget). Proposal only; nothing has been run.
+# 85/15 math/general replay by processed tokens; math from shard b of the training-only stream
+# (34.1 M tokens), disjoint from the base-pretraining shard. Primary run: configs/midtrain.yaml.
+stage: midtrain
+model: configs/model_43m.yaml
+tokenizer: artifacts/tokenizer/v1
+parent: runs/pretrain_v1/checkpoints/FINAL  # replace with the v0-base checkpoint path
+mixture:
+  - {dataset: data/tokenized/math_stream_b_v1, weight: 0.85}
+  - {dataset: data/tokenized/general_text_train_v1, weight: 0.15}
+validation:
+  - {dataset: data/tokenized/general_text_val_v1, sequences: 256}
+  - {dataset: data/tokenized/math_val_v1, sequences: 256}
+seed: 43
+precision: bf16
+sequence_length: 1024
+effective_batch_tokens: 32768
+micro_batch_size: 16
+max_train_tokens: 40000000
+eval_every_steps: 100
+checkpoint_every_steps: 250
+optimizer:
+  name: adamw
+  peak_lr: 0.0001
+  weight_decay: 0.1
+  grad_clip_norm: 1.0
+scheduler:
+  name: cosine
+  warmup_fraction: 0.02
+  min_lr_fraction: 0.1
+budget:
+  paid_compute_allowed: false
+  max_spend_usd: 0

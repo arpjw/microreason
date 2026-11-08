@@ -83,35 +83,49 @@ def _check_spec(spec: dict, expected: Fraction, value: Fraction, is_equal: bool)
     return "unknown_kind"
 
 
-def verify_completion(final_answer: str, verifier_spec: dict, completion: object) -> VerifyResult:
+def verify_answer_text(
+    final_answer: str,
+    verifier_spec: dict,
+    answer_text: str,
+    steps_status: StepsStatus = "absent",
+) -> VerifyResult:
+    """Score an answer string already extracted from a completion."""
     try:
         expected = parse_answer_value(final_answer)
     except Exception:
         return VerifyResult("verifier_error", "bad_expected_answer")
-
     try:
-        parsed = parse_completion(completion)
-        if not parsed.ok:
-            return VerifyResult("invalid_format", parsed.reason, steps_status=parsed.steps_status)
         try:
-            value = parse_answer_value(parsed.answer_text)
+            value = parse_answer_value(answer_text)
         except AnswerFormatError as e:
-            return VerifyResult(
-                "invalid_format", e.code, parsed.answer_text, steps_status=parsed.steps_status
-            )
+            return VerifyResult("invalid_format", e.code, answer_text, steps_status=steps_status)
         is_equal = value == expected
         problem = _check_spec(verifier_spec, expected, value, is_equal)
         if problem:
-            return VerifyResult("verifier_error", problem, parsed.answer_text)
+            return VerifyResult("verifier_error", problem, answer_text)
         return VerifyResult(
             "correct" if is_equal else "wrong",
             "match" if is_equal else "mismatch",
-            parsed.answer_text,
+            answer_text,
             fmt_value(value),
-            parsed.steps_status,
+            steps_status,
         )
     except Exception as e:  # fail closed
         return VerifyResult("verifier_error", f"exception:{type(e).__name__}")
+
+
+def verify_completion(final_answer: str, verifier_spec: dict, completion: object) -> VerifyResult:
+    try:
+        parse_answer_value(final_answer)
+    except Exception:
+        return VerifyResult("verifier_error", "bad_expected_answer")
+    try:
+        parsed = parse_completion(completion)
+    except Exception as e:  # fail closed
+        return VerifyResult("verifier_error", f"exception:{type(e).__name__}")
+    if not parsed.ok:
+        return VerifyResult("invalid_format", parsed.reason, steps_status=parsed.steps_status)
+    return verify_answer_text(final_answer, verifier_spec, parsed.answer_text, parsed.steps_status)
 
 
 def primary_reward(final_answer: str, verifier_spec: dict, completion: object) -> float:
