@@ -1,14 +1,13 @@
 # Budget for protocol v3 Phase C (reports/protocol_v3.md): RL pool, KV check, reward-variance
 # gate, 2 x v4-grpo + 2 x time-matched v2-extra-sft, val/held-out-val evals, and the single
 # confirmatory test evaluation (reports/confirmatory_plan_v2.md). One pod.
-# NOT YET APPROVED: paid_compute_allowed stays false (and the cap 0) until the owner approves the
-# Phase C spend in chat. Proposed on approval: max_spend_usd 6.0, max_runtime_hours 5.0, and the
-# live GPU type and rate; then fill approved_by and approved_at.
-paid_compute_allowed: false
+# Owner approved in chat on 2026-11-09 ("Approve Phase C") after a quoted estimate of about
+# $3-3.5 with caps of $6 and 5 h. hourly_rate_usd must equal the live rate of the pod created.
+paid_compute_allowed: true
 provider: runpod
 gpu_type: NVIDIA RTX 6000 Ada Generation (Secure Cloud)
 hourly_rate_usd: 0.99
-max_spend_usd: 0
+max_spend_usd: 6.0
 max_runtime_hours: 5.0
 reserve_minutes: 15
 shutdown_rule: >-
@@ -16,5 +15,5 @@ shutdown_rule: >-
   final v4-grpo and v2-extra-sft checkpoints (both seeds) off the pod, then terminate (delete) it
   when the session finishes, at either ceiling, or on any failure; the pod also deletes itself
   45 minutes after finishing if not collected.
-approved_by: pending
-approved_at: pending
+approved_by: project owner (approval in chat for protocol v3 Phase C)
+approved_at: "2026-11-09"
