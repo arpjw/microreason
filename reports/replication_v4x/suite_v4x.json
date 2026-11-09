@@ -1,0 +1,33 @@
+{
+  "counts": {
+    "by_answer_type": {
+      "integer": 3736,
+      "rational": 3264
+    },
+    "by_difficulty": {
+      "1": 781,
+      "2": 2256,
+      "3": 1793,
+      "4": 1296,
+      "5": 874
+    },
+    "by_family": {
+      "expression_1op": 1064,
+      "expression_2op": 1633,
+      "expression_3op": 1076,
+      "expression_4op": 603,
+      "expression_5op": 334,
+      "linear_equation": 2290
+    },
+    "by_kind": {
+      "expression": 4710,
+      "linear_equation": 2290
+    },
+    "distinct_shapes": 1209
+  },
+  "record_count": 7000,
+  "root_seed": 20261209,
+  "sha256": "35d481707bd979b10e52ab02b8b80506e98b110ea22e4eab1f6d9a3fbfd0ea50",
+  "split": "test_extrapolation",
+  "version": "v4x"
+}

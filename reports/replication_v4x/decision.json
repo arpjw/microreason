@@ -1,0 +1,71 @@
+{
+  "plan": "reports/replication_v4x.md",
+  "suite": "test_extrapolation_v4x",
+  "rule": "seed-mean grpo - control interval above 0 and all 3 seeds > 0",
+  "grpo_vs_control": {
+    "difference": 0.021666666666666664,
+    "bootstrap95": [
+      0.00617842073538276,
+      0.03783878915874692
+    ],
+    "clusters": 1209,
+    "prompts": 7000,
+    "seeds": 3,
+    "resamples": 10000,
+    "bootstrap_seed": 0,
+    "per_seed": [
+      0.01828571428571428,
+      0.026714285714285704,
+      0.01999999999999999
+    ],
+    "interval_above_zero": true
+  },
+  "status": "replicated",
+  "grpo_vs_parent": {
+    "difference": -0.0017142857142857142,
+    "bootstrap95": [
+      -0.005120734560543857,
+      0.00197952877558903
+    ],
+    "clusters": 1209,
+    "prompts": 7000,
+    "seeds": 3,
+    "resamples": 10000,
+    "bootstrap_seed": 0,
+    "per_seed": [
+      -0.002142857142857141,
+      -0.0020000000000000018,
+      -0.0010000000000000009
+    ],
+    "interval_above_zero": false
+  },
+  "control_vs_parent": {
+    "difference": -0.02338095238095238,
+    "bootstrap95": [
+      -0.0395800651623024,
+      -0.00836009583524494
+    ],
+    "clusters": 1209,
+    "prompts": 7000,
+    "seeds": 3,
+    "resamples": 10000,
+    "bootstrap_seed": 0,
+    "per_seed": [
+      -0.02042857142857142,
+      -0.028714285714285706,
+      -0.02099999999999999
+    ],
+    "interval_above_zero": false
+  },
+  "accuracy": {
+    "v2-sft-long": 0.09514285714285714,
+    "v4-grpo-s1": 0.093,
+    "v4-grpo-s2": 0.09314285714285714,
+    "v4-grpo-s3": 0.09414285714285714,
+    "v2-extra-sft-s1": 0.07471428571428572,
+    "v2-extra-sft-s2": 0.06642857142857143,
+    "v2-extra-sft-s3": 0.07414285714285715,
+    "v4-rft-s1": 0.09457142857142857,
+    "v4-grpo-step-s1": 0.09071428571428572
+  }
+}

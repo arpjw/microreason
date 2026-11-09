@@ -6,7 +6,19 @@ mid-training → SFT → DPO / GRPO) within a bounded compute budget.
 
 The full design is in [MICROREASON_MASTER_SPEC.md](MICROREASON_MASTER_SPEC.md).
 
-## Status
+## Status: closed (2026-11-09)
+
+**Final summary: [`reports/closeout.md`](reports/closeout.md).** Four protocols and about $23 of GPU time, all
+pre-registered, with sealed test suites:
+- **H1 and H2 supported, confirmed on test:** math mid-training helps (+5.3 points); SFT gives the answer format.
+- **H3 and H4 not supported:** DPO hurt accuracy. GRPO beat its parent by only +0.49 points on held-out shapes and
+  lost to equal-time continued SFT by 1.06.
+- **What fixed generalization:** digit-level tokenization plus tree-generated problems, taking held-out accuracy
+  from 0.2% to 70%.
+- **Confirmed secondary finding:** RL preserves number extrapolation that extra SFT erodes (+2.17 points on a
+  fresh frozen suite, `reports/replication_v4x.md`).
+
+### History
 
 **Stage 1 trained: v0-base and v1-math** (RTX 4090, ≈$0.64). On val, math mid-training lifts exact
 accuracy from 25.8% to 48.9% (paired +23.2 pts, 95% CI [+22.1, +24.3]); see `reports/stage1_v1.md`.
@@ -39,8 +51,11 @@ on-policy Dr. GRPO-style recipe, 3 seeds. On the sealed held-out-shape test GRPO
 [+0.09, +0.98] but lost to time-matched continued SFT by −1.06 [−1.76, −0.53]: **H4 not supported**; H1, H2
 supported. Exploratory: GRPO kept number extrapolation that continued SFT eroded (+2.18 vs the control). See
 `reports/v4_results.md`, `reports/protocol_v4.md` and `reports/GRPO gains for tiny models.md`.
+**Replication v4x (≈$0.97, evaluation only):** on a fresh, separately frozen extrapolation suite, GRPO again beat
+time-matched continued SFT, by +2.17 points [+0.62, +3.78], with all seeds positive: **replicated**. See
+`reports/replication_v4x.md`.
 Math training data: a 1.47M-problem training-only stream (≈70M tokens) excludes every frozen
-evaluation problem; see `reports/math_stream_v1.md`. No real training stage or evaluation has run yet. Every number in the spec is a target or estimate, not a measured result.
+evaluation problem; see `reports/math_stream_v1.md`. Numbers in the spec are targets or estimates; measured results are in the reports above.
 
 | Phase | Scope | Status |
 | --- | --- | --- |
