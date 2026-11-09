@@ -1,0 +1,22 @@
+{
+  "approved_at": "2026-11-08",
+  "approved_by": "project owner (approval in chat for protocol v3 Phase B)",
+  "approved_max_runtime_hours": 4.5,
+  "approved_max_usd": 6.0,
+  "billing_start": "2026-11-09T00:30:25+00:00",
+  "ceiling_at": "2026-11-09T05:00:25+00:00",
+  "elapsed_hours": 2.4418,
+  "estimated_accrued_usd": 2.4174,
+  "gpu_type": "NVIDIA RTX 6000 Ada Generation (Secure Cloud)",
+  "hourly_rate_usd": 0.99,
+  "measured_step_seconds": 0.1976,
+  "note": "GPU time at the listed rate only; storage and other charges are excluded.",
+  "pod_id": "pppweshg0o8h9t",
+  "projected_total_usd": 2.6649,
+  "provider": "runpod",
+  "reserve_minutes": 15.0,
+  "shutdown_rule": "Copy reports, data v3 manifests (including the frozen-suite file), tokenizer v2, metrics, budget ledgers, eval rows and the v0-base, v1-math and v2-sft checkpoints off the pod, then terminate (delete) it when the session finishes, at either ceiling, or on any failure; the pod also deletes itself 45 minutes after finishing if not collected.",
+  "steps_remaining": 0,
+  "stop_reason": null,
+  "updated_at": "2026-11-09T02:56:55.592122+00:00"
+}

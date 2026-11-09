@@ -1,0 +1,173 @@
+{
+  "device": "cuda",
+  "estimated_cost_usd": 2.4923,
+  "examples_processed": 100032,
+  "final_checkpoint": "runs/p3/v2-sft/checkpoints/step_0001563",
+  "final_eval": {
+    "sft_val_direct": 1.0530102294003485,
+    "sft_val_show_work": 0.01760683298637847
+  },
+  "mixture": {
+    "sft_math_train_v1": {
+      "epoch": 2,
+      "examples": 50000,
+      "position": 32
+    }
+  },
+  "provenance": {
+    "code_revision": {
+      "dirty": false,
+      "git_commit": "83921bcd7800f993e018f575c949c42f6b62dbcb",
+      "source": "REVISION file"
+    },
+    "config_hash": "sha256:24101195d426bc82e360ac7024c0900c9a04d9bdaa9844819f026265822c307c",
+    "packing_policy": "bos/eos-separated documents concatenated; attention crosses docs",
+    "parent": "runs/p3/v1-math/checkpoints/step_0006104",
+    "parent_config_hash": "sha256:88fb25dbce910334bb288352b1d825e5adca5708aa901d338c78bd5ec77b0803",
+    "parent_step": 6104,
+    "sft_data": {
+      "by_mode": {
+        "direct": 12446,
+        "show_work": 37554
+      },
+      "examples": 50000,
+      "mode_rule": "show_work if sha256('mode:' + id) bucket < show_work_fraction else direct",
+      "prompt_format": "sft-v1",
+      "selection_rule": "records sorted by sha256(id), first num_examples",
+      "tokens_per_example": {
+        "max": 260,
+        "mean": 86.4
+      },
+      "train_manifest_sha256": "0020a0e550aa91f0c17a145c02006c0ed21b86d815607d871822445e57d4c101",
+      "val_manifest_sha256": "4d9b10b328968dd9b6f2197ac36a28630fc7052c5fcd3a41d9624627aafadf21"
+    },
+    "stage": "sft",
+    "tokenizer_sha256": "c6266b1082fd4d259c12f1ff59e21c6c000d38eee50379490cd5cafc111db81a",
+    "train_datasets": {
+      "sft_math_train_v1": "95ad3bf2593372fc7c870040d81697ada25e5f790ff75d59511124d773d5cc8a"
+    },
+    "validation_datasets": {
+      "sft_val_direct": "256 val records",
+      "sft_val_show_work": "256 val records"
+    },
+    "weight_decay_policy": "decay all Linear weights; no decay on RMSNorm weights or the embedding"
+  },
+  "resolved_config": {
+    "model": {
+      "bias": false,
+      "d_model": 512,
+      "dropout": 0.0,
+      "head_dim": 64,
+      "max_seq_len": 2048,
+      "mlp": "swiglu",
+      "mlp_hidden": 1408,
+      "n_heads": 8,
+      "n_kv_heads": 8,
+      "n_layers": 12,
+      "name": "microreason-43m",
+      "norm": "rmsnorm",
+      "position": "rope",
+      "rope_theta": 10000.0,
+      "tie_embeddings": true,
+      "vocab_size": 8192
+    },
+    "schema_version": 1,
+    "stage": {
+      "budget": {
+        "approved_at": "2026-11-08",
+        "approved_by": "project owner (approval in chat for protocol v3 Phase B)",
+        "gpu_type": "NVIDIA RTX 6000 Ada Generation (Secure Cloud)",
+        "hourly_rate_usd": 0.99,
+        "max_runtime_hours": 4.5,
+        "max_spend_usd": 6.0,
+        "paid_compute_allowed": true,
+        "provider": "runpod",
+        "reserve_minutes": 15.0,
+        "shutdown_rule": "Copy reports, data v3 manifests (including the frozen-suite file), tokenizer v2, metrics, budget ledgers, eval rows and the v0-base, v1-math and v2-sft checkpoints off the pod, then terminate (delete) it when the session finishes, at either ceiling, or on any failure; the pod also deletes itself 45 minutes after finishing if not collected."
+      },
+      "checkpoint_every_steps": 500,
+      "curriculum": null,
+      "data_manifest": null,
+      "effective_batch_tokens": 24576,
+      "eval_every_steps": 250,
+      "log_every_steps": 25,
+      "max_examples": 100000,
+      "max_steps": null,
+      "max_train_tokens": null,
+      "max_wall_seconds": null,
+      "micro_batch_size": 64,
+      "mixture": [],
+      "model": "configs/model_43m.yaml",
+      "optimizer": {
+        "betas": [
+          0.9,
+          0.95
+        ],
+        "eps": 1e-08,
+        "grad_clip_norm": 1.0,
+        "name": "adamw",
+        "peak_lr": 5e-05,
+        "weight_decay": 0.1
+      },
+      "parent": "runs/p3/v1-math/checkpoints/step_0006104",
+      "precision": "bf16",
+      "scheduler": {
+        "min_lr_fraction": 0.1,
+        "name": "cosine",
+        "warmup_fraction": 0.02
+      },
+      "seed": 54,
+      "sequence_length": 384,
+      "sft": {
+        "num_examples": 50000,
+        "show_work_fraction": 0.75,
+        "stream_partition": null,
+        "train_manifest": "data/manifests/math_train_v3.json",
+        "val_examples_per_format": 256,
+        "val_manifest": "data/manifests/math_val_v3.json"
+      },
+      "stage": "sft",
+      "tokenizer": "artifacts/tokenizer/v2",
+      "validation": []
+    }
+  },
+  "software": {
+    "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+    "python": "3.13.11",
+    "torch": "2.15.0+cu132"
+  },
+  "started_at": "2026-11-09T02:59:12.010268+00:00",
+  "status": "completed",
+  "steps_completed": 1563,
+  "timing": {
+    "budget_ledger": {
+      "approved_at": "2026-11-08",
+      "approved_by": "project owner (approval in chat for protocol v3 Phase B)",
+      "approved_max_runtime_hours": 4.5,
+      "approved_max_usd": 6.0,
+      "billing_start": "2026-11-09T00:30:25+00:00",
+      "ceiling_at": "2026-11-09T05:00:25+00:00",
+      "elapsed_hours": 2.5175,
+      "estimated_accrued_usd": 2.4923,
+      "gpu_type": "NVIDIA RTX 6000 Ada Generation (Secure Cloud)",
+      "hourly_rate_usd": 0.99,
+      "measured_step_seconds": 0.0862,
+      "note": "GPU time at the listed rate only; storage and other charges are excluded.",
+      "pod_id": "pppweshg0o8h9t",
+      "projected_total_usd": 2.7398,
+      "provider": "runpod",
+      "reserve_minutes": 15.0,
+      "shutdown_rule": "Copy reports, data v3 manifests (including the frozen-suite file), tokenizer v2, metrics, budget ledgers, eval rows and the v0-base, v1-math and v2-sft checkpoints off the pod, then terminate (delete) it when the session finishes, at either ceiling, or on any failure; the pod also deletes itself 45 minutes after finishing if not collected.",
+      "steps_remaining": 0,
+      "stop_reason": null,
+      "updated_at": "2026-11-09T03:01:27.879612+00:00"
+    },
+    "median_step_seconds": 0.0862,
+    "peak_memory_gib": 7.628,
+    "stopped_at_wall_limit": false,
+    "train_wall_seconds": 135.87
+  },
+  "tokens_processed": 8646446,
+  "total_steps": 1563,
+  "updated_at": "2026-11-09T03:01:27.880261+00:00"
+}

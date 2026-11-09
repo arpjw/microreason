@@ -1,0 +1,11 @@
+{
+  "rule": {
+    "min_greedy_exact": 0.1,
+    "min_sampled_pass_at_4": 0.2
+  },
+  "greedy_exact": 0.7025,
+  "sampled_pass_at_4": 0.7436666666666667,
+  "summary": "reports/v3_phase_b/v2-sft_val_heldout_shape_sft-show-work-v1_summary.json",
+  "checkpoint_id": "sha256:8c2cf6b977d7d59019e474d8f0f5185a414d61da4276ac4de07d2e935c06fa02",
+  "passed": true
+}

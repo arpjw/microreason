@@ -1,0 +1,51 @@
+{
+  "corpus_scan": {
+    "candidate_keys": 39600,
+    "contaminated_candidates_dropped": {
+      "test_extrapolation": 0,
+      "test_heldout_shape": 0,
+      "test_id": 69,
+      "val": 60,
+      "val_heldout_shape": 0
+    },
+    "contaminated_keys": 129,
+    "corpus_files": [
+      "409f601f1c8eb559ca1173816eb48f2b6f6a6ab3e562a7111e78a6229ca7e152",
+      "51db9b9e53540a67a9f88b8299504960feb29f7bfe39ccd728d6cdbdda0678ee",
+      "57d4ab3c6f8327f33c4da47afae7491cdd9ac18d103153fd630f8c7e81a485c8",
+      "bb0d51bf863f11feafb99ea9af56acec1b8b6837413f51a7498282c7e8f37381",
+      "c0c658bbe65657c4e03f4dd593e224ecf763c0a64a6dbe468b3cc3deacfc7a3c"
+    ],
+    "documents_scanned": 435019,
+    "enabled": true
+  },
+  "coverage": {
+    "equation": {
+      "eligible": 104,
+      "heldout_test": 9,
+      "heldout_test_features_not_in_train": [],
+      "heldout_val": 10,
+      "heldout_val_features_not_in_train": [],
+      "train": 137
+    },
+    "expression": {
+      "eligible": 46912,
+      "heldout_test": 4589,
+      "heldout_test_features_not_in_train": [],
+      "heldout_val": 4591,
+      "heldout_val_features_not_in_train": [],
+      "train": 37768
+    },
+    "failures": [],
+    "passed": true
+  },
+  "frozen": "data/manifests/math_eval_frozen_v3.json",
+  "records": {
+    "test_extrapolation": 7000,
+    "test_heldout_shape": 6000,
+    "test_id": 7000,
+    "train": 100000,
+    "val": 7000,
+    "val_heldout_shape": 6000
+  }
+}

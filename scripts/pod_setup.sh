@@ -25,7 +25,14 @@ if [[ "${SETUP_PROFILE:-full}" == "v3" ]]; then
   uv run microreason data audit-v3 --report reports/v3_phase_b/data_v3_audit.json > /dev/null
   uv run microreason data generate-stream-v3 --config configs/data_v3.yaml
   echo "== tokenizer v2 (one token per digit)"
-  uv run microreason tokenizer train --config configs/tokenizer_v2.yaml
+  if [[ -f artifacts/tokenizer/v2/tokenizer.json ]]; then
+    # Committed after Phase B: reuse it, never retrain (checkpoints are bound to its hash).
+    uv run python -c "import hashlib, json; m = json.load(open('artifacts/tokenizer/v2/tokenizer_manifest.json')); \
+h = hashlib.sha256(open('artifacts/tokenizer/v2/tokenizer.json', 'rb').read()).hexdigest(); \
+assert h == m['tokenizer_sha256'], 'tokenizer v2 hash mismatch'; print('tokenizer v2 verified', h[:12])"
+  else
+    uv run microreason tokenizer train --config configs/tokenizer_v2.yaml
+  fi
   echo "== tokenize with tokenizer v2"
   uv run microreason data tokenize --tokenizer artifacts/tokenizer/v2 --out data/tokenized_v2 \
     --datasets general_text_train_v1,general_text_val_v1,math_train_v3,math_val_v3

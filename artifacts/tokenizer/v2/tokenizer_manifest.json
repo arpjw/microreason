@@ -1,0 +1,42 @@
+{
+  "config": {
+    "digits": "individual",
+    "math_format": "plain",
+    "math_manifest": "data/manifests/math_train_v3.json",
+    "min_frequency": 2,
+    "out_dir": "artifacts/tokenizer/v2",
+    "raw_dir": "data/raw",
+    "sources_config": "configs/data_sources.yaml",
+    "text_select_per_100k": 2900,
+    "version": "v2",
+    "vocab_size": 8192
+  },
+  "model": "byte-level BPE",
+  "normalization": "replace CRLF and CR with LF, then Unicode NFC",
+  "pre_tokenization": "Digits(individual_digits=True) then ByteLevel(add_prefix_space=False, use_regex=True)",
+  "schema_version": 1,
+  "special_tokens": {
+    "[/answer]": 8,
+    "[/steps]": 6,
+    "[answer]": 7,
+    "[assistant]": 4,
+    "[bos]": 1,
+    "[eos]": 2,
+    "[pad]": 0,
+    "[steps]": 5,
+    "[user]": 3
+  },
+  "special_tokens_matched_in_text": false,
+  "tokenizer_sha256": "c6266b1082fd4d259c12f1ff59e21c6c000d38eee50379490cd5cafc111db81a",
+  "training_data": {
+    "general_text_chars": 47654312,
+    "general_text_docs": 12170,
+    "general_text_split": "train",
+    "math_char_fraction": 0.2476,
+    "math_chars": 15684401,
+    "math_manifest_sha256": "0020a0e550aa91f0c17a145c02006c0ed21b86d815607d871822445e57d4c101",
+    "math_records": 100000
+  },
+  "version": "v2",
+  "vocab_size": 8192
+}

@@ -1,0 +1,3 @@
+runs/p3/v0-base/checkpoints/step_0015259
+runs/p3/v1-math/checkpoints/step_0006104
+runs/p3/v2-sft/checkpoints/step_0001563

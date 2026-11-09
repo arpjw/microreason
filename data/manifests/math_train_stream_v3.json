@@ -1,0 +1,49 @@
+{
+  "build_rejections": {
+    "duplicate": 344940,
+    "duplicate_across_parts": 940587,
+    "frozen_eval_overlap": 181242,
+    "sampler:division_by_zero": 145150,
+    "sampler:no_unique_solution": 250120,
+    "sampler:solved_constant_out_of_range": 666638,
+    "sampler:trace_does_not_end_in_answer": 26460,
+    "sampler:value_cap": 547425,
+    "shape_not_in_split_set": 979076
+  },
+  "by_difficulty": {
+    "1": 309925,
+    "2": 1581504,
+    "3": 1428562,
+    "4": 1416547,
+    "5": 1263462
+  },
+  "code_revision": {
+    "dirty": false,
+    "git_commit": "83921bcd7800f993e018f575c949c42f6b62dbcb",
+    "source": "REVISION file"
+  },
+  "data_config_hash": "sha256:1f26dfe86be00155de6fec1fb6a7f2fb696fc5743c3bb265adcd623bb9d75569",
+  "dataset": "math",
+  "distinct_shapes": 37560,
+  "excluded_fingerprints": 33000,
+  "excluded_frozen_suites": {
+    "test_extrapolation": "28db77f8794d27dc7a31ff3901ca131c279f51a564d0c7d43fccb93b87e441ca",
+    "test_heldout_shape": "a370443a077d1469d8d6c1fa5528a0608f460763fa87bcfc57dab5c54546ae73",
+    "test_id": "2085da0f3c2ef612e58a266513e56760f6d8222a94cec663f1b6834b12f3254a",
+    "val": "4d9b10b328968dd9b6f2197ac36a28630fc7052c5fcd3a41d9624627aafadf21",
+    "val_heldout_shape": "fabbcecef5ddda6018b81c2df1c33d6f4146094e7db6c7be60ae508590d2c39e"
+  },
+  "file": "data/generated/math_v3/train_stream/train_stream.jsonl",
+  "generator_version": "3.0",
+  "record_count": 6000000,
+  "root_seed": 20261110,
+  "schema_version": 1,
+  "sha256": "d359e6015d5cbe80a69017f3c100ff02acee330e38483aa0e2e35642145ec144",
+  "shards": {
+    "a": 3600995,
+    "b": 2399005,
+    "rule": "sha256(id) bucket < 0.6 -> a, else b"
+  },
+  "split": "train_stream",
+  "version": "v3"
+}

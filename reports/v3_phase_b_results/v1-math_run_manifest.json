@@ -1,0 +1,251 @@
+{
+  "device": "cuda",
+  "estimated_cost_usd": 2.4174,
+  "examples_processed": 195328,
+  "final_checkpoint": "runs/p3/v1-math/checkpoints/step_0006104",
+  "final_eval": {
+    "general_text_val": 2.4281885474920273,
+    "math_val": 0.3567379340529442
+  },
+  "mixture": {
+    "curriculum": {
+      "current_phase": 2,
+      "phase_log": [
+        {
+          "at_tokens": 50003979,
+          "phase": 1
+        },
+        {
+          "at_tokens": 120009554,
+          "phase": 2
+        }
+      ],
+      "phases": [
+        {
+          "until_tokens": 50003968,
+          "weights": {
+            "general_text_train_v1": 0.15,
+            "math_stream_b_easy_v3": 0.45,
+            "math_stream_b_hard_v3": 0.4
+          }
+        },
+        {
+          "until_tokens": 120009523,
+          "weights": {
+            "general_text_train_v1": 0.15,
+            "math_stream_b_easy_v3": 0.2,
+            "math_stream_b_hard_v3": 0.65
+          }
+        },
+        {
+          "until_tokens": 200015872,
+          "weights": {
+            "general_text_train_v1": 0.15,
+            "math_stream_b_easy_v3": 0.05,
+            "math_stream_b_hard_v3": 0.8
+          }
+        }
+      ]
+    },
+    "general_text_train_v1": {
+      "actual": 0.15,
+      "documents": 33322,
+      "epoch": 0,
+      "target": 0.15
+    },
+    "math_stream_b_easy_v3": {
+      "actual": 0.2025,
+      "documents": 721249,
+      "epoch": 0,
+      "target": 0.2
+    },
+    "math_stream_b_hard_v3": {
+      "actual": 0.6475,
+      "documents": 1105379,
+      "epoch": 0,
+      "target": 0.65
+    }
+  },
+  "provenance": {
+    "code_revision": {
+      "dirty": false,
+      "git_commit": "83921bcd7800f993e018f575c949c42f6b62dbcb",
+      "source": "REVISION file"
+    },
+    "config_hash": "sha256:88fb25dbce910334bb288352b1d825e5adca5708aa901d338c78bd5ec77b0803",
+    "packing_policy": "bos/eos-separated documents concatenated; attention crosses docs",
+    "parent": "runs/p3/v0-base/checkpoints/step_0015259",
+    "parent_config_hash": "sha256:f60c6a4e57b73f3ff1b89a11989400f31510689b44bc75bb56d2b76729f98d8f",
+    "parent_step": 15259,
+    "stage": "midtrain",
+    "tokenizer_sha256": "c6266b1082fd4d259c12f1ff59e21c6c000d38eee50379490cd5cafc111db81a",
+    "train_datasets": {
+      "general_text_train_v1": "b4849f9c5e32701d4a8ae7f8150b9652dda04098f14c55a164ace3ab041ccea5",
+      "math_stream_b_easy_v3": "fe619aea9167399b48e63e1db2dda940f462ac99e4973c3299a0b16cf623a9b9",
+      "math_stream_b_hard_v3": "6b51f17ecc6be0e5c149f44e0a3e6e145defd00f01a32600d89d6e504f719a7b"
+    },
+    "validation_datasets": {
+      "general_text_val_v1": "59df64a58df011b61186a5f432e1afbc9c45e275ec8222602bc35c029a165d97",
+      "math_val_v3": "3e83b8c9e2406d69b01ad11c04d1f433d77fe7bbc047bdb9399fcbca1fd99e85"
+    },
+    "weight_decay_policy": "decay all Linear weights; no decay on RMSNorm weights or the embedding"
+  },
+  "resolved_config": {
+    "model": {
+      "bias": false,
+      "d_model": 512,
+      "dropout": 0.0,
+      "head_dim": 64,
+      "max_seq_len": 2048,
+      "mlp": "swiglu",
+      "mlp_hidden": 1408,
+      "n_heads": 8,
+      "n_kv_heads": 8,
+      "n_layers": 12,
+      "name": "microreason-43m",
+      "norm": "rmsnorm",
+      "position": "rope",
+      "rope_theta": 10000.0,
+      "tie_embeddings": true,
+      "vocab_size": 8192
+    },
+    "schema_version": 1,
+    "stage": {
+      "budget": {
+        "approved_at": "2026-11-08",
+        "approved_by": "project owner (approval in chat for protocol v3 Phase B)",
+        "gpu_type": "NVIDIA RTX 6000 Ada Generation (Secure Cloud)",
+        "hourly_rate_usd": 0.99,
+        "max_runtime_hours": 4.5,
+        "max_spend_usd": 6.0,
+        "paid_compute_allowed": true,
+        "provider": "runpod",
+        "reserve_minutes": 15.0,
+        "shutdown_rule": "Copy reports, data v3 manifests (including the frozen-suite file), tokenizer v2, metrics, budget ledgers, eval rows and the v0-base, v1-math and v2-sft checkpoints off the pod, then terminate (delete) it when the session finishes, at either ceiling, or on any failure; the pod also deletes itself 45 minutes after finishing if not collected."
+      },
+      "checkpoint_every_steps": 2000,
+      "curriculum": [
+        {
+          "until_fraction": 0.25,
+          "weights": {
+            "data/tokenized_v2/general_text_train_v1": 0.15,
+            "data/tokenized_v2/math_stream_b_easy_v3": 0.45,
+            "data/tokenized_v2/math_stream_b_hard_v3": 0.4
+          }
+        },
+        {
+          "until_fraction": 0.6,
+          "weights": {
+            "data/tokenized_v2/general_text_train_v1": 0.15,
+            "data/tokenized_v2/math_stream_b_easy_v3": 0.2,
+            "data/tokenized_v2/math_stream_b_hard_v3": 0.65
+          }
+        },
+        {
+          "until_fraction": 1.0,
+          "weights": {
+            "data/tokenized_v2/general_text_train_v1": 0.15,
+            "data/tokenized_v2/math_stream_b_easy_v3": 0.05,
+            "data/tokenized_v2/math_stream_b_hard_v3": 0.8
+          }
+        }
+      ],
+      "data_manifest": null,
+      "effective_batch_tokens": 32768,
+      "eval_every_steps": 500,
+      "log_every_steps": 10,
+      "max_examples": null,
+      "max_steps": null,
+      "max_train_tokens": 200000000,
+      "max_wall_seconds": null,
+      "micro_batch_size": 16,
+      "mixture": [
+        {
+          "dataset": "data/tokenized_v2/math_stream_b_easy_v3",
+          "weight": 0.2
+        },
+        {
+          "dataset": "data/tokenized_v2/math_stream_b_hard_v3",
+          "weight": 0.65
+        },
+        {
+          "dataset": "data/tokenized_v2/general_text_train_v1",
+          "weight": 0.15
+        }
+      ],
+      "model": "configs/model_43m.yaml",
+      "optimizer": {
+        "betas": [
+          0.9,
+          0.95
+        ],
+        "eps": 1e-08,
+        "grad_clip_norm": 1.0,
+        "name": "adamw",
+        "peak_lr": 0.0001,
+        "weight_decay": 0.1
+      },
+      "parent": "runs/p3/v0-base/checkpoints/step_0015259",
+      "precision": "bf16",
+      "scheduler": {
+        "min_lr_fraction": 0.1,
+        "name": "cosine",
+        "warmup_fraction": 0.02
+      },
+      "seed": 53,
+      "sequence_length": 1024,
+      "sft": null,
+      "stage": "midtrain",
+      "tokenizer": "artifacts/tokenizer/v2",
+      "validation": [
+        {
+          "dataset": "data/tokenized_v2/general_text_val_v1",
+          "sequences": 256
+        },
+        {
+          "dataset": "data/tokenized_v2/math_val_v3",
+          "sequences": 256
+        }
+      ]
+    }
+  },
+  "software": {
+    "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+    "python": "3.13.11",
+    "torch": "2.15.0+cu132"
+  },
+  "started_at": "2026-11-09T02:36:30.365687+00:00",
+  "status": "completed",
+  "steps_completed": 6104,
+  "timing": {
+    "budget_ledger": {
+      "approved_at": "2026-11-08",
+      "approved_by": "project owner (approval in chat for protocol v3 Phase B)",
+      "approved_max_runtime_hours": 4.5,
+      "approved_max_usd": 6.0,
+      "billing_start": "2026-11-09T00:30:25+00:00",
+      "ceiling_at": "2026-11-09T05:00:25+00:00",
+      "elapsed_hours": 2.4418,
+      "estimated_accrued_usd": 2.4174,
+      "gpu_type": "NVIDIA RTX 6000 Ada Generation (Secure Cloud)",
+      "hourly_rate_usd": 0.99,
+      "measured_step_seconds": 0.1976,
+      "note": "GPU time at the listed rate only; storage and other charges are excluded.",
+      "pod_id": "pppweshg0o8h9t",
+      "projected_total_usd": 2.6649,
+      "provider": "runpod",
+      "reserve_minutes": 15.0,
+      "shutdown_rule": "Copy reports, data v3 manifests (including the frozen-suite file), tokenizer v2, metrics, budget ledgers, eval rows and the v0-base, v1-math and v2-sft checkpoints off the pod, then terminate (delete) it when the session finishes, at either ceiling, or on any failure; the pod also deletes itself 45 minutes after finishing if not collected.",
+      "steps_remaining": 0,
+      "stop_reason": null,
+      "updated_at": "2026-11-09T02:56:55.592122+00:00"
+    },
+    "median_step_seconds": 0.1976,
+    "peak_memory_gib": 7.579,
+    "stopped_at_wall_limit": false,
+    "train_wall_seconds": 1225.23
+  },
+  "tokens_processed": 200015872,
+  "total_steps": 6104,
+  "updated_at": "2026-11-09T02:56:55.593145+00:00"
+}

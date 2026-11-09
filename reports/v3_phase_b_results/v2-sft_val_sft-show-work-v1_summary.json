@@ -1,0 +1,180 @@
+{
+  "checkpoint": "runs/p3/v2-sft/checkpoints/step_0001563",
+  "checkpoint_id": "sha256:8c2cf6b977d7d59019e474d8f0f5185a414d61da4276ac4de07d2e935c06fa02",
+  "checkpoint_step": 1563,
+  "data_version": "v3",
+  "decode": {
+    "greedy": {
+      "max_new_tokens": 320
+    },
+    "kv_cache": true,
+    "sampled": {
+      "max_new_tokens": 320,
+      "samples": 4,
+      "seed": 0,
+      "temperature": 0.8
+    }
+  },
+  "device": "cuda",
+  "greedy": {
+    "accuracy_by_difficulty": {
+      "1": {
+        "denominator": 592,
+        "numerator": 555,
+        "value": 0.9375,
+        "wilson95": [
+          0.9150397192798118,
+          0.9543190544873575
+        ]
+      },
+      "2": {
+        "denominator": 1786,
+        "numerator": 1493,
+        "value": 0.8359462486002239,
+        "wilson95": [
+          0.8180537994234683,
+          0.8523966441541803
+        ]
+      },
+      "3": {
+        "denominator": 1750,
+        "numerator": 1329,
+        "value": 0.7594285714285715,
+        "wilson95": [
+          0.7388482009843235,
+          0.7788724831934534
+        ]
+      },
+      "4": {
+        "denominator": 1569,
+        "numerator": 1174,
+        "value": 0.7482472912683238,
+        "wilson95": [
+          0.7261830062453309,
+          0.7690989534406052
+        ]
+      },
+      "5": {
+        "denominator": 1303,
+        "numerator": 913,
+        "value": 0.7006907137375288,
+        "wilson95": [
+          0.6752647370615364,
+          0.7249368302134719
+        ]
+      }
+    },
+    "accuracy_by_family": {
+      "expression_1op": {
+        "denominator": 775,
+        "numerator": 734,
+        "value": 0.9470967741935484,
+        "wilson95": [
+          0.9290173187697026,
+          0.9607658227817584
+        ]
+      },
+      "expression_2op": {
+        "denominator": 1380,
+        "numerator": 1099,
+        "value": 0.7963768115942029,
+        "wilson95": [
+          0.7743214420088727,
+          0.816786733559951
+        ]
+      },
+      "expression_3op": {
+        "denominator": 1123,
+        "numerator": 715,
+        "value": 0.6366874443455031,
+        "wilson95": [
+          0.6081361218773326,
+          0.664306818162603
+        ]
+      },
+      "expression_4op": {
+        "denominator": 733,
+        "numerator": 370,
+        "value": 0.504774897680764,
+        "wilson95": [
+          0.4686496579218665,
+          0.5408503504126311
+        ]
+      },
+      "expression_5op": {
+        "denominator": 535,
+        "numerator": 196,
+        "value": 0.3663551401869159,
+        "wilson95": [
+          0.3266157464147436,
+          0.40800007117106524
+        ]
+      },
+      "linear_equation": {
+        "denominator": 2454,
+        "numerator": 2350,
+        "value": 0.9576202118989405,
+        "wilson95": [
+          0.9489086352291554,
+          0.9649013226668521
+        ]
+      }
+    },
+    "exact_accuracy": {
+      "denominator": 7000,
+      "numerator": 5464,
+      "value": 0.7805714285714286,
+      "wilson95": [
+        0.7707238855504278,
+        0.7901111966105262
+      ]
+    },
+    "generated_tokens": {
+      "max": 209,
+      "mean": 76.44857142857143,
+      "median": 71
+    },
+    "prompts": 7000,
+    "status_counts": {
+      "correct": 5464,
+      "invalid_format": 1,
+      "wrong": 1535
+    },
+    "valid_format_rate": {
+      "denominator": 7000,
+      "numerator": 6999,
+      "value": 0.9998571428571429,
+      "wilson95": [
+        0.9991911818238058,
+        0.9999747817613155
+      ]
+    }
+  },
+  "greedy_seconds": 46.608,
+  "limited_to": null,
+  "prompt_format": "sft-show-work-v1",
+  "protocol": "eval-v2-cached",
+  "sampled": {
+    "pass@4": {
+      "denominator": 7000,
+      "numerator": 5703,
+      "value": 0.8147142857142857,
+      "wilson95": [
+        0.8054408269157008,
+        0.8236425162617848
+      ]
+    },
+    "sampled_pass@1": {
+      "denominator": 28000,
+      "numerator": 21377,
+      "value": 0.7634642857142857,
+      "wilson95": [
+        0.758450848804455,
+        0.7684054405976821
+      ]
+    },
+    "samples_per_prompt": 4
+  },
+  "suite": "val",
+  "suite_sha256": "4d9b10b328968dd9b6f2197ac36a28630fc7052c5fcd3a41d9624627aafadf21"
+}

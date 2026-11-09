@@ -27,6 +27,10 @@ The test suites have now been used once; any later test evaluation is post-hoc.
 **Closeout:** H1 and H2 supported (val), H3 and H4 not supported; see `reports/closeout_v1.md`.
 Out-of-distribution failures (tokenizer-limited number copying, template substitution) are
 analysed in `reports/failure_analysis_v1.md`.
+**Protocol v3 Phase B (≈$2.76):** digit tokenizer + tree-generated data. v2-sft solves 70.3% of
+held-out-*shape* val problems (v1 held-out templates: 0.17%), as well as same-size training
+shapes; accuracy is limited by depth (95% at 1 operator, ~37% at 5). H1 +5.2, H2 +78.1 on val.
+Capability gate passed; see `reports/v3_phase_b.md` and `reports/protocol_v3.md`.
 Math training data: a 1.47M-problem training-only stream (≈70M tokens) excludes every frozen
 evaluation problem; see `reports/math_stream_v1.md`. No real training stage or evaluation has run yet. Every number in the spec is a target or estimate, not a measured result.
 

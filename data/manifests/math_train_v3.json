@@ -1,0 +1,92 @@
+{
+  "build_rejections": {
+    "duplicate": 6659,
+    "sampler:division_by_zero": 6705,
+    "sampler:no_unique_solution": 11757,
+    "sampler:solved_constant_out_of_range": 32468,
+    "sampler:trace_does_not_end_in_answer": 1230,
+    "sampler:value_cap": 27185,
+    "shape_not_in_split_set": 256966
+  },
+  "code_revision": {
+    "dirty": false,
+    "git_commit": "83921bcd7800f993e018f575c949c42f6b62dbcb",
+    "source": "REVISION file"
+  },
+  "corpus_scan": {
+    "candidate_keys": 39600,
+    "contaminated_candidates_dropped": {
+      "test_extrapolation": 0,
+      "test_heldout_shape": 0,
+      "test_id": 69,
+      "val": 60,
+      "val_heldout_shape": 0
+    },
+    "contaminated_keys": 129,
+    "corpus_files": [
+      "409f601f1c8eb559ca1173816eb48f2b6f6a6ab3e562a7111e78a6229ca7e152",
+      "51db9b9e53540a67a9f88b8299504960feb29f7bfe39ccd728d6cdbdda0678ee",
+      "57d4ab3c6f8327f33c4da47afae7491cdd9ac18d103153fd630f8c7e81a485c8",
+      "bb0d51bf863f11feafb99ea9af56acec1b8b6837413f51a7498282c7e8f37381",
+      "c0c658bbe65657c4e03f4dd593e224ecf763c0a64a6dbe468b3cc3deacfc7a3c"
+    ],
+    "documents_scanned": 435019,
+    "enabled": true
+  },
+  "counts": {
+    "by_answer_type": {
+      "integer": 60184,
+      "rational": 39816
+    },
+    "by_difficulty": {
+      "1": 8433,
+      "2": 25651,
+      "3": 24068,
+      "4": 23263,
+      "5": 18585
+    },
+    "by_family": {
+      "expression_1op": 11286,
+      "expression_2op": 20532,
+      "expression_3op": 15682,
+      "expression_4op": 11279,
+      "expression_5op": 7502,
+      "linear_equation": 33719
+    },
+    "by_kind": {
+      "expression": 66281,
+      "linear_equation": 33719
+    },
+    "distinct_shapes": 9407
+  },
+  "coverage": {
+    "equation": {
+      "eligible": 104,
+      "heldout_test": 9,
+      "heldout_test_features_not_in_train": [],
+      "heldout_val": 10,
+      "heldout_val_features_not_in_train": [],
+      "train": 137
+    },
+    "expression": {
+      "eligible": 46912,
+      "heldout_test": 4589,
+      "heldout_test_features_not_in_train": [],
+      "heldout_val": 4591,
+      "heldout_val_features_not_in_train": [],
+      "train": 37768
+    },
+    "passed": true
+  },
+  "data_config_hash": "sha256:1f26dfe86be00155de6fec1fb6a7f2fb696fc5743c3bb265adcd623bb9d75569",
+  "dataset": "math",
+  "file": "data/generated/math_v3/train/train.jsonl",
+  "generator_version": "3.0",
+  "record_count": 100000,
+  "required_shape_set": "train",
+  "root_seed": 20261110,
+  "schema_version": 1,
+  "sha256": "0020a0e550aa91f0c17a145c02006c0ed21b86d815607d871822445e57d4c101",
+  "split": "train",
+  "version": "v3"
+}
