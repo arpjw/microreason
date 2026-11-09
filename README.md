@@ -1,141 +1,214 @@
 # MicroReason
 
-A small (~42.7M parameter) decoder language model, trained from random initialization, to test whether
-arithmetic and basic algebra skills can be learned through a staged pipeline (base pretraining → math
-mid-training → SFT → DPO / GRPO) within a bounded compute budget.
+Small decoder-only language models (42.7 M parameters) trained **from random initialization** to
+do exact arithmetic and linear algebra with step-by-step work. The project asked whether a staged
+pipeline can teach a tiny model to reason within a small compute budget. The pipeline is base
+pretraining → math mid-training → SFT → RL. Every hypothesis was pre-registered and tested once
+on sealed test suites, for a total GPU spend of about $23.
 
-The full design is in [MICROREASON_MASTER_SPEC.md](MICROREASON_MASTER_SPEC.md).
+- **Models:** [huggingface.co/arpjw/microreason-43m](https://huggingface.co/arpjw/microreason-43m)
+- **Final report:** [`reports/closeout.md`](reports/closeout.md)
+- **Design spec:** [`MICROREASON_MASTER_SPEC.md`](MICROREASON_MASTER_SPEC.md)
 
-## Status: closed (2026-11-09)
+**Status:** closed (2026-11-09).
 
-**Final summary: [`reports/closeout.md`](reports/closeout.md).** Four protocols and about $23 of GPU time, all
-pre-registered, with sealed test suites:
-- **H1 and H2 supported, confirmed on test:** math mid-training helps (+5.3 points); SFT gives the answer format.
-- **H3 and H4 not supported:** DPO hurt accuracy. GRPO beat its parent by only +0.49 points on held-out shapes and
-  lost to equal-time continued SFT by 1.06.
-- **What fixed generalization:** digit-level tokenization plus tree-generated problems, taking held-out accuracy
-  from 0.2% to 70%.
-- **Confirmed secondary finding:** RL preserves number extrapolation that extra SFT erodes (+2.17 points on a
-  fresh frozen suite, `reports/replication_v4x.md`).
+## Results
 
-### History
+The final models come from protocol v4:
 
-**Stage 1 trained: v0-base and v1-math** (RTX 4090, ≈$0.64). On val, math mid-training lifts exact
-accuracy from 25.8% to 48.9% (paired +23.2 pts, 95% CI [+22.1, +24.3]); see `reports/stage1_v1.md`.
-**v2-sft trained** (≈$0.44): val show-work 50.0%, direct 21.8%, 100% valid format, pass@4 60.5%;
-see `reports/stage2_v1.md`.
-**Protocol v2 (scaled: 1B base + 200M mid tokens, ≈$2.19):** val accuracy v0-base 88.1%, v1-math
-93.9%, v2-sft show-work 89.9% (pass@4 93.6%); see `reports/scale_v2.md` and `reports/protocol_v2.md`.
+| Model | Held-out-shape test | In-distribution test | 4–5 digit extrapolation |
+| --- | ---: | ---: | ---: |
+| `sft-long`: SFT model (3.1 M supervised examples) | 81.4% | 87.1% | 10.2% |
+| `grpo`: `sft-long` + GRPO (150 on-policy steps, outcome reward) | 82.0% | 87.8% | 10.1% |
+| `extra-sft`: `sft-long` + continued SFT for the same GPU time as GRPO | 83.1% | 88.8% | 7.8% |
 
-**RL stage v1 (≈$1.75, val only):** v4-grpo 88.4% (−1.5 vs v2-sft), equal-compute v2-extra-sft
-93.9% (+4.1), v3-dpo 84.5% (−5.4); the reward-variance gate passed (mixed groups 0.28). See
-`reports/rl_v1.md` and `reports/rl_protocol_v1.md`.
-**RL stage v2 + confirmatory test (≈$2.31):** GRPO v2 (KV-cache rollouts, mixed-group sampling,
-group 8) val 88.1% (−1.8) vs time-matched v2-extra-sft-r2 94.4% (+4.5). **H4 not supported** on
-the held-out-template test: every model is near 0% there (v4-grpo-r2 0.07%, v2-sft 0.17%,
-v2-extra-sft-r2 0.20%), and near 0% on number extrapolation; `test_id` 87.8 / 90.2 / 94.3%.
-See `reports/rl_v2.md`, `reports/rl_protocol_v2.md` and `reports/confirmatory_plan_v1.md`.
-The test suites have now been used once; any later test evaluation is post-hoc.
-**Closeout:** H1 and H2 supported (val), H3 and H4 not supported; see `reports/closeout_v1.md`.
-Out-of-distribution failures (tokenizer-limited number copying, template substitution) are
-analysed in `reports/failure_analysis_v1.md`.
-**Protocol v3 Phase B (≈$2.76):** digit tokenizer + tree-generated data. v2-sft solves 70.3% of
-held-out-*shape* val problems (v1 held-out templates: 0.17%), as well as same-size training
-shapes; accuracy is limited by depth (95% at 1 operator, ~37% at 5). H1 +5.2, H2 +78.1 on val.
-Capability gate passed; see `reports/v3_phase_b.md` and `reports/protocol_v3.md`.
-**Protocol v3 Phase C (≈$0.63, two attempts):** the RL reward-variance gate failed twice (mixed
-groups 0.182 at T 0.8, 0.195 at T 1.0; rule ≥ 0.20). v2-sft's outcomes are near all-or-nothing per
-prompt. No GRPO ran; the v3 test suites stay sealed; H4 undecided. See `reports/v3_phase_c_attempt2.md`.
-**Protocol v4 (≈$10.47):** converged SFT parent (80.7% held-out-val), a pass-rate-filtered prompt stream and an
-on-policy Dr. GRPO-style recipe, 3 seeds. On the sealed held-out-shape test GRPO beat its parent by +0.49 pts
-[+0.09, +0.98] but lost to time-matched continued SFT by −1.06 [−1.76, −0.53]: **H4 not supported**; H1, H2
-supported. Exploratory: GRPO kept number extrapolation that continued SFT eroded (+2.18 vs the control). See
-`reports/v4_results.md`, `reports/protocol_v4.md` and `reports/GRPO gains for tiny models.md`.
-**Replication v4x (≈$0.97, evaluation only):** on a fresh, separately frozen extrapolation suite, GRPO again beat
-time-matched continued SFT, by +2.17 points [+0.62, +3.78], with all seeds positive: **replicated**. See
-`reports/replication_v4x.md`.
-Math training data: a 1.47M-problem training-only stream (≈70M tokens) excludes every frozen
-evaluation problem; see `reports/math_stream_v1.md`. Numbers in the spec are targets or estimates; measured results are in the reports above.
+**How these numbers were measured:**
+- **Decoding:** greedy, show-work format, exact final answer.
+- **Suite sizes:** 6,000 / 7,000 / 7,000 problems.
+- **Sealing:** the suites were frozen before training and opened once.
+- **Held out:** a held-out shape is an expression structure never seen in training.
 
-| Phase | Scope | Status |
-| --- | --- | --- |
-| 1 | Package, typed config schema, logging, CLI skeleton, tests | Done (local tests green) |
-| 2 | Data generators, splits, manifests, answer verifier | Done; eval suites frozen (`data/manifests/math_eval_frozen_v1.json`) |
-| 3 | Tokenizer and model | Done; see `reports/phase3_inspection_v1.md` |
-| 4 | Common training loop, resume, smoke tests | Done; see `reports/phase4_training_loop_v1.md` |
-| 5 | Authorized GPU pilot | Done; see `reports/phase5_pilot_v1.md` |
-| 6 | Base pretraining and math mid-training | Done (val only; test sealed) |
-| 7 | SFT (v2-sft) | Done (val only); DPO, GRPO and SFT control not started |
-| 8 | Branch comparisons, sealed test evaluation, final report | Not started |
+**Pre-registered hypotheses** (spec §7):
 
-## Setup
+| ID | Hypothesis | Finding | Evidence |
+| --- | --- | --- | --- |
+| H1 | Math mid-training improves math capability | **Supported** | +5.29 pts [+4.49, +6.14] on `test_id` |
+| H2 | SFT gives instruction following and answer format | **Supported** | 0.0% → 79.5% under SFT prompts on `test_id` |
+| H3 | DPO improves format without a major correctness loss | **Not supported** | format already 100% valid; −5.1 pts on `test_id` |
+| H4 | Outcome-reward GRPO beats SFT and equal-cost continued SFT on held-out problems | **Not supported** | +0.49 [+0.09, +0.98] vs parent; −1.06 [−1.76, −0.53] vs continued SFT |
 
-Requires [uv](https://docs.astral.sh/uv/). The project pins Python 3.13 via `.python-version`.
+**Confirmed secondary finding.** RL *preserves* the ability to handle numbers larger than any seen
+in training, which continued SFT erodes.
+- **First result (v4):** GRPO beat time-matched continued SFT by +2.18 points
+  [+0.56, +3.88].
+- **Replication:** +2.17 [+0.62, +3.78] on a fresh, separately frozen suite.
+- **Consistency:** all three seeds were positive both times.
+
+## What the models do
+
+**Expressions:** expressions with 1–5 operators over integers up to 999 (`+ − × ÷`, parentheses),
+with exact rational results.
+
+**Equations:** linear equations such as `3(x + 4) − 2 = 5x − 10`.
+
+**Output format:** each model writes numbered reduction steps, then an answer:
+
+```
+[steps]
+1. Expand: 3x + 12 - 2 = 5x - 10
+2. Combine constants: 3x + 10 = 5x - 10
+3. Subtract 5x from both sides: -2x + 10 = -10
+4. Subtract 10 from both sides: -2x = -20
+5. Divide both sides by -2: x = 10
+[/steps]
+[answer]10[/answer][eos]
+```
+
+**Accuracy falls with depth:** about 98% with 1 operator, 76% with 3 and 60% with 5. Linear
+equations are about 99%.
+
+## Usage
+
+**From Hugging Face:** no checkout needed; the model code ships with the weights.
+
+```python
+import torch
+from transformers import AutoModelForCausalLM, PreTrainedTokenizerFast
+from huggingface_hub import snapshot_download
+
+path = snapshot_download("arpjw/microreason-43m", allow_patterns=["grpo/*"]) + "/grpo"
+tok = PreTrainedTokenizerFast(tokenizer_file=f"{path}/tokenizer.json")
+model = AutoModelForCausalLM.from_pretrained(path, trust_remote_code=True).eval()
+
+prompt = "[bos][user]Compute: (12 - 5) * 3 + 4 / 2 Show your work.[eos][assistant]"
+ids = torch.tensor([tok(prompt, add_special_tokens=False)["input_ids"]])
+eos = tok.convert_tokens_to_ids("[eos]")
+with torch.no_grad():
+    for _ in range(320):
+        nxt = model(ids).logits[0, -1].argmax().item()
+        ids = torch.cat([ids, torch.tensor([[nxt]])], dim=1)
+        if nxt == eos:
+            break
+print(tok.decode(ids[0]))
+```
+
+**From this repository:**
+- **Requires** [uv](https://docs.astral.sh/uv/); Python 3.13 is pinned.
+- **Evaluation is protected:** it only runs on frozen suites, and test suites refuse to open
+  without `--allow-test`.
 
 ```bash
 uv sync
 uv run pytest
-uv run microreason --help
+uv run microreason eval --suite val --checkpoint <checkpoint> --format sft-show-work-v1 \
+    --data-version v3 --tokenizer artifacts/tokenizer/v2 --kv-cache --max-new-tokens 320 \
+    --out runs/eval/<name>
+uv run microreason compare --a runs/eval/<a> --b runs/eval/<b>    # paired bootstrap, b − a
 ```
 
-## What works today
+**Prompt formats** (the markers are single tokens):
+
+| Format | Prompt | Used for |
+| --- | --- | --- |
+| `sft-show-work-v1` | `[bos][user]{problem} Show your work.[eos][assistant]` | SFT and RL models |
+| `sft-direct-v1` | `[bos][user]{problem} Give only the answer.[eos][assistant]` | SFT models; about 35% accuracy |
+| `plain-v1` | `[bos]{problem}\n` | base and mid-trained models; they continue to `Answer: x` |
+
+## Training
+
+| Stage | Data | Notes |
+| --- | --- | --- |
+| Base pretraining | 1.0 B tokens: 70% general text ([Cosmopedia](https://huggingface.co/datasets/HuggingFaceTB/cosmopedia)), 30% synthetic math | from random init |
+| Math mid-training | 200 M tokens, 85% math with an easy → hard curriculum | |
+| SFT | 100 k, then 3 M more verified worked solutions (75% show-work, 25% answer-only) | `sft-long` |
+| GRPO | 150 steps × 1,024 completions, group 16, binary exact-answer reward, pass-rate filter (2–14 of 16 correct), LR 3e-6, KL 1e-3, one update per batch | `grpo` |
+| Continued SFT | about 2.2 M fresh worked solutions in the same 46 min of GPU time | `extra-sft` |
+
+**Model:** 12 layers × 512 dimensions, 8 heads, RMSNorm, RoPE, SwiGLU, tied embeddings.
+
+**Tokenizer:** an 8,192-token byte-level BPE that splits every number into single digits.
+
+**Math data:** generated by a seeded expression-tree grammar; every training problem is checked
+against the frozen evaluation suites to exclude overlap.
+
+## What we learned
+
+1. **Data representation was the bottleneck, not the training method.**
+   - **Before:** with ordinary BPE numbers and 14 fixed templates, every model scored ≤ 0.2% on
+     held-out templates.
+   - **After:** digit-level tokens plus tree-generated problems reached 70% on held-out shapes,
+     with the same model and budget.
+2. **GRPO needs the published recipe, even at 43 M parameters.**
+   - **Before:** with off-policy minibatches, std-normalised advantages, a 10× higher LR and a
+     strong KL, GRPO lost to its parent.
+   - **After:** with on-policy updates, Dr. GRPO-style normalisation and a pass-rate-filtered
+     prompt stream, it gains on every seed.
+3. **With unlimited correct worked solutions, extra SFT beats RL at equal compute.** In GRPO's
+   46 minutes, continued SFT processed about 2.2 M fresh gold traces; GRPO trained on about 154 k
+   of its own samples.
+4. **RL's advantage here is protection, not improvement.** Extra SFT erodes extrapolation to
+   larger numbers; GRPO and RFT don't.
+5. **GRPO's negative term added nothing over rejection-sampling fine-tuning** (+0.13, interval
+   includes 0). A bounded step-level process reward did not help either.
+
+## History
+
+| Protocol | What changed | What it found | Spend | Report |
+| --- | --- | --- | ---: | --- |
+| v1 | 14 fixed templates, BPE tokenizer | Pipeline works; mid-training +23 pts on val | ≈ $1.1 | [`stage1_v1`](reports/stage1_v1.md), [`stage2_v1`](reports/stage2_v1.md) |
+| v2 | 1 B base + 200 M mid tokens; GRPO, DPO, equal-compute SFT | ≤ 0.2% on held-out templates for every model; GRPO and DPO lost | ≈ $7.3 | [`closeout_v1`](reports/closeout_v1.md), [`failure_analysis_v1`](reports/failure_analysis_v1.md) |
+| v3 | Digit tokenizer, tree-generated problems, held-out shapes | 70.3% on held-out shapes; the RL gate failed twice | ≈ $3.4 | [`v3_phase_b`](reports/v3_phase_b.md), [`protocol_v3`](reports/protocol_v3.md) |
+| v4 | Literature review; much longer SFT; filtered prompt stream; published GRPO recipe; 3 seeds | GRPO +0.5 vs parent, −1.1 vs continued SFT | ≈ $10.5 | [`v4_results`](reports/v4_results.md), [`protocol_v4`](reports/protocol_v4.md), [review](<reports/GRPO gains for tiny models.md>) |
+| v4x | Evaluation only, on a fresh frozen extrapolation suite | Extrapolation finding replicated | ≈ $1.0 | [`replication_v4x`](reports/replication_v4x.md) |
+
+## Repository layout
+
+| Path | Contents |
+| --- | --- |
+| `src/microreason/model.py` | The model (Hugging Face `PreTrainedModel`, KV cache) |
+| `src/microreason/data/` | Math generators (v1 templates, v3 expression trees), splits, manifests, training pools |
+| `src/microreason/verify/` | Exact answer and step verifiers |
+| `src/microreason/train/` | Training loop, SFT, budget guard |
+| `src/microreason/rl/` | GRPO / RFT (`grpo.py`), DPO, rollouts, gates |
+| `src/microreason/eval/` | Generation, scoring, paired and cluster bootstrap |
+| `configs/` | Model, data, stage, RL and budget configs |
+| `scripts/` | Pod setup and session scripts, decision rules |
+| `data/manifests/` | Hashes and counts of every dataset; frozen evaluation suites (v1, v3, v4x) |
+| `reports/` | Protocols, confirmatory plans, results, closeout |
+| `tests/` | About 350 tests |
+
+Generated data (`data/generated/`), runs and checkpoints (`runs/`) are not tracked. The data is
+rebuilt deterministically from seeds, and each rebuild must match the committed hashes.
+
+## Reproducing
+
+Heavy work runs on rented GPU pods; the Mac only runs tests and small checks. The v4 pipeline,
+on a RunPod pod with this repository pushed by `scripts/pod_push.sh`:
 
 ```bash
-uv run microreason config validate --config configs/pretrain.yaml   # validate and print resolved config + hash
-uv run microreason model inspect --config configs/model_43m.yaml    # instantiate; count + memory
-uv run microreason tokenizer train                                  # train tokenizer (train splits only)
-uv run microreason tokenizer inspect                                # diagnostics + real token counts
+SETUP_PROFILE=v4 scripts/pod_setup.sh    # rebuild and verify frozen suites, build the v4 SFT pool
+scripts/pod_v4_phase_b.sh                # v2-sft-long, gates, LR pilots (held-out-val only)
+SETUP_PROFILE=v4c scripts/pod_setup.sh   # rebuild the RL pool, check it matches Phase B
+scripts/pod_v4_phase_c.sh                # 3 GRPO seeds, time-matched controls, the single test look
 ```
 
-Data pipeline:
+Earlier protocols have their own `scripts/pod_*.sh` and configs. See
+[`scripts/PILOT_RUNBOOK.md`](scripts/PILOT_RUNBOOK.md) for pod setup, the self-terminating
+watchdog and collecting results.
 
-```bash
-uv run microreason data fetch-sources   # download pinned Cosmopedia files (~1.2 GB), verify sha256
-uv run microreason data split-text      # hash-split general text into train/val
-uv run microreason data generate        # build math splits + manifests, scan corpus for overlap
-uv run microreason data audit           # re-verify every record, check cross-split leakage
-uv run microreason data generate-stream # ~1.47M-problem training-only math stream (2 disjoint shards)
-uv run microreason data audit-stream    # stream vs frozen suites: full overlap check + sampled re-verify
-uv run microreason data freeze          # lock evaluation suite hashes (only after review)
-```
+**Spending safeguards:**
+- **Off by default:** configs default to `paid_compute_allowed: false` and `max_spend_usd: 0`.
+  A paid run needs a provider, a dollar cap, a runtime cap and a shutdown rule in its config, plus
+  explicit owner approval.
+- **Budget guard:** it stops training before either ceiling and saves a checkpoint.
+- **Watchdog:** a watchdog on the pod deletes the pod at a hard deadline.
 
-Generated JSONL lives in `data/generated/` (not tracked; rebuilt deterministically). Manifests with
-hashes and counts are tracked in `data/manifests/`; the audit report is in `reports/`.
+## Limitations
 
-Training (local, $0):
-
-```bash
-uv run microreason data tokenize                                    # pre-tokenize train/val datasets
-uv run microreason train --config configs/smoke.yaml --run-dir runs/smoke_v1_a
-uv run microreason train --config configs/smoke.yaml --run-dir runs/smoke_v1_b \
-    --resume runs/smoke_v1_a/checkpoints/step_0000100                  # exact resume
-```
-
-Evaluation (frozen suites only; test suites are sealed unless `--allow-test` is passed):
-
-```bash
-uv run microreason eval --suite val --checkpoint runs/<run>/checkpoints/step_N \
-    --format plain-v1 --out runs/eval/<name> [--samples 4]       # rows.jsonl + summary.json
-uv run microreason compare --a runs/eval/<a> --b runs/eval/<b>    # paired bootstrap, b - a
-```
-
-Prompt formats: `plain-v1` for base and mid-trained checkpoints (continues to `Answer: x`),
-`sft-show-work-v1` and `sft-direct-v1` for later stages. Math mid-training follows an easy-to-hard
-curriculum (`configs/midtrain.yaml`), with uniform sampling kept as an ablation
-(`configs/midtrain_uniform.yaml`).
-
-Runs and checkpoints live in `runs/` (not tracked). Heavy jobs (training, evaluation of real
-checkpoints) run on rented GPUs, not locally. SFT, DPO and GRPO stages and `serve` are
-placeholders that exit with an error naming the phase that will implement them.
-
-## Spending
-
-The config schema defaults to `paid_compute_allowed: false` and `max_spend_usd: 0`. Enabling paid
-compute requires a provider, dollar cap, runtime cap, and shutdown rule in the config **and** a separate
-explicit approval from the project owner. Nothing in this repository authorizes spending on its own.
-
-Paid runs additionally need an hourly rate, a pod id and the billing start time. A budget guard
-stops training before the tighter of the runtime and dollar ceilings (minus a reserve), saves a
-checkpoint, and keeps an atomic ledger in `budget_ledger.json`. An on-pod watchdog terminates the
-pod at the hard deadline. `configs/pilot_43m.yaml` stays invalid until its approval fields are
-filled in.
+- Narrow domain: arithmetic and linear equations only, in the training phrasing. These are not
+  general chat or general-purpose math models.
+- Accuracy on numbers beyond 3 digits is low (about 10%).
+- Every test suite in this repository has now been used. Any further claim needs freshly
+  generated, separately frozen suites (`microreason data generate-replication-v4x` shows how).
+- Small models trained on a narrow distribution; outputs should not be relied on without
+  checking.
