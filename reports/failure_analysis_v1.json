@@ -1,0 +1,811 @@
+{
+  "note": "post-hoc, descriptive; test failures never enter training data",
+  "operand_tokenization": {
+    "test_id": {
+      "1_tokens": 1.0
+    },
+    "test_extrapolation": {
+      "1_tokens": 0.2658,
+      "2_tokens": 0.7341
+    },
+    "test_heldout_template": {
+      "1_tokens": 1.0
+    },
+    "train_sample_50k": {
+      "1_tokens": 1.0
+    }
+  },
+  "models": {
+    "v2-sft": {
+      "test_id": {
+        "prompts": 7000,
+        "first_divergence": {
+          "correct": 0.9019,
+          "arithmetic": 0.0969,
+          "final": 0.001,
+          "copy": 0.0003
+        },
+        "first_divergence_step": {
+          "0": 68,
+          "1": 208,
+          "2": 408,
+          "3": 3
+        },
+        "copy_error_subtype": {
+          "other": 2
+        },
+        "by_template": {
+          "a_paren_x_plus_b_equals_c": {
+            "correct": 386,
+            "arithmetic": 114
+          },
+          "a_times_paren_diff": {
+            "correct": 478,
+            "arithmetic": 22
+          },
+          "add_ab": {
+            "correct": 498,
+            "arithmetic": 2
+          },
+          "add_mul_abc": {
+            "correct": 456,
+            "arithmetic": 42,
+            "final": 2
+          },
+          "ax_equals_b": {
+            "correct": 491,
+            "arithmetic": 9
+          },
+          "ax_plus_b_equals_c": {
+            "correct": 495,
+            "arithmetic": 5
+          },
+          "ax_plus_b_equals_cx_plus_d": {
+            "correct": 491,
+            "arithmetic": 9
+          },
+          "div_ab": {
+            "correct": 492,
+            "arithmetic": 8
+          },
+          "mul_ab": {
+            "correct": 498,
+            "final": 2
+          },
+          "mul_sub_mul": {
+            "arithmetic": 291,
+            "correct": 207,
+            "copy": 1,
+            "final": 1
+          },
+          "paren_sum_times_diff": {
+            "correct": 428,
+            "arithmetic": 71,
+            "final": 1
+          },
+          "sub_ab": {
+            "correct": 495,
+            "arithmetic": 5
+          },
+          "sub_mul_add": {
+            "correct": 412,
+            "arithmetic": 87,
+            "final": 1
+          },
+          "x_plus_a_equals_b": {
+            "correct": 486,
+            "arithmetic": 13,
+            "copy": 1
+          }
+        },
+        "by_operand_tokenization": {
+          "all_single_token": {
+            "correct": 6313,
+            "arithmetic": 678,
+            "final": 7,
+            "copy": 2
+          }
+        }
+      },
+      "test_extrapolation": {
+        "prompts": 7000,
+        "first_divergence": {
+          "copy": 0.8973,
+          "arithmetic": 0.0974,
+          "skeleton": 0.0031,
+          "correct": 0.0021
+        },
+        "first_divergence_step": {
+          "0": 6973,
+          "1": 12
+        },
+        "copy_error_subtype": {
+          "prefix": 5133,
+          "other": 1148
+        },
+        "by_template": {
+          "a_paren_x_plus_b_equals_c": {
+            "copy": 442,
+            "arithmetic": 58
+          },
+          "a_times_paren_diff": {
+            "copy": 486,
+            "arithmetic": 12,
+            "skeleton": 2
+          },
+          "add_ab": {
+            "copy": 492,
+            "arithmetic": 8
+          },
+          "add_mul_abc": {
+            "copy": 491,
+            "arithmetic": 9
+          },
+          "ax_equals_b": {
+            "arithmetic": 486,
+            "correct": 9,
+            "copy": 5
+          },
+          "ax_plus_b_equals_c": {
+            "copy": 466,
+            "arithmetic": 33,
+            "correct": 1
+          },
+          "ax_plus_b_equals_cx_plus_d": {
+            "copy": 500
+          },
+          "div_ab": {
+            "copy": 492,
+            "arithmetic": 6,
+            "correct": 2
+          },
+          "mul_ab": {
+            "copy": 489,
+            "arithmetic": 11
+          },
+          "mul_sub_mul": {
+            "copy": 491,
+            "arithmetic": 8,
+            "skeleton": 1
+          },
+          "paren_sum_times_diff": {
+            "copy": 474,
+            "skeleton": 19,
+            "arithmetic": 7
+          },
+          "sub_ab": {
+            "copy": 490,
+            "arithmetic": 8,
+            "correct": 2
+          },
+          "sub_mul_add": {
+            "copy": 491,
+            "arithmetic": 9
+          },
+          "x_plus_a_equals_b": {
+            "copy": 472,
+            "arithmetic": 27,
+            "correct": 1
+          }
+        },
+        "by_operand_tokenization": {
+          "all_single_token": {
+            "arithmetic": 139,
+            "copy": 53,
+            "correct": 11
+          },
+          "some_multi_token": {
+            "copy": 6228,
+            "arithmetic": 543,
+            "skeleton": 22,
+            "correct": 4
+          }
+        }
+      },
+      "test_heldout_template": {
+        "prompts": 6000,
+        "first_divergence": {
+          "skeleton": 0.7122,
+          "copy": 0.2835,
+          "arithmetic": 0.0027,
+          "correct": 0.0017
+        },
+        "first_divergence_step": {
+          "0": 4704,
+          "1": 438,
+          "2": 848
+        },
+        "copy_error_subtype": {
+          "other": 1670,
+          "prefix": 31
+        },
+        "by_template": {
+          "heldout_nested_product": {
+            "skeleton": 1432,
+            "copy": 567,
+            "arithmetic": 1
+          },
+          "heldout_paren_both_sides": {
+            "skeleton": 1990,
+            "correct": 10
+          },
+          "heldout_paren_quotient_plus": {
+            "copy": 1134,
+            "skeleton": 851,
+            "arithmetic": 15
+          }
+        },
+        "by_operand_tokenization": {
+          "all_single_token": {
+            "skeleton": 4273,
+            "copy": 1701,
+            "arithmetic": 16,
+            "correct": 10
+          }
+        },
+        "reproduced_training_skeleton": {
+          "paren_sum_times_diff": 2417,
+          "ax_plus_b_equals_cx_plus_d": 1902,
+          "a_times_paren_diff": 804,
+          "mul_sub_mul": 772,
+          "a_paren_x_plus_b_equals_c": 81,
+          "ax_plus_b_equals_c": 13,
+          "add_ab": 8,
+          "no_training_skeleton": 2,
+          "sub_mul_add": 1
+        },
+        "gold_skeletons": {
+          "heldout_nested_product": [
+            "Multiply",
+            "Add",
+            "Multiply",
+            "Subtract"
+          ],
+          "heldout_paren_both_sides": [
+            "Expand",
+            "Combine",
+            "Subtract",
+            "Subtract",
+            "Divide"
+          ],
+          "heldout_paren_quotient_plus": [
+            "Add",
+            "Subtract",
+            "Divide",
+            "Add"
+          ]
+        }
+      }
+    },
+    "v4-grpo-r2": {
+      "test_id": {
+        "prompts": 7000,
+        "first_divergence": {
+          "correct": 0.8784,
+          "arithmetic": 0.1206,
+          "final": 0.0007,
+          "copy": 0.0003
+        },
+        "first_divergence_step": {
+          "0": 188,
+          "1": 252,
+          "2": 408,
+          "3": 3
+        },
+        "copy_error_subtype": {
+          "other": 2
+        },
+        "by_template": {
+          "a_paren_x_plus_b_equals_c": {
+            "correct": 374,
+            "arithmetic": 126
+          },
+          "a_times_paren_diff": {
+            "correct": 453,
+            "arithmetic": 46,
+            "final": 1
+          },
+          "add_ab": {
+            "correct": 489,
+            "arithmetic": 11
+          },
+          "add_mul_abc": {
+            "correct": 465,
+            "arithmetic": 34,
+            "final": 1
+          },
+          "ax_equals_b": {
+            "correct": 478,
+            "arithmetic": 22
+          },
+          "ax_plus_b_equals_c": {
+            "correct": 483,
+            "arithmetic": 17
+          },
+          "ax_plus_b_equals_cx_plus_d": {
+            "correct": 483,
+            "arithmetic": 16,
+            "copy": 1
+          },
+          "div_ab": {
+            "correct": 490,
+            "arithmetic": 10
+          },
+          "mul_ab": {
+            "correct": 500
+          },
+          "mul_sub_mul": {
+            "arithmetic": 306,
+            "correct": 192,
+            "final": 2
+          },
+          "paren_sum_times_diff": {
+            "correct": 403,
+            "arithmetic": 96,
+            "final": 1
+          },
+          "sub_ab": {
+            "correct": 478,
+            "arithmetic": 22
+          },
+          "sub_mul_add": {
+            "correct": 406,
+            "arithmetic": 93,
+            "copy": 1
+          },
+          "x_plus_a_equals_b": {
+            "correct": 455,
+            "arithmetic": 45
+          }
+        },
+        "by_operand_tokenization": {
+          "all_single_token": {
+            "correct": 6149,
+            "arithmetic": 844,
+            "final": 5,
+            "copy": 2
+          }
+        }
+      },
+      "test_extrapolation": {
+        "prompts": 7000,
+        "first_divergence": {
+          "copy": 0.8949,
+          "arithmetic": 0.0997,
+          "skeleton": 0.0029,
+          "correct": 0.0026
+        },
+        "first_divergence_step": {
+          "0": 6974,
+          "1": 8
+        },
+        "copy_error_subtype": {
+          "prefix": 5193,
+          "other": 1071
+        },
+        "by_template": {
+          "a_paren_x_plus_b_equals_c": {
+            "copy": 442,
+            "arithmetic": 57,
+            "correct": 1
+          },
+          "a_times_paren_diff": {
+            "copy": 491,
+            "arithmetic": 9
+          },
+          "add_ab": {
+            "copy": 491,
+            "arithmetic": 9
+          },
+          "add_mul_abc": {
+            "copy": 491,
+            "arithmetic": 9
+          },
+          "ax_equals_b": {
+            "arithmetic": 486,
+            "correct": 13,
+            "copy": 1
+          },
+          "ax_plus_b_equals_c": {
+            "copy": 469,
+            "arithmetic": 31
+          },
+          "ax_plus_b_equals_cx_plus_d": {
+            "copy": 492,
+            "skeleton": 8
+          },
+          "div_ab": {
+            "copy": 490,
+            "arithmetic": 9,
+            "correct": 1
+          },
+          "mul_ab": {
+            "copy": 488,
+            "arithmetic": 12
+          },
+          "mul_sub_mul": {
+            "copy": 492,
+            "arithmetic": 8
+          },
+          "paren_sum_times_diff": {
+            "copy": 477,
+            "skeleton": 12,
+            "arithmetic": 10,
+            "correct": 1
+          },
+          "sub_ab": {
+            "copy": 490,
+            "arithmetic": 9,
+            "correct": 1
+          },
+          "sub_mul_add": {
+            "copy": 491,
+            "arithmetic": 9
+          },
+          "x_plus_a_equals_b": {
+            "copy": 459,
+            "arithmetic": 40,
+            "correct": 1
+          }
+        },
+        "by_operand_tokenization": {
+          "all_single_token": {
+            "arithmetic": 134,
+            "copy": 57,
+            "correct": 12
+          },
+          "some_multi_token": {
+            "copy": 6207,
+            "arithmetic": 564,
+            "skeleton": 20,
+            "correct": 6
+          }
+        }
+      },
+      "test_heldout_template": {
+        "prompts": 6000,
+        "first_divergence": {
+          "skeleton": 0.7877,
+          "copy": 0.1958,
+          "arithmetic": 0.0158,
+          "correct": 0.0007
+        },
+        "first_divergence_step": {
+          "0": 4213,
+          "1": 434,
+          "2": 1349
+        },
+        "copy_error_subtype": {
+          "other": 1146,
+          "prefix": 29
+        },
+        "by_template": {
+          "heldout_nested_product": {
+            "skeleton": 1374,
+            "copy": 624,
+            "arithmetic": 2
+          },
+          "heldout_paren_both_sides": {
+            "skeleton": 1996,
+            "correct": 4
+          },
+          "heldout_paren_quotient_plus": {
+            "skeleton": 1356,
+            "copy": 551,
+            "arithmetic": 93
+          }
+        },
+        "by_operand_tokenization": {
+          "all_single_token": {
+            "skeleton": 4726,
+            "copy": 1175,
+            "arithmetic": 95,
+            "correct": 4
+          }
+        },
+        "reproduced_training_skeleton": {
+          "paren_sum_times_diff": 2171,
+          "ax_plus_b_equals_cx_plus_d": 1942,
+          "a_times_paren_diff": 1040,
+          "mul_sub_mul": 759,
+          "a_paren_x_plus_b_equals_c": 34,
+          "ax_plus_b_equals_c": 21,
+          "no_training_skeleton": 15,
+          "sub_mul_add": 14,
+          "add_ab": 4
+        },
+        "gold_skeletons": {
+          "heldout_nested_product": [
+            "Multiply",
+            "Add",
+            "Multiply",
+            "Subtract"
+          ],
+          "heldout_paren_both_sides": [
+            "Expand",
+            "Combine",
+            "Subtract",
+            "Subtract",
+            "Divide"
+          ],
+          "heldout_paren_quotient_plus": [
+            "Add",
+            "Subtract",
+            "Divide",
+            "Add"
+          ]
+        }
+      }
+    },
+    "v2-extra-sft-r2": {
+      "test_id": {
+        "prompts": 7000,
+        "first_divergence": {
+          "correct": 0.9429,
+          "arithmetic": 0.0571
+        },
+        "first_divergence_step": {
+          "0": 10,
+          "1": 118,
+          "2": 272
+        },
+        "copy_error_subtype": {},
+        "by_template": {
+          "a_paren_x_plus_b_equals_c": {
+            "correct": 418,
+            "arithmetic": 82
+          },
+          "a_times_paren_diff": {
+            "correct": 495,
+            "arithmetic": 5
+          },
+          "add_ab": {
+            "correct": 500
+          },
+          "add_mul_abc": {
+            "correct": 485,
+            "arithmetic": 15
+          },
+          "ax_equals_b": {
+            "correct": 497,
+            "arithmetic": 3
+          },
+          "ax_plus_b_equals_c": {
+            "correct": 500
+          },
+          "ax_plus_b_equals_cx_plus_d": {
+            "correct": 499,
+            "arithmetic": 1
+          },
+          "div_ab": {
+            "correct": 495,
+            "arithmetic": 5
+          },
+          "mul_ab": {
+            "correct": 500
+          },
+          "mul_sub_mul": {
+            "correct": 283,
+            "arithmetic": 217
+          },
+          "paren_sum_times_diff": {
+            "correct": 468,
+            "arithmetic": 32
+          },
+          "sub_ab": {
+            "correct": 500
+          },
+          "sub_mul_add": {
+            "correct": 462,
+            "arithmetic": 38
+          },
+          "x_plus_a_equals_b": {
+            "correct": 498,
+            "arithmetic": 2
+          }
+        },
+        "by_operand_tokenization": {
+          "all_single_token": {
+            "correct": 6600,
+            "arithmetic": 400
+          }
+        }
+      },
+      "test_extrapolation": {
+        "prompts": 7000,
+        "first_divergence": {
+          "copy": 0.8987,
+          "arithmetic": 0.0943,
+          "skeleton": 0.0049,
+          "correct": 0.0021
+        },
+        "first_divergence_step": {
+          "0": 6971,
+          "1": 14
+        },
+        "copy_error_subtype": {
+          "prefix": 5048,
+          "other": 1243
+        },
+        "by_template": {
+          "a_paren_x_plus_b_equals_c": {
+            "copy": 443,
+            "arithmetic": 56,
+            "correct": 1
+          },
+          "a_times_paren_diff": {
+            "copy": 484,
+            "arithmetic": 14,
+            "skeleton": 2
+          },
+          "add_ab": {
+            "copy": 492,
+            "arithmetic": 8
+          },
+          "add_mul_abc": {
+            "copy": 492,
+            "arithmetic": 6,
+            "skeleton": 2
+          },
+          "ax_equals_b": {
+            "arithmetic": 484,
+            "correct": 10,
+            "copy": 6
+          },
+          "ax_plus_b_equals_c": {
+            "copy": 470,
+            "arithmetic": 29,
+            "correct": 1
+          },
+          "ax_plus_b_equals_cx_plus_d": {
+            "copy": 483,
+            "skeleton": 17
+          },
+          "div_ab": {
+            "copy": 492,
+            "arithmetic": 7,
+            "correct": 1
+          },
+          "mul_ab": {
+            "copy": 491,
+            "arithmetic": 9
+          },
+          "mul_sub_mul": {
+            "copy": 493,
+            "arithmetic": 6,
+            "skeleton": 1
+          },
+          "paren_sum_times_diff": {
+            "copy": 478,
+            "skeleton": 12,
+            "arithmetic": 9,
+            "correct": 1
+          },
+          "sub_ab": {
+            "copy": 492,
+            "arithmetic": 7,
+            "correct": 1
+          },
+          "sub_mul_add": {
+            "copy": 493,
+            "arithmetic": 7
+          },
+          "x_plus_a_equals_b": {
+            "copy": 482,
+            "arithmetic": 18
+          }
+        },
+        "by_operand_tokenization": {
+          "all_single_token": {
+            "arithmetic": 134,
+            "copy": 58,
+            "correct": 11
+          },
+          "some_multi_token": {
+            "copy": 6233,
+            "arithmetic": 526,
+            "skeleton": 34,
+            "correct": 4
+          }
+        }
+      },
+      "test_heldout_template": {
+        "prompts": 6000,
+        "first_divergence": {
+          "skeleton": 0.6592,
+          "copy": 0.3382,
+          "correct": 0.002,
+          "arithmetic": 0.0007
+        },
+        "first_divergence_step": {
+          "0": 5239,
+          "1": 81,
+          "2": 668
+        },
+        "copy_error_subtype": {
+          "other": 2015,
+          "prefix": 14
+        },
+        "by_template": {
+          "heldout_nested_product": {
+            "skeleton": 1291,
+            "copy": 708,
+            "correct": 1
+          },
+          "heldout_paren_both_sides": {
+            "skeleton": 1989,
+            "correct": 11
+          },
+          "heldout_paren_quotient_plus": {
+            "copy": 1321,
+            "skeleton": 675,
+            "arithmetic": 4
+          }
+        },
+        "by_operand_tokenization": {
+          "all_single_token": {
+            "skeleton": 3955,
+            "copy": 2029,
+            "correct": 12,
+            "arithmetic": 4
+          }
+        },
+        "reproduced_training_skeleton": {
+          "paren_sum_times_diff": 2755,
+          "ax_plus_b_equals_cx_plus_d": 1722,
+          "mul_sub_mul": 729,
+          "a_times_paren_diff": 511,
+          "a_paren_x_plus_b_equals_c": 221,
+          "ax_plus_b_equals_c": 45,
+          "add_ab": 14,
+          "sub_mul_add": 2,
+          "no_training_skeleton": 1
+        },
+        "gold_skeletons": {
+          "heldout_nested_product": [
+            "Multiply",
+            "Add",
+            "Multiply",
+            "Subtract"
+          ],
+          "heldout_paren_both_sides": [
+            "Expand",
+            "Combine",
+            "Subtract",
+            "Subtract",
+            "Divide"
+          ],
+          "heldout_paren_quotient_plus": [
+            "Add",
+            "Subtract",
+            "Divide",
+            "Add"
+          ]
+        }
+      }
+    }
+  },
+  "training_skeletons": {
+    "Add": "add_ab",
+    "Subtract": "sub_ab",
+    "Multiply": "mul_ab",
+    "Divide": "div_ab",
+    "Multiply > Add": "add_mul_abc",
+    "Multiply > Multiply > Subtract": "mul_sub_mul",
+    "Multiply > Subtract > Add": "sub_mul_add",
+    "Add > Divide": "ax_plus_b_equals_c",
+    "Subtract > Divide": "ax_plus_b_equals_c",
+    "Add > Subtract > Multiply": "paren_sum_times_diff",
+    "Subtract > Multiply": "a_times_paren_diff",
+    "Divide > Add": "a_paren_x_plus_b_equals_c",
+    "Divide > Subtract": "a_paren_x_plus_b_equals_c",
+    "Add > Add > Divide": "ax_plus_b_equals_cx_plus_d",
+    "Add > Subtract > Divide": "ax_plus_b_equals_cx_plus_d",
+    "Subtract > Add > Divide": "ax_plus_b_equals_cx_plus_d",
+    "Subtract > Subtract > Divide": "ax_plus_b_equals_cx_plus_d",
+    "Subtract > Subtract": "ax_plus_b_equals_cx_plus_d",
+    "Subtract > Add": "ax_plus_b_equals_cx_plus_d",
+    "Add > Subtract": "ax_plus_b_equals_cx_plus_d",
+    "Add > Add": "ax_plus_b_equals_cx_plus_d"
+  }
+}

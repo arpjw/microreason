@@ -24,6 +24,9 @@ the held-out-template test: every model is near 0% there (v4-grpo-r2 0.07%, v2-s
 v2-extra-sft-r2 0.20%), and near 0% on number extrapolation; `test_id` 87.8 / 90.2 / 94.3%.
 See `reports/rl_v2.md`, `reports/rl_protocol_v2.md` and `reports/confirmatory_plan_v1.md`.
 The test suites have now been used once; any later test evaluation is post-hoc.
+**Closeout:** H1 and H2 supported (val), H3 and H4 not supported; see `reports/closeout_v1.md`.
+Out-of-distribution failures (tokenizer-limited number copying, template substitution) are
+analysed in `reports/failure_analysis_v1.md`.
 Math training data: a 1.47M-problem training-only stream (≈70M tokens) excludes every frozen
 evaluation problem; see `reports/math_stream_v1.md`. No real training stage or evaluation has run yet. Every number in the spec is a target or estimate, not a measured result.
 
