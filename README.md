@@ -31,6 +31,9 @@ analysed in `reports/failure_analysis_v1.md`.
 held-out-*shape* val problems (v1 held-out templates: 0.17%), as well as same-size training
 shapes; accuracy is limited by depth (95% at 1 operator, ~37% at 5). H1 +5.2, H2 +78.1 on val.
 Capability gate passed; see `reports/v3_phase_b.md` and `reports/protocol_v3.md`.
+**Protocol v3 Phase C (≈$0.63, two attempts):** the RL reward-variance gate failed twice (mixed
+groups 0.182 at T 0.8, 0.195 at T 1.0; rule ≥ 0.20). v2-sft's outcomes are near all-or-nothing per
+prompt. No GRPO ran; the v3 test suites stay sealed; H4 undecided. See `reports/v3_phase_c_attempt2.md`.
 Math training data: a 1.47M-problem training-only stream (≈70M tokens) excludes every frozen
 evaluation problem; see `reports/math_stream_v1.md`. No real training stage or evaluation has run yet. Every number in the spec is a target or estimate, not a measured result.
 

@@ -376,3 +376,15 @@ test suite has been opened, so this change cannot depend on test results.
 - This is the second gate attempt.
 
 Both will be reported.
+
+## Outcome (2026-11-09)
+
+Phase C attempt 2 (temperature 1.0) also stopped at the reward-variance gate: 0.195 of groups
+were mixed, against the 0.20 required (`reports/v3_phase_c_attempt2.md`). Per the amendment,
+protocol v3 ends here:
+- **Q1** answered yes.
+- **H4** undecided.
+- **The v3 test suites stay sealed and unused.** They remain available to a future protocol's
+  confirmatory look.
+
+Total v3 spend: Phase B ≈ $2.76 plus Phase C ≈ $0.63, **≈ $3.39**.
