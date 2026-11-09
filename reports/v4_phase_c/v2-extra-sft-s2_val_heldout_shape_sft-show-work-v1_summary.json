@@ -1,0 +1,116 @@
+{
+  "checkpoint": "runs/p4c/v2-extra-sft-s2/checkpoints/step_0033714",
+  "checkpoint_id": "sha256:503e8bcc158052890008a13d94a596396ec77b6629b6b637d29eda28976c483f",
+  "checkpoint_step": 33714,
+  "data_version": "v3",
+  "decode": {
+    "greedy": {
+      "max_new_tokens": 320
+    },
+    "kv_cache": true
+  },
+  "device": "cuda",
+  "greedy": {
+    "accuracy_by_difficulty": {
+      "3": {
+        "denominator": 1785,
+        "numerator": 1431,
+        "value": 0.8016806722689076,
+        "wilson95": [
+          0.7825438797609927,
+          0.8195217726697261
+        ]
+      },
+      "4": {
+        "denominator": 1662,
+        "numerator": 1308,
+        "value": 0.7870036101083032,
+        "wilson95": [
+          0.7666696323296465,
+          0.8060139174454737
+        ]
+      },
+      "5": {
+        "denominator": 2553,
+        "numerator": 2198,
+        "value": 0.8609479044261653,
+        "wilson95": [
+          0.8469832704333181,
+          0.8738279451553311
+        ]
+      }
+    },
+    "accuracy_by_family": {
+      "expression_3op": {
+        "denominator": 1785,
+        "numerator": 1431,
+        "value": 0.8016806722689076,
+        "wilson95": [
+          0.7825438797609927,
+          0.8195217726697261
+        ]
+      },
+      "expression_4op": {
+        "denominator": 1120,
+        "numerator": 767,
+        "value": 0.6848214285714286,
+        "wilson95": [
+          0.6570202833126514,
+          0.7113590790525989
+        ]
+      },
+      "expression_5op": {
+        "denominator": 807,
+        "numerator": 479,
+        "value": 0.5935563816604709,
+        "wilson95": [
+          0.5593028813850428,
+          0.6269234127410835
+        ]
+      },
+      "linear_equation": {
+        "denominator": 2288,
+        "numerator": 2260,
+        "value": 0.9877622377622378,
+        "wilson95": [
+          0.9823697845032796,
+          0.9915195704560787
+        ]
+      }
+    },
+    "exact_accuracy": {
+      "denominator": 6000,
+      "numerator": 4937,
+      "value": 0.8228333333333333,
+      "wilson95": [
+        0.8129667156904612,
+        0.8322868318209267
+      ]
+    },
+    "generated_tokens": {
+      "max": 222,
+      "mean": 105.21183333333333,
+      "median": 98
+    },
+    "prompts": 6000,
+    "status_counts": {
+      "correct": 4937,
+      "wrong": 1063
+    },
+    "valid_format_rate": {
+      "denominator": 6000,
+      "numerator": 6000,
+      "value": 1.0,
+      "wilson95": [
+        0.9993601665122168,
+        0.9999999999999999
+      ]
+    }
+  },
+  "greedy_seconds": 21.626,
+  "limited_to": null,
+  "prompt_format": "sft-show-work-v1",
+  "protocol": "eval-v2-cached",
+  "suite": "val_heldout_shape",
+  "suite_sha256": "fabbcecef5ddda6018b81c2df1c33d6f4146094e7db6c7be60ae508590d2c39e"
+}

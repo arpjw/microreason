@@ -1,0 +1,9 @@
+artifacts/p4-v2-sft-long
+runs/p4c/v4-grpo-s1/checkpoints/step_0000150
+runs/p4c/v2-extra-sft-s1/checkpoints/step_0034005
+runs/p4c/v4-grpo-s2/checkpoints/step_0000150
+runs/p4c/v2-extra-sft-s2/checkpoints/step_0033714
+runs/p4c/v4-grpo-s3/checkpoints/step_0000150
+runs/p4c/v2-extra-sft-s3/checkpoints/step_0034097
+runs/p4c/v4-rft-s1/checkpoints/step_0000150
+runs/p4c/v4-grpo-step-s1/checkpoints/step_0000150

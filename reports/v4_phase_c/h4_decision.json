@@ -1,0 +1,161 @@
+{
+  "plan": "reports/confirmatory_plan_v3.md",
+  "H4": {
+    "rule": "seed-mean difference >= 0.02 and shape-cluster bootstrap 95% interval above 0, vs v2-sft-long AND vs the time-matched v2-extra-sft; and all 6 per-seed differences > 0",
+    "vs_parent": {
+      "difference": 0.004944444444444444,
+      "bootstrap95": [
+        0.0008923958480108965,
+        0.009796437659033078
+      ],
+      "clusters": 1053,
+      "prompts": 6000,
+      "seeds": 3,
+      "resamples": 10000,
+      "bootstrap_seed": 0,
+      "per_seed": [
+        0.006333333333333413,
+        0.0023333333333334094,
+        0.006166666666666654
+      ],
+      "interval_above_zero": true
+    },
+    "vs_control": {
+      "difference": -0.010555555555555554,
+      "bootstrap95": [
+        -0.01757890531362365,
+        -0.005340821495430018
+      ],
+      "clusters": 1053,
+      "prompts": 6000,
+      "seeds": 3,
+      "resamples": 10000,
+      "bootstrap_seed": 0,
+      "per_seed": [
+        -0.007833333333333248,
+        -0.013333333333333308,
+        -0.010500000000000065
+      ],
+      "interval_above_zero": false
+    },
+    "status": "not_supported"
+  },
+  "H1": {
+    "rule": "shape-cluster bootstrap 95% interval above 0",
+    "difference": 0.05285714285714286,
+    "bootstrap95": [
+      0.0448907265209687,
+      0.0614246906127377
+    ],
+    "clusters": 1574,
+    "prompts": 7000,
+    "seeds": 1,
+    "resamples": 10000,
+    "bootstrap_seed": 0,
+    "per_seed": [
+      0.052857142857142825
+    ],
+    "interval_above_zero": true,
+    "status": "supported"
+  },
+  "H2": {
+    "rule": "shape-cluster bootstrap 95% interval above 0",
+    "difference": 0.795,
+    "bootstrap95": [
+      0.76644469709274,
+      0.8215087858369666
+    ],
+    "clusters": 1574,
+    "prompts": 7000,
+    "seeds": 1,
+    "resamples": 10000,
+    "bootstrap_seed": 0,
+    "per_seed": [
+      0.795
+    ],
+    "interval_above_zero": true,
+    "status": "supported"
+  },
+  "secondary": {
+    "v4-grpo-s1_vs_v4-rft-s1": {
+      "difference": 0.0013333333333333333,
+      "bootstrap95": [
+        -0.0015007503751875938,
+        0.004269449715370019
+      ],
+      "clusters": 1053,
+      "prompts": 6000,
+      "seeds": 1,
+      "resamples": 10000,
+      "bootstrap_seed": 0,
+      "per_seed": [
+        0.0013333333333334085
+      ],
+      "interval_above_zero": false
+    },
+    "v4-rft-s1_vs_v2-sft-long": {
+      "difference": 0.005,
+      "bootstrap95": [
+        0.0006255864873318737,
+        0.010312405216863815
+      ],
+      "clusters": 1053,
+      "prompts": 6000,
+      "seeds": 1,
+      "resamples": 10000,
+      "bootstrap_seed": 0,
+      "per_seed": [
+        0.0050000000000000044
+      ],
+      "interval_above_zero": true
+    },
+    "v4-grpo-step-s1_vs_v4-grpo-s1": {
+      "difference": -0.0028333333333333335,
+      "bootstrap95": [
+        -0.006608357628765792,
+        0.00041135335252982314
+      ],
+      "clusters": 1053,
+      "prompts": 6000,
+      "seeds": 1,
+      "resamples": 10000,
+      "bootstrap_seed": 0,
+      "per_seed": [
+        -0.0028333333333333544
+      ],
+      "interval_above_zero": false
+    },
+    "v4-grpo-step-s1_vs_v2-sft-long": {
+      "difference": 0.0035,
+      "bootstrap95": [
+        -0.0006273525721455458,
+        0.008135593220338983
+      ],
+      "clusters": 1053,
+      "prompts": 6000,
+      "seeds": 1,
+      "resamples": 10000,
+      "bootstrap_seed": 0,
+      "per_seed": [
+        0.0035000000000000586
+      ],
+      "interval_above_zero": false
+    },
+    "v4-rft-s1_vs_v2-extra-sft-s1": {
+      "difference": -0.009166666666666667,
+      "bootstrap95": [
+        -0.016441359152356595,
+        -0.0036351619299405157
+      ],
+      "clusters": 1053,
+      "prompts": 6000,
+      "seeds": 1,
+      "resamples": 10000,
+      "bootstrap_seed": 0,
+      "per_seed": [
+        -0.009166666666666656
+      ],
+      "interval_above_zero": false
+    }
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "completions": 1067008,
+  "device": "cuda",
+  "estimated_cost_usd": 0.8132,
+  "final_checkpoint": "runs/p4c/v4-grpo-s1/checkpoints/step_0000150",
+  "optimizer_updates": 150,
+  "provenance": {
+    "code_revision": {
+      "dirty": false,
+      "git_commit": "445f32d1c686b5ea101dae117dbbbf3f6501a6c6",
+      "source": "REVISION file"
+    },
+    "config_hash": "sha256:3b4c9df24b68078fac2d03ddc8ccdd93273da572273bc1056d1f66a578d0c917",
+    "objective": "GRPO, advantage batch_std; clip [1-0.2, 1+0.28]; k3 KL beta 0.001 to frozen parent; token_constant aggregation; binary exact-answer reward; filter 2..14 correct of 16; truncated masked",
+    "parent": "artifacts/p4-v2-sft-long",
+    "parent_checkpoint_id": "sha256:609683361f03a0f437b5ad95aa850037516f0df611d29712f91df8d71ed29ab8",
+    "parent_config_hash": "sha256:33f86042f28c3312c0fdce0aa60df3497c2fc39b454275dd129e800edcc9a291",
+    "pool": {
+      "manifest": "data/manifests/math_train_rl_v4.json",
+      "partition": "grpo",
+      "prompts_used": 66688,
+      "sha256": "25a81015821268e5d046bd3d006c079775a042cdd8c377a0b3b3cc896ed8f9a9"
+    },
+    "stage": "grpo",
+    "tokenizer_sha256": "c6266b1082fd4d259c12f1ff59e21c6c000d38eee50379490cd5cafc111db81a"
+  },
+  "resolved_config": {
+    "model": {
+      "bias": false,
+      "d_model": 512,
+      "dropout": 0.0,
+      "head_dim": 64,
+      "max_seq_len": 2048,
+      "mlp": "swiglu",
+      "mlp_hidden": 1408,
+      "n_heads": 8,
+      "n_kv_heads": 8,
+      "n_layers": 12,
+      "name": "microreason-43m",
+      "norm": "rmsnorm",
+      "position": "rope",
+      "rope_theta": 10000.0,
+      "tie_embeddings": true,
+      "vocab_size": 8192
+    },
+    "schema_version": 1,
+    "stage": {
+      "adv_eps": 1e-06,
+      "advantage": "batch_std",
+      "betas": [
+        0.9,
+        0.95
+      ],
+      "budget": {
+        "approved_at": "2026-11-08",
+        "approved_by": "project owner (pre-approval in chat for protocol v4)",
+        "gpu_type": "NVIDIA RTX 6000 Ada Generation (Secure Cloud)",
+        "hourly_rate_usd": 0.99,
+        "max_runtime_hours": 8.0,
+        "max_spend_usd": 9.0,
+        "paid_compute_allowed": true,
+        "provider": "runpod",
+        "reserve_minutes": 20.0,
+        "shutdown_rule": "Copy reports, metrics, budget ledgers, eval rows and every final RL-stage checkpoint off the pod, then terminate (delete) it when the session finishes, at either ceiling, or on any failure; the pod also deletes itself 45 minutes after finishing if not collected."
+      },
+      "checkpoint_every_steps": 100,
+      "clip_eps": 0.2,
+      "clip_eps_high": 0.28,
+      "dynamic_sampling": true,
+      "filter_max_correct": 14,
+      "filter_min_correct": 2,
+      "gate": {
+        "max_malformed_fraction": 0.1,
+        "max_pass_at_1": 0.95,
+        "min_filter_yield": 0.125,
+        "min_mixed_group_fraction": null,
+        "min_pass_at_1": 0.05,
+        "prompts": 512
+      },
+      "grad_clip_norm": 1.0,
+      "kl_beta": 0.001,
+      "log_every_steps": 5,
+      "loss_aggregation": "token_constant",
+      "lr": 3e-06,
+      "mask_truncated": true,
+      "max_sample_rounds": 8,
+      "minibatches_per_step": 1,
+      "model": "configs/model_43m.yaml",
+      "objective": "grpo",
+      "parent": "artifacts/p4-v2-sft-long",
+      "pool_manifest": "data/manifests/math_train_rl_v4.json",
+      "precision": "bf16",
+      "prompts_per_step": 64,
+      "sample_chunk_prompts": 128,
+      "sampling": {
+        "generation_batch_size": 1024,
+        "group_size": 16,
+        "kv_cache": true,
+        "max_new_tokens": 256,
+        "temperature": 1.0
+      },
+      "seed": 81,
+      "stage": "grpo",
+      "step_reward_weight": 0.0,
+      "steps": 150,
+      "tokenizer": "artifacts/tokenizer/v2",
+      "update_micro_batch": 256,
+      "warmup_steps": 10,
+      "weight_decay": 0.0
+    }
+  },
+  "rollouts_sha256": "db3120a9e13a764c99788acb5f3bf2724fcb5c23066ee9a70c9cf7844f37a9b8",
+  "software": {
+    "python": "3.13.11",
+    "torch": "2.15.0+cu132"
+  },
+  "started_at": "2026-11-09T10:16:44.858385+00:00",
+  "status": "completed",
+  "steps_completed": 150,
+  "timing": {
+    "budget_ledger": {
+      "approved_at": "2026-11-08",
+      "approved_by": "project owner (pre-approval in chat for protocol v4)",
+      "approved_max_runtime_hours": 8.0,
+      "approved_max_usd": 9.0,
+      "billing_start": "2026-11-09T10:13:38+00:00",
+      "ceiling_at": "2026-11-09T18:13:38+00:00",
+      "elapsed_hours": 0.8214,
+      "estimated_accrued_usd": 0.8132,
+      "gpu_type": "NVIDIA RTX 6000 Ada Generation (Secure Cloud)",
+      "hourly_rate_usd": 0.99,
+      "measured_step_seconds": 17.91,
+      "note": "GPU time at the listed rate only; storage and other charges are excluded.",
+      "pod_id": "8tzge9u80u3s4o",
+      "projected_total_usd": 1.1432,
+      "provider": "runpod",
+      "reserve_minutes": 20.0,
+      "shutdown_rule": "Copy reports, metrics, budget ledgers, eval rows and every final RL-stage checkpoint off the pod, then terminate (delete) it when the session finishes, at either ceiling, or on any failure; the pod also deletes itself 45 minutes after finishing if not collected.",
+      "steps_remaining": 0,
+      "stop_reason": null,
+      "updated_at": "2026-11-09T11:02:55.026631+00:00"
+    },
+    "median_step_seconds": 17.91,
+    "peak_memory_gib": 30.098,
+    "rollout_seconds": 2405.88,
+    "train_wall_seconds": 2768.98,
+    "update_seconds": 359.77
+  },
+  "total_steps": 150,
+  "trained_completions": 153600,
+  "updated_at": "2026-11-09T11:02:55.027464+00:00"
+}

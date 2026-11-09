@@ -228,3 +228,15 @@ session before the confirmatory test phase. The fix:
 
 **Unchanged:** the primary runs, the H4 rule, and the order in which test suites are opened
 (after all training).
+
+## Outcome (2026-11-09)
+
+Phases B and C ran on one pod for about $10.47 (`reports/v4_phase_b.md`, `reports/v4_results.md`).
+
+- **H4 not supported.** GRPO beats its parent on `test_heldout_shape` by +0.49 points
+  [+0.09, +0.98], positive on all three seeds but far below +2.0. It loses to time-matched
+  continued SFT by 1.06 points [−1.76, −0.53].
+- **H1 and H2 supported** on `test_id`.
+- **Exploratory:** GRPO beats continued SFT on `test_extrapolation` by +2.18 [+0.56, +3.88],
+  because continued SFT erodes extrapolation (−2.4) while GRPO preserves it.
+- **The data-v3 test suites are now used.** Any later evaluation on them is post hoc.
