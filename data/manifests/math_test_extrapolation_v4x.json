@@ -1,0 +1,53 @@
+{
+  "build_rejections": {
+    "duplicate": 49,
+    "sampler:no_unique_solution": 224,
+    "sampler:solved_constant_out_of_range": 1909,
+    "sampler:trace_does_not_end_in_answer": 12,
+    "sampler:value_cap": 2017,
+    "shape_not_in_split_set": 706
+  },
+  "code_revision": {
+    "dirty": false,
+    "git_commit": "c3eea8e8aae5febefb79ffa46a051834b9681bc4",
+    "source": "REVISION file"
+  },
+  "counts": {
+    "by_answer_type": {
+      "integer": 3736,
+      "rational": 3264
+    },
+    "by_difficulty": {
+      "1": 781,
+      "2": 2256,
+      "3": 1793,
+      "4": 1296,
+      "5": 874
+    },
+    "by_family": {
+      "expression_1op": 1064,
+      "expression_2op": 1633,
+      "expression_3op": 1076,
+      "expression_4op": 603,
+      "expression_5op": 334,
+      "linear_equation": 2290
+    },
+    "by_kind": {
+      "expression": 4710,
+      "linear_equation": 2290
+    },
+    "distinct_shapes": 1209
+  },
+  "dataset": "math",
+  "excluded_v3_eval_fingerprints": 33000,
+  "excluded_v3_eval_prompts": 33000,
+  "file": "data/generated/math_v4x/eval/test_extrapolation.jsonl",
+  "generator_version": "3.0",
+  "record_count": 7000,
+  "required_shape_set": "train",
+  "root_seed": 20261209,
+  "schema_version": 1,
+  "sha256": "35d481707bd979b10e52ab02b8b80506e98b110ea22e4eab1f6d9a3fbfd0ea50",
+  "split": "test_extrapolation",
+  "version": "v4x"
+}

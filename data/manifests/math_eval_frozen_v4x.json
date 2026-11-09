@@ -1,0 +1,10 @@
+{
+  "dataset": "math",
+  "suites": {
+    "test_extrapolation": {
+      "record_count": 7000,
+      "sha256": "35d481707bd979b10e52ab02b8b80506e98b110ea22e4eab1f6d9a3fbfd0ea50"
+    }
+  },
+  "version": "v4x"
+}
