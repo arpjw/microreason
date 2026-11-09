@@ -27,7 +27,12 @@ V3_EVAL_SPLITS: tuple[Split, ...] = (
     "test_id",
     "val",
 )
-EVAL_SPLITS_BY_VERSION: dict[str, tuple[Split, ...]] = {"v1": EVAL_SPLITS, "v3": V3_EVAL_SPLITS}
+EVAL_SPLITS_BY_VERSION: dict[str, tuple[Split, ...]] = {
+    "v1": EVAL_SPLITS,
+    "v3": V3_EVAL_SPLITS,
+    # protocol v4 replication: a fresh, separately frozen extrapolation suite
+    "v4x": ("test_extrapolation",),
+}
 
 
 class _Strict(BaseModel):

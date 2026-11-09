@@ -142,3 +142,31 @@ def test_select_headroom_plateau(tmp_path):
     )
     p = json.loads((tmp_path / "p.json").read_text())
     assert p["plateaued"] and abs(p["last_doubling_gain"] - 0.005) < 1e-9
+
+
+def test_replication_rule(tmp_path):
+    base = _base(3000)
+    s = "test_extrapolation_v4x"
+
+    def arms(ev, ctrl_drop, grpo_drop):
+        _write(ev, "v2-sft-long", s, base)
+        right = [i for i, c in enumerate(base) if c]
+        for k in (1, 2, 3):
+            g, x = list(base), list(base)
+            for i in right[:ctrl_drop]:
+                x[i] = False
+            for i in right[:grpo_drop]:
+                g[i] = False
+            _write(ev, f"v4-grpo-s{k}", s, g)
+            _write(ev, f"v2-extra-sft-s{k}", s, x)
+
+    arms(tmp_path / "a", ctrl_drop=90, grpo_drop=5)
+    vd.main(["replication", "--eval-dir", str(tmp_path / "a"), "--out", str(tmp_path / "a.json")])
+    assert json.loads((tmp_path / "a.json").read_text())["status"] == "replicated"
+    arms(tmp_path / "b", ctrl_drop=5, grpo_drop=5)
+    vd.main(["replication", "--eval-dir", str(tmp_path / "b"), "--out", str(tmp_path / "b.json")])
+    assert json.loads((tmp_path / "b.json").read_text())["status"] == "not_replicated"
+    vd.main(
+        ["replication", "--eval-dir", str(tmp_path / "none"), "--out", str(tmp_path / "c.json")]
+    )
+    assert json.loads((tmp_path / "c.json").read_text())["status"] == "undecided"

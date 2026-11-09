@@ -585,3 +585,65 @@ def _build_stream(cfg: DataV3Config, root_seed: int, records: int, part_size: in
     }  # fmt: skip
     Path(out_manifest).write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     return manifest
+
+
+# ----------------------------------------------------------------------------- v4x replication
+
+REPLICATION_VERSION = "v4x"
+
+
+def build_replication_suite(cfg: DataV3Config, root_seed: int, n: int,
+                            version: str = REPLICATION_VERSION) -> Path:  # fmt: skip
+    """A fresh `test_extrapolation` suite (protocol v4 replication, reports/replication_v4x.md).
+
+    Same generator, shape set and number range as the v3 suite, but its own root seed, and every
+    problem whose fingerprint or normalized prompt appears in any frozen v3 evaluation suite is
+    excluded. Written as data version `version` and frozen on first build; a rebuild must
+    reproduce the frozen hash exactly or nothing is written.
+    """
+    frozen_v3 = Path(cfg.manifest_dir) / f"math_eval_frozen_{cfg.version}.json"
+    if not frozen_v3.exists():
+        raise ValueError("v3 suites are not frozen")
+    state = State()
+    for split in V3_EVAL_SPLITS:
+        m = json.loads(manifest_path(cfg.manifest_dir, cfg.version, split).read_text())
+        for r in load_split_v3(m):
+            state.seen_fp.add(r.semantic_fingerprint)
+            state.seen_prompt.add(normalize_prompt(r.prompt))
+    excluded = (len(state.seen_fp), len(state.seen_prompt))
+    split = "test_extrapolation"
+    cands = _generate(cfg.model_copy(update={"root_seed": root_seed}), split, n, state)
+    recs = [to_record(c, i).model_copy(update={"id": f"{version}_{split}_{i:08d}"})
+            for i, c in enumerate(cands)]  # fmt: skip
+    data = "".join(record_line(r) for r in recs).encode("utf-8")
+    sha = hashlib.sha256(data).hexdigest()
+    frozen_path = Path(cfg.manifest_dir) / f"math_eval_frozen_{version}.json"
+    if frozen_path.exists():
+        want = json.loads(frozen_path.read_text())["suites"][split]["sha256"]
+        if want != sha:
+            raise ValueError(f"{split} ({version}) would change its frozen hash; refusing to write")
+    out = Path(cfg.out_dir).parent / f"math_{version}" / "eval" / f"{split}.jsonl"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_bytes(data)
+    m = {"schema_version": 1, "dataset": "math", "version": version, "split": split,
+         "file": str(out), "sha256": sha, "record_count": len(recs),
+         "generator_version": GENERATOR_VERSION_V3, "root_seed": root_seed,
+         "required_shape_set": REQUIRED_SET[split], "counts": _counts(recs),
+         "excluded_v3_eval_fingerprints": excluded[0], "excluded_v3_eval_prompts": excluded[1],
+         "build_rejections": dict(state.rejections), "code_revision": _code_revision()}  # fmt: skip
+    p = manifest_path(cfg.manifest_dir, version, split)
+    p.write_text(json.dumps(m, indent=2, sort_keys=True) + "\n")
+    if not frozen_path.exists():
+        frozen_path.write_text(
+            json.dumps(
+                {
+                    "dataset": "math",
+                    "version": version,
+                    "suites": {split: {"sha256": sha, "record_count": len(recs)}},
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n"
+        )
+    return p

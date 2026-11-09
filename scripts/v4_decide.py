@@ -195,6 +195,39 @@ def cmd_h4(a) -> int:
     return 0
 
 
+def cmd_replication(a) -> int:
+    """reports/replication_v4x.md: on the fresh frozen v4x extrapolation suite, the seed-mean
+    v4-grpo - v2-extra-sft difference must have a shape-cluster 95% interval above 0 and all
+    three per-seed differences must be > 0. No magnitude threshold."""
+    ev = Path(a.eval_dir)
+    suite = "test_extrapolation_v4x"
+    seeds = (1, 2, 3)
+    need = ["v2-sft-long", *(f"v4-grpo-s{s}" for s in seeds),
+            *(f"v2-extra-sft-s{s}" for s in seeds)]  # fmt: skip
+    missing = [n for n in need if not (ev / f"{n}_{suite}_{SW}" / "rows.jsonl").exists()]
+    out: dict = {"plan": "reports/replication_v4x.md", "suite": suite}
+    if missing:
+        out["status"] = "undecided"
+        out["missing"] = missing
+    else:
+        p = _rows(ev, "v2-sft-long", suite)
+        g = {s: _rows(ev, f"v4-grpo-s{s}", suite) for s in seeds}
+        x = {s: _rows(ev, f"v2-extra-sft-s{s}", suite) for s in seeds}
+        prim = cluster_bootstrap([(x[s], g[s]) for s in seeds])
+        ok = prim["interval_above_zero"] and all(v > 0 for v in prim["per_seed"])
+        out.update(rule="seed-mean grpo - control interval above 0 and all 3 seeds > 0",
+                   grpo_vs_control=prim, status="replicated" if ok else "not_replicated",
+                   grpo_vs_parent=cluster_bootstrap([(p, g[s]) for s in seeds]),
+                   control_vs_parent=cluster_bootstrap([(p, x[s]) for s in seeds]),
+                   accuracy={n: _acc(_rows(ev, n, suite)) for n in need})  # fmt: skip
+        for n in ("v4-rft-s1", "v4-grpo-step-s1"):
+            if (ev / f"{n}_{suite}_{SW}" / "rows.jsonl").exists():
+                out["accuracy"][n] = _acc(_rows(ev, n, suite))
+    Path(a.out).write_text(json.dumps(out, indent=2) + "\n")
+    print(json.dumps({"status": out["status"]}))
+    return 0
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -215,9 +248,12 @@ def main(argv=None) -> int:
     h4 = sub.add_parser("h4")
     h4.add_argument("--eval-dir", required=True)
     h4.add_argument("--out", required=True)
+    rp = sub.add_parser("replication")
+    rp.add_argument("--eval-dir", required=True)
+    rp.add_argument("--out", required=True)
     a = p.parse_args(argv)
     return {"plateau": cmd_plateau, "headroom": cmd_headroom, "select": cmd_select,
-            "h4": cmd_h4}[a.cmd](a)  # fmt: skip
+            "h4": cmd_h4, "replication": cmd_replication}[a.cmd](a)  # fmt: skip
 
 
 if __name__ == "__main__":

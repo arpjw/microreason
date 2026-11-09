@@ -315,3 +315,29 @@ def test_parallel_sft_example_building_matches_sequential(records):
     assert [(i, e.input_ids, e.labels) for i, e in par] == [
         (i, e.input_ids, e.labels) for i, e in seq
     ]
+
+
+def test_replication_suite_is_fresh_frozen_and_reproducible(tmp_path):
+    from test_data_v3 import _cfg
+
+    from microreason.data import build_v3 as b3
+    from microreason.eval.report import load_frozen_suite
+
+    cfg = _cfg(tmp_path)
+    b3.write_v3(cfg, b3.build_v3(cfg))
+    b3.freeze_v3(cfg.manifest_dir)
+    p = b3.build_replication_suite(cfg, root_seed=99, n=50)
+    m = json.loads(p.read_text())
+    assert m["version"] == "v4x" and m["record_count"] == 50
+    recs, sha = load_frozen_suite("test_extrapolation", cfg.manifest_dir, "v4x")
+    assert sha == m["sha256"] and all(r["id"].startswith("v4x_test_extrapolation_") for r in recs)
+    assert all(r["number_range"] == "extrapolation" for r in recs)
+    old = json.loads(b3.manifest_path(cfg.manifest_dir, "v3", "test_extrapolation").read_text())
+    v3 = set()
+    for split in b3.V3_EVAL_SPLITS:
+        mm = json.loads(b3.manifest_path(cfg.manifest_dir, "v3", split).read_text())
+        v3 |= {r.semantic_fingerprint for r in b3.load_split_v3(mm)}
+    assert not {r["semantic_fingerprint"] for r in recs} & v3 and old["sha256"] != sha
+    assert b3.build_replication_suite(cfg, root_seed=99, n=50) == p  # rebuild matches frozen
+    with pytest.raises(ValueError, match="frozen hash"):
+        b3.build_replication_suite(cfg, root_seed=100, n=50)

@@ -277,6 +277,20 @@ def _cmd_data_generate_stream_v3(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _cmd_data_generate_replication_v4x(args: argparse.Namespace) -> int:
+    from microreason.data import build_v3 as b3
+
+    try:
+        p = b3.build_replication_suite(b3.load_v3_config(args.config), args.root_seed, args.records)
+    except (ValidationError, ValueError, RuntimeError, FileNotFoundError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    m = json.loads(p.read_text())
+    print(json.dumps({k: m[k] for k in ("version", "split", "record_count", "sha256", "root_seed",
+                                        "counts")}, indent=2, sort_keys=True))  # fmt: skip
+    return EXIT_OK
+
+
 def _cmd_data_generate_rl_pool_v3(args: argparse.Namespace) -> int:
     import yaml
 
@@ -662,6 +676,14 @@ def build_parser() -> argparse.ArgumentParser:
     dsv3 = data_sub.add_parser("generate-stream-v3", help="Data v3: training-only stream.")
     dsv3.add_argument("--config", default="configs/data_v3.yaml")
     dsv3.set_defaults(func=_cmd_data_generate_stream_v3)
+    drx = data_sub.add_parser(
+        "generate-replication-v4x",
+        help="Protocol v4 replication: fresh frozen extrapolation suite.",
+    )
+    drx.add_argument("--config", default="configs/data_v3.yaml")
+    drx.add_argument("--root-seed", type=int, default=20261209)
+    drx.add_argument("--records", type=int, default=7000)
+    drx.set_defaults(func=_cmd_data_generate_replication_v4x)
     drv3 = data_sub.add_parser("generate-rl-pool-v3", help="Data v3: Phase C RL pool.")
     drv3.add_argument("--config", default="configs/data_v3.yaml")
     drv3.add_argument("--pool", default="configs/rl_pool_v3.yaml")

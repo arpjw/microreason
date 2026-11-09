@@ -34,6 +34,19 @@ assert h == m['tokenizer_sha256'], 'tokenizer v2 hash mismatch'; print('tokenize
   echo "== setup v3c complete"
   exit 0
 fi
+if [[ "${SETUP_PROFILE:-full}" == "v4x" ]]; then
+  # Protocol v4 replication (reports/replication_v4x.md): regenerate the frozen v3 suites (needed
+  # to exclude their problems), then build and freeze the fresh v4x extrapolation suite.
+  mkdir -p reports/replication_v4x
+  uv run microreason data generate-v3 --config configs/data_v3.yaml > reports/replication_v4x/data_v3_build.json
+  uv run microreason data audit-v3 --report reports/replication_v4x/data_v3_audit.json > /dev/null
+  uv run python -c "import hashlib, json; m = json.load(open('artifacts/tokenizer/v2/tokenizer_manifest.json')); \
+h = hashlib.sha256(open('artifacts/tokenizer/v2/tokenizer.json', 'rb').read()).hexdigest(); \
+assert h == m['tokenizer_sha256'], 'tokenizer v2 hash mismatch'; print('tokenizer v2 verified', h[:12])"
+  uv run microreason data generate-replication-v4x | tee reports/replication_v4x/suite_v4x.json
+  echo "== setup v4x complete"
+  exit 0
+fi
 if [[ "${SETUP_PROFILE:-full}" == "v4" || "${SETUP_PROFILE:-full}" == "v4c" ]]; then
   # Protocol v4 (reports/protocol_v4.md): regenerate the frozen v3 suites (the build refuses any
   # change), verify the committed tokenizer v2. Phase B (v4) also builds the v4 SFT pool here;
