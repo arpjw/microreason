@@ -1,0 +1,38 @@
+{
+  "rule": "highest held-out-val greedy show-work accuracy; ties -> lower LR",
+  "arm": "grpo",
+  "candidates": [
+    {
+      "lr": 1e-06,
+      "lr_text": "0.000001",
+      "name": "pilot-grpo-lr0.000001",
+      "accuracy": 0.8086666666666666,
+      "correct": 4852
+    },
+    {
+      "lr": 3e-06,
+      "lr_text": "0.000003",
+      "name": "pilot-grpo-lr0.000003",
+      "accuracy": 0.8106666666666666,
+      "correct": 4864
+    },
+    {
+      "lr": 1e-05,
+      "lr_text": "0.00001",
+      "name": "pilot-grpo-lr0.00001",
+      "accuracy": 0.8066666666666666,
+      "correct": 4840
+    }
+  ],
+  "selected": {
+    "lr": 3e-06,
+    "lr_text": "0.000003",
+    "name": "pilot-grpo-lr0.000003",
+    "accuracy": 0.8106666666666666,
+    "correct": 4864
+  },
+  "baseline": {
+    "name": "v2-sft-long",
+    "accuracy": 0.807
+  }
+}

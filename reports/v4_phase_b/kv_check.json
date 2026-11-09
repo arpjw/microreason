@@ -1,0 +1,27 @@
+{
+  "bf16_greedy_agreement": 0.962890625,
+  "bf16_sampled": {
+    "cached": {
+      "mean_tokens": 84.78173828125,
+      "pass_at_1": 0.72509765625,
+      "seconds": 5.526
+    },
+    "uncached": {
+      "mean_tokens": 84.77392578125,
+      "pass_at_1": 0.72509765625,
+      "seconds": 128.728
+    }
+  },
+  "checkpoint": "runs/p4/v2-sft-long/checkpoints/step_0046875",
+  "failures": [],
+  "fp32_greedy_agreement": 1.0,
+  "partition": "gate",
+  "pass_at_1_gap": 0.0,
+  "passed": true,
+  "prompts": 512,
+  "rule": {
+    "max_pass_at_1_gap": 0.02,
+    "min_fp32_greedy_agreement": 0.99
+  },
+  "speedup": 23.29
+}

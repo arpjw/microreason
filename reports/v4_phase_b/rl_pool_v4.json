@@ -1,0 +1,27 @@
+{
+  "by_family": {
+    "expression_1op": 102624,
+    "expression_2op": 589919,
+    "expression_3op": 1006250,
+    "expression_4op": 987954,
+    "expression_5op": 821073,
+    "linear_equation": 492180
+  },
+  "family_keep_probability": {
+    "expression_1op": 0.108,
+    "expression_2op": 0.263,
+    "expression_3op": 0.577,
+    "expression_4op": 0.802,
+    "expression_5op": 1.0,
+    "linear_equation": 0.157
+  },
+  "partitions": {
+    "dpo": 579433,
+    "gate": 20033,
+    "grpo": 1000221,
+    "rule": "bucket = sha256('rl-partition:' + id)[:8] / 0xFFFFFFFF; gate < 0.005 <= grpo < 0.255 <= dpo < 0.40 <= sft_extra",
+    "sft_extra": 2400313
+  },
+  "record_count": 4000000,
+  "sha256": "25a81015821268e5d046bd3d006c079775a042cdd8c377a0b3b3cc896ed8f9a9"
+}

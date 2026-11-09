@@ -1,0 +1,10 @@
+{
+  "rule": "pass@16 - sampled pass@1 >= 0.05 on val_heldout_shape at temperature 1.0",
+  "samples": 16,
+  "temperature": 1.0,
+  "pass_at_k": 0.8891666666666667,
+  "pass_at_1": 0.7761145833333334,
+  "gap": 0.11305208333333328,
+  "passed": true,
+  "greedy_accuracy": 0.807
+}

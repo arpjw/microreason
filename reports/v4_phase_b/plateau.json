@@ -1,0 +1,27 @@
+{
+  "rule": "plateaued iff accuracy(final) - accuracy(half) < 0.01 (held-out-val greedy show-work); descriptive, never blocks",
+  "points": [
+    {
+      "examples": 375040,
+      "name": "sft-long-375040",
+      "accuracy": 0.6233333333333333
+    },
+    {
+      "examples": 750080,
+      "name": "sft-long-750080",
+      "accuracy": 0.6836666666666666
+    },
+    {
+      "examples": 1500160,
+      "name": "sft-long-1500160",
+      "accuracy": 0.7456666666666667
+    },
+    {
+      "examples": 3000000,
+      "name": "v2-sft-long",
+      "accuracy": 0.807
+    }
+  ],
+  "last_doubling_gain": 0.06133333333333335,
+  "plateaued": false
+}

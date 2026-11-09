@@ -1,0 +1,36 @@
+{
+  "failures": [],
+  "passed": true,
+  "splits": {
+    "test_extrapolation": {
+      "bad": {},
+      "record_count": 7000,
+      "sha256": "28db77f8794d27dc7a31ff3901ca131c279f51a564d0c7d43fccb93b87e441ca"
+    },
+    "test_heldout_shape": {
+      "bad": {},
+      "record_count": 6000,
+      "sha256": "a370443a077d1469d8d6c1fa5528a0608f460763fa87bcfc57dab5c54546ae73"
+    },
+    "test_id": {
+      "bad": {},
+      "record_count": 7000,
+      "sha256": "2085da0f3c2ef612e58a266513e56760f6d8222a94cec663f1b6834b12f3254a"
+    },
+    "train": {
+      "bad": {},
+      "record_count": 100000,
+      "sha256": "0020a0e550aa91f0c17a145c02006c0ed21b86d815607d871822445e57d4c101"
+    },
+    "val": {
+      "bad": {},
+      "record_count": 7000,
+      "sha256": "4d9b10b328968dd9b6f2197ac36a28630fc7052c5fcd3a41d9624627aafadf21"
+    },
+    "val_heldout_shape": {
+      "bad": {},
+      "record_count": 6000,
+      "sha256": "fabbcecef5ddda6018b81c2df1c33d6f4146094e7db6c7be60ae508590d2c39e"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "budget_ledger": {
+    "approved_at": "2026-11-08",
+    "approved_by": "project owner (pre-approval in chat for protocol v4)",
+    "approved_max_runtime_hours": 4.5,
+    "approved_max_usd": 5.0,
+    "billing_start": "2026-11-09T07:01:16+00:00",
+    "ceiling_at": "2026-11-09T11:31:16+00:00",
+    "elapsed_hours": 2.6672,
+    "estimated_accrued_usd": 2.6405,
+    "gpu_type": "NVIDIA RTX 6000 Ada Generation (Secure Cloud)",
+    "hourly_rate_usd": 0.99,
+    "measured_step_seconds": 18.022,
+    "note": "GPU time at the listed rate only; storage and other charges are excluded.",
+    "pod_id": "8tzge9u80u3s4o",
+    "projected_total_usd": 2.888,
+    "provider": "runpod",
+    "reserve_minutes": 15.0,
+    "shutdown_rule": "Copy reports, pool manifests, metrics, budget ledgers, eval rows and the final v2-sft-long checkpoint off the pod, then terminate (delete) it when the session finishes, at either ceiling, or on any failure; the pod also deletes itself 45 minutes after finishing if not collected.",
+    "steps_remaining": 0,
+    "stop_reason": null,
+    "updated_at": "2026-11-09T09:41:17.967021+00:00"
+  },
+  "final_checkpoint": "runs/p4/pilot-grpo-lr0.00001/checkpoints/step_0000040",
+  "median_step_seconds": 18.022,
+  "peak_memory_gib": 28.41,
+  "rollout_seconds": 621.67,
+  "status": "completed",
+  "steps": 40,
+  "train_wall_seconds": 723.42,
+  "update_seconds": 100.42,
+  "updates": 40
+}

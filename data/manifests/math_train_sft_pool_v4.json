@@ -1,0 +1,75 @@
+{
+  "build_rejections": {
+    "duplicate": 413634,
+    "duplicate_across_parts": 723295,
+    "frozen_eval_overlap": 215666,
+    "sampler:division_by_zero": 173248,
+    "sampler:no_unique_solution": 299275,
+    "sampler:solved_constant_out_of_range": 795390,
+    "sampler:trace_does_not_end_in_answer": 31542,
+    "sampler:value_cap": 653604,
+    "shape_not_in_split_set": 1171431
+  },
+  "by_difficulty": {
+    "1": 267387,
+    "2": 1314896,
+    "3": 1191132,
+    "4": 1179395,
+    "5": 1047190
+  },
+  "by_family": {
+    "expression_1op": 365763,
+    "expression_2op": 1171872,
+    "expression_3op": 915906,
+    "expression_4op": 647513,
+    "expression_5op": 432220,
+    "linear_equation": 1466726
+  },
+  "code_revision": {
+    "dirty": false,
+    "git_commit": "2d20fb44ba3d7bb63b34aeee45bca8389fa7b385",
+    "source": "REVISION file"
+  },
+  "data_config_hash": "sha256:d462a4aea39a87c2884d051f28b27b715b4b38853fad8f695ad86771d4bee8ea",
+  "dataset": "math",
+  "distinct_shapes": 37335,
+  "excluded_fingerprints": 33000,
+  "excluded_frozen_suites": {
+    "test_extrapolation": "28db77f8794d27dc7a31ff3901ca131c279f51a564d0c7d43fccb93b87e441ca",
+    "test_heldout_shape": "a370443a077d1469d8d6c1fa5528a0608f460763fa87bcfc57dab5c54546ae73",
+    "test_id": "2085da0f3c2ef612e58a266513e56760f6d8222a94cec663f1b6834b12f3254a",
+    "val": "4d9b10b328968dd9b6f2197ac36a28630fc7052c5fcd3a41d9624627aafadf21",
+    "val_heldout_shape": "fabbcecef5ddda6018b81c2df1c33d6f4146094e7db6c7be60ae508590d2c39e"
+  },
+  "family_accuracy": {},
+  "family_keep_probability": {
+    "expression_1op": 1.0,
+    "expression_2op": 1.0,
+    "expression_3op": 1.0,
+    "expression_4op": 1.0,
+    "expression_5op": 1.0,
+    "linear_equation": 1.0
+  },
+  "file": "data/generated/math_v3/train_sft_v4/train_sft_v4.jsonl",
+  "generator_version": "3.0",
+  "group_size": 16,
+  "partitions": {
+    "dpo": 726112,
+    "gate": 24905,
+    "grpo": 1248817,
+    "rule": "bucket = sha256('rl-partition:' + id)[:8] / 0xFFFFFFFF; gate < 0.005 <= grpo < 0.255 <= dpo < 0.40 <= sft_extra",
+    "sft_extra": 3000166
+  },
+  "purpose": "sft_pool",
+  "record_count": 5000000,
+  "root_seed": 20261201,
+  "schema_version": 1,
+  "sha256": "76acc7c8f7ad9d9e4270e165c776c329e62c8141bbfacc0092b3277ef7bc39e7",
+  "shards": {
+    "a": 2499905,
+    "b": 2500095,
+    "rule": "sha256(id) bucket < 0.5 -> a, else b"
+  },
+  "split": "train_stream",
+  "version": "v3"
+}

@@ -1,0 +1,31 @@
+{
+  "rule": "highest held-out-val greedy show-work accuracy; ties -> lower LR",
+  "arm": "extra_sft",
+  "candidates": [
+    {
+      "lr": 5e-06,
+      "lr_text": "0.000005",
+      "name": "pilot-sft-lr0.000005",
+      "accuracy": 0.8146666666666667,
+      "correct": 4888
+    },
+    {
+      "lr": 2e-05,
+      "lr_text": "0.00002",
+      "name": "pilot-sft-lr0.00002",
+      "accuracy": 0.79,
+      "correct": 4740
+    }
+  ],
+  "selected": {
+    "lr": 5e-06,
+    "lr_text": "0.000005",
+    "name": "pilot-sft-lr0.000005",
+    "accuracy": 0.8146666666666667,
+    "correct": 4888
+  },
+  "baseline": {
+    "name": "v2-sft-long",
+    "accuracy": 0.807
+  }
+}
