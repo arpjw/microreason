@@ -3,6 +3,8 @@
 # confirmatory test evaluation (reports/confirmatory_plan_v2.md). One pod.
 # Owner approved in chat on 2026-11-09 ("Approve Phase C") after a quoted estimate of about
 # $3-3.5 with caps of $6 and 5 h. hourly_rate_usd must equal the live rate of the pod created.
+# Attempt 1 stopped at the reward-variance gate (~$0.33). The owner approved a second session under
+# the temperature-1.0 amendment on 2026-11-09 ("let's go with your recommendations"); same caps.
 paid_compute_allowed: true
 provider: runpod
 gpu_type: NVIDIA RTX 6000 Ada Generation (Secure Cloud)

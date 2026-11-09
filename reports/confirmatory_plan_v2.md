@@ -40,6 +40,11 @@ wrong and stay in the denominator.
 checkpoint is chosen by any result. A GRPO or control run that does not complete is reported as
 such. H4 is then **undecided**: the rule needs both seeds.
 
+**Amendment (2026-11-09, before any v3 test suite was opened).** GRPO samples at temperature
+1.0, not 0.8, after Phase C attempt 1 stopped at the reward-variance gate
+(`reports/protocol_v3.md`). The checkpoints, suites, decoding, comparisons and rules below are
+unchanged.
+
 ## Primary: H4
 
 > **H4:** exact-outcome GRPO improves held-out correctness beyond SFT and equal-cost continued SFT.

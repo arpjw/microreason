@@ -345,3 +345,34 @@ If either fails, the session stops and the test suites stay sealed.
 That totals **about 2.7–3 h**, so **≈ $3–3.5** on an RTX 6000 Ada at $0.99/h. The proposed
 bounds are **$6 and 5 h** (`configs/budget_v3_phase_c.yaml`, which stays unpaid until approved).
 GRPO step time is the main uncertainty, because v3 rollouts are about 2–3× longer than rl-v2's.
+
+## Amendment for Phase C attempt 2 (2026-11-09, after attempt 1 and before any GRPO update)
+
+**What happened.** Phase C attempt 1 stopped at the reward-variance gate
+(`reports/v3_phase_c_attempt1.md`): 0.182 of groups were mixed, against a required 0.20.
+Outcomes were near all-or-nothing per prompt at temperature 0.8.
+
+**What changes.** The owner approved this amendment and a second Phase C session on 2026-11-09
+("let's go with your recommendations"):
+- **GRPO's sampling temperature is raised from 0.8 to 1.0** in `configs/grpo_v3_seed{1,2}.yaml`.
+- The new temperature applies to the KV-cache check, the reward-variance gate, GRPO rollouts,
+  and the temperature-scaled log probabilities in the GRPO loss.
+
+**What stays the same:**
+- **Gate rule:** mixed groups at least 0.20, malformed at most 0.10, pass@1 between 0.05 and 0.95.
+- **Everything else** in the Phase C settings above.
+- **Evaluation protocol:** greedy primary; sampled pass@k still at temperature 0.8 for every
+  branch.
+- **The confirmatory plan** (`reports/confirmatory_plan_v2.md`) and its rules.
+
+**If the gate fails again,** the session stops, the test suites stay sealed, and H4 stays
+undecided. No further sampling change is made within this protocol.
+
+**Why this is not test-informed.** Attempt 1 evaluated only training-only gate prompts. No v3
+test suite has been opened, so this change cannot depend on test results.
+
+**Deviations recorded:**
+- Temperature 1.0 differs from the spec's initial setting (0.8, §6 Stage 5).
+- This is the second gate attempt.
+
+Both will be reported.
