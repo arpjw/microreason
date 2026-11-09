@@ -302,3 +302,16 @@ def test_v4_pools_use_declared_keep_and_distinct_ids(tmp_path):
         bad = assistant_ids(tok, wrong_steps, "987654", "show_work")
         c2 = score(r, bad, True, tok, step_reward_weight=0.2)
         assert c2.step_credit == 0.0 and c2.reward < 1.0
+
+
+def test_parallel_sft_example_building_matches_sequential(records):
+    from microreason.tokenizer import MicroTokenizer
+    from microreason.train.sft import build_examples
+
+    tk = MicroTokenizer.load(TOK)
+    seq = build_examples(tk, str(TOK), records, 0.75, 384, workers=1)
+    par = build_examples(tk, str(TOK), records, 0.75, 384, workers=2, parallel_min=0, chunk=7)
+    assert [i for i, _ in par] == [r["id"] for r in records]
+    assert [(i, e.input_ids, e.labels) for i, e in par] == [
+        (i, e.input_ids, e.labels) for i, e in seq
+    ]

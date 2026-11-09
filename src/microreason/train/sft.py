@@ -115,6 +115,43 @@ class SFTStream:
         self._order_cache = None
 
 
+_WORKER_TOK: MicroTokenizer | None = None
+
+
+def _init_example_worker(tokenizer_dir: str) -> None:
+    global _WORKER_TOK
+    _WORKER_TOK = MicroTokenizer.load(tokenizer_dir)
+
+
+def _example_chunk(args: tuple) -> list[tuple[str, Example]]:
+    records, frac, max_len = args
+    return [(r["id"], build_record_example(_WORKER_TOK, r, mode_for(r["id"], frac),
+                                           max_len=max_len)) for r in records]  # fmt: skip
+
+
+def build_examples(tok: MicroTokenizer, tokenizer_dir: str, records: list[dict], frac: float,
+                   max_len: int, workers: int | None = None, parallel_min: int = 100_000,
+                   chunk: int = 20_000) -> list[tuple[str, Example]]:  # fmt: skip
+    """(id, example) for every record, in record order. Large selections (protocol v4: 2-3 M
+    examples) are built in worker processes; the result is identical to the sequential path."""
+    import os
+
+    if workers is None:
+        workers = min(12, int(os.environ.get("OMP_NUM_THREADS") or os.cpu_count() or 1))
+    if workers <= 1 or len(records) < parallel_min:
+        return [(r["id"], build_record_example(tok, r, mode_for(r["id"], frac), max_len=max_len))
+                for r in records]  # fmt: skip
+    from concurrent.futures import ProcessPoolExecutor
+
+    jobs = [(records[i : i + chunk], frac, max_len) for i in range(0, len(records), chunk)]
+    out: list[tuple[str, Example]] = []
+    with ProcessPoolExecutor(workers, initializer=_init_example_worker,
+                             initargs=(str(tokenizer_dir),)) as ex:  # fmt: skip
+        for part in ex.map(_example_chunk, jobs):
+            out.extend(part)
+    return out
+
+
 def build_sft_trainer(
     resolved: ResolvedConfig, run_dir: str | Path, device: str, budget_guard=None
 ):
@@ -141,12 +178,11 @@ def build_sft_trainer(
     else:
         records, train_manifest = select_records(cfg.train_manifest, "train", cfg.num_examples)
         selection = SELECTION_RULE
-    items: list[tuple[str, Example]] = []
+    items = build_examples(tok, stage.tokenizer, records, cfg.show_work_fraction,
+                           stage.sequence_length)  # fmt: skip
     counts = {"show_work": 0, "direct": 0}
-    for r in records:
-        mode = mode_for(r["id"], cfg.show_work_fraction)
-        counts[mode] += 1
-        items.append((r["id"], build_record_example(tok, r, mode, max_len=stage.sequence_length)))
+    for rid, _ in items:
+        counts[mode_for(rid, cfg.show_work_fraction)] += 1
     name = "sft_math_train_v1" if cfg.stream_partition is None else f"sft_{cfg.stream_partition}"
     stream = SFTStream(items, stage.seed, tok.pad_id, name)
 
