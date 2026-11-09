@@ -1,0 +1,15 @@
+# Byte-level BPE tokenizer v2 (reports/protocol_v3.md): v1's settings plus one token per digit.
+# Trained on training splits only: the same hash-selected general-text sample as v1 and the
+# data-v3 SFT training split (built on the pod in Phase B, before this tokenizer).
+version: v2
+vocab_size: 8192
+min_frequency: 2
+sources_config: configs/data_sources.yaml
+raw_dir: data/raw
+# v1 used 800 per 100k (~13 M chars) for ~30% math; the v3 SFT split is ~20 M chars, so ~2,900
+# per 100k (~47 M chars) keeps the same ~70/30 general/math character balance.
+text_select_per_100k: 2900
+math_manifest: data/manifests/math_train_v3.json
+math_format: plain
+digits: individual
+out_dir: artifacts/tokenizer/v2

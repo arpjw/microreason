@@ -14,7 +14,7 @@ from pathlib import Path
 import torch
 
 from microreason.data import build
-from microreason.data.schema import EVAL_SPLITS
+from microreason.data.schema import EVAL_SPLITS_BY_VERSION
 from microreason.eval.generate import FORMATS, eval_prompt_ids, generate_all
 from microreason.eval.score import (
     paired_bootstrap,
@@ -34,8 +34,8 @@ class SealedSuiteError(RuntimeError):
 
 
 def load_frozen_suite(split: str, manifest_dir: str = "data/manifests", version: str = "v1"):
-    if split not in EVAL_SPLITS:
-        raise ValueError(f"{split!r} is not an evaluation suite")
+    if split not in EVAL_SPLITS_BY_VERSION.get(version, ()):
+        raise ValueError(f"{split!r} is not an evaluation suite of data-{version}")
     frozen = build.frozen_suites(manifest_dir, version)
     if frozen is None:
         raise ValueError("evaluation suites are not frozen")
@@ -84,6 +84,8 @@ def run_eval(
     batch_size: int = 64,
     limit: int | None = None,
     device: str = "cpu",
+    data_version: str = "v1",
+    kv_cache: bool = False,
 ) -> dict:
     from microreason.checkpoint import MANIFEST, load_checkpoint
 
@@ -97,7 +99,7 @@ def run_eval(
     if (out / "summary.json").exists():
         raise FileExistsError(f"{out} already holds an evaluation; refusing to overwrite")
 
-    records, suite_hash = load_frozen_suite(split, manifest_dir)
+    records, suite_hash = load_frozen_suite(split, manifest_dir, data_version)
     if limit is not None:
         records = records[:limit]
     tok = MicroTokenizer.load(tokenizer_dir)
@@ -107,15 +109,19 @@ def run_eval(
     ckpt_id = "sha256:" + hashlib.sha256((Path(checkpoint) / MANIFEST).read_bytes()).hexdigest()
     model.eval()
     prompts = [eval_prompt_ids(tok, r["prompt"], fmt) for r in records]
-    common = dict(max_new_tokens=max_new_tokens, eos_id=tok.eos_id, pad_id=tok.pad_id)
+    # kv_cache selects the cached generator (protocol v3, eval-v2); same tokens as the uncached
+    # one up to rounding (tests/test_eval.py; on-pod parity check reports/rl_v2_results).
+    common = dict(max_new_tokens=max_new_tokens, eos_id=tok.eos_id, pad_id=tok.pad_id,
+                  use_cache=kv_cache)  # fmt: skip
 
     t0 = time.time()
     greedy = generate_all(model, prompts, batch_size=batch_size, **common)
     dt = time.time() - t0
     rows = _rows(records, greedy, tok, fmt, suite_hash, ckpt_id, "greedy", dt / len(records))
     summary = {
-        "protocol": EVAL_PROTOCOL,
+        "protocol": "eval-v2-cached" if kv_cache else EVAL_PROTOCOL,
         "suite": split,
+        "data_version": data_version,
         "suite_sha256": suite_hash,
         "limited_to": limit,
         "checkpoint": str(checkpoint),
@@ -123,7 +129,7 @@ def run_eval(
         "checkpoint_step": ckpt_manifest.get("step"),
         "prompt_format": fmt,
         "device": device,
-        "decode": {"greedy": {"max_new_tokens": max_new_tokens}},
+        "decode": {"greedy": {"max_new_tokens": max_new_tokens}, "kv_cache": kv_cache},
         "greedy": summarize_greedy(rows),
         "greedy_seconds": round(dt, 3),
     }

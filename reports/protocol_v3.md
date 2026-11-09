@@ -1,9 +1,15 @@
-# Protocol v3 (DRAFT for owner review): a capability-first redesign, then H4 again
+# Protocol v3: a capability-first redesign, then H4 again
 
-Date: 2026-11-08. **Status: draft.** Nothing in this protocol has been run, and no money is
-committed. Phase A (local code and tests) can start once the owner approves this design. Phases B
-and C each need their own spend approval. Before the first pod run, the frozen version of this
-protocol is committed with every open choice resolved.
+Date: 2026-11-08.
+
+**Status:**
+- **Design approved:** the owner approved this design and the recommended choices in chat on
+  2026-11-08 ("Approve, start Phase A"): in-distribution operands 0–999, extrapolation 4–5
+  digits, DPO dropped, 2 seeds for the RL branches.
+- **Phase A is complete:** local code and tests on tiny models, CPU only.
+- **The settings below are frozen** for Phase B, as amended in "Phase A results and frozen
+  settings" at the end. **No pod has run.**
+- **Spend:** Phases B and C each still need their own spend approval.
 
 ## Why v3
 
@@ -109,9 +115,9 @@ consulted.
 
 ### 4. Generation length
 
-Traces and digit tokens are longer, so the generation cap rises from 128 to **256** new tokens
-for evaluation and rollouts. Phase A sets the SFT `sequence_length` from the measured maximum
-example length; it stays at 256 if everything fits.
+Traces and digit tokens are longer, so the generation caps rise from 128 to **320** new tokens
+for evaluation and **256** for GRPO rollouts. SFT `sequence_length` is **384**. All three were set
+from Phase A measurements; see the amendments at the end.
 
 ## Stages
 
@@ -147,7 +153,7 @@ before a broad claim. Pretraining, mid-training and SFT use 1 seed, as before.
 | Item | Plan |
 | --- | --- |
 | Suite | held-out-test: new, frozen at build, sealed |
-| Decoding | greedy show-work, 256 new tokens, eval protocol eval-v1 (the uncached generator) |
+| Decoding | greedy show-work, 320 new tokens, eval protocol `eval-v2-cached` (the cached generator, for every branch) |
 | Comparisons | v4-grpo − v2-sft and v4-grpo − v2-extra-sft, for each seed pair |
 | Rule | spec §7: at least +2 points, paired 95% interval above 0 |
 | Seeds | **H4 is supported only if the rule holds for both seeds** in both comparisons |
@@ -180,12 +186,91 @@ The usual safeguards apply: watchdog, termination on completion, and per-session
   test content enters v3 data: the v3 generator and held-out sets are new, and the v3 test suites
   are built and frozen fresh.
 
-## Decisions needed from the owner
+## Phase A results and frozen settings (amendments, all before any v3 run)
 
-1. Approve this design so Phase A can start (free).
-2. Number ranges: in distribution 0–999, extrapolation 4–5 digits. Or keep a narrower range,
-   such as 0–99 in distribution, which is easier.
-3. Drop DPO from v3 (recommended), or keep it.
-4. Two seeds for the RL branches (recommended; about +$1), or one.
-5. Phase B and Phase C spend caps. These will be asked for separately, after Phase A, with
-   measured length and cost estimates.
+Phase A built and tested the v3 code locally (CPU, tiny models, small samples). These settings
+replace or sharpen the draft above.
+
+**Generator** (`src/microreason/data/trees.py`):
+- **Every sample verifies.** 2,976 of 4,000 in-distribution draws were accepted. All of them
+  pass the independent SymPy check and the step checker. Rejections were for caps, division by
+  zero, and no unique solution.
+- **Mix:** expressions are about 64% of accepted problems and equations about 36%. About 57% of
+  expression answers and 67% of in-distribution equation answers are integers.
+- **Shape split** (fixed by a hash, pinned in tests):
+
+  | | Train-visible | Held-out-val | Held-out-test | Eligible |
+  | --- | ---: | ---: | ---: | ---: |
+  | Expression shapes | 37,768 | 4,591 | 4,589 | 46,912 |
+  | Equation shapes | 137 | 10 | 9 | 104 |
+
+- **Coverage check:** passes. No operator pairing or step type in either held-out set is missing
+  from training.
+- **Equations:** the held-out equation sets are small (10 and 9 shapes), so most of the
+  held-out signal comes from expressions. Results will be reported by kind.
+
+**Tokenizer v2** (`configs/tokenizer_v2.yaml`): `Digits(individual_digits=True)`, then
+byte-level.
+- **Trade-off:** every digit is one token in every position. The cost is a separate space
+  token before a number. A variant that attached the space to the first digit was rejected,
+  because it gives leading digits two identities.
+- **Training data balance:** the general-text sample is raised to 2,900 per 100 k, keeping
+  v1's ~70/30 general/math character balance with the longer v3 problems.
+
+**Lengths** (provisional digit tokenizer; `reports/v3_phase_a_lengths.json`): a v3 problem is
+about **90 plain-text tokens** (p99 217), against 23 in v1. Show-work answers:
+
+| Suite | Mean | Max |
+| --- | ---: | ---: |
+| In distribution | 75 | 220 |
+| Held-out-val | 105 | 207 |
+| Extrapolation | 95 (p99 249) | 261 |
+
+These set the following limits:
+
+| Setting | Value | Reason |
+| --- | --- | --- |
+| Evaluation `max_new_tokens` | **320** | Covers extrapolation's longest answer (261) |
+| GRPO rollouts `max_new_tokens` | **256** | Rollouts use in-distribution prompts only |
+| SFT `sequence_length` | **384** | Longest of 30,000 examples is 259; SFT never truncates |
+| SFT batch | 64 examples per step | Unchanged from v2 |
+
+**Evaluation protocol.** Every v3 checkpoint is evaluated with the **cached generator**
+(`eval-v2-cached`, `--kv-cache`), with the same settings for every branch.
+- **Why:** answers are about 3× longer, so uncached evaluation would cost about 25 minutes per
+  sampled held-out pass.
+- **Parity:** the cached generator matched the uncached one on 512/512 fp32 greedy prompts on
+  the real v2-sft model (`reports/rl_v2_results/kv_check.json`), and in the local tests.
+- **Comparability:** no v3 number is compared with a v1 or v2 number.
+
+**Data sizes** (`configs/data_v3.yaml`): the stream has **6 M records**, with shard a at 60%.
+- **Base pretraining:** shard a (about 324 M tokens) covers its 300 M math tokens in under one
+  pass.
+- **Mid-training:** shard b covers about 41 M easy tokens in about one pass and about 130 M hard
+  tokens in under one pass.
+- **Curriculum buckets:** easy is levels 1–2 (about 20% of tokens); hard is levels 3–5.
+- **Other sets:** the SFT pool has 100,000 records; val and `test_id` have 7,000 each; each
+  held-out suite has 6,000; extrapolation has 7,000.
+
+**Stage configs** (`configs/pretrain_v3.yaml`, `midtrain_v3.yaml`, `sft_v3.yaml`): protocol v2
+recipes with tokenizer v2, data v3, new seeds (52, 53, 54) and the SFT length above.
+
+**Phase B session** (`scripts/pod_setup.sh` with `SETUP_PROFILE=v3`, then
+`scripts/pod_v3_phase_b.sh`):
+1. On the pod, build, audit and freeze the v3 suites. Build the SFT split, the stream and
+   tokenizer v2, then tokenize.
+2. Train v0-base, v1-math and v2-sft.
+3. Evaluate on val: H1, H2, show-work with samples, and direct.
+4. Evaluate on held-out-val: v2-sft show-work (greedy plus 4 samples) and direct, and v1-math
+   plain.
+5. Apply the capability gate (`scripts/v3_capability_gate.py`).
+
+The test suites stay sealed: the script refuses any `test_*` evaluation. The frozen v3
+manifests are pulled and committed after the session.
+
+**Phase B estimate:**
+- **Time:** about 2.5–3 h on one GPU. Setup and data take about 40 minutes, base pretraining
+  about 60–80 minutes, and mid-training, SFT and evaluations the rest.
+- **Cost:** **about $3–3.5** at the RTX 6000 Ada's $0.99/h.
+- **Proposed bounds:** **$6 and 4.5 h** (`configs/budget_v3_phase_b.yaml`, which stays unpaid
+  until approved).

@@ -7,10 +7,27 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, PositiveInt
 
 Split = Literal[
-    "train", "train_stream", "val", "test_id", "test_extrapolation", "test_heldout_template"
+    "train",
+    "train_stream",
+    "val",
+    "test_id",
+    "test_extrapolation",
+    "test_heldout_template",
+    "val_heldout_shape",
+    "test_heldout_shape",
 ]
 EVAL_SPLITS: tuple[Split, ...] = ("test_heldout_template", "test_extrapolation", "test_id", "val")
 ALL_SPLITS: tuple[Split, ...] = (*EVAL_SPLITS, "train")
+# Data v3 (generator 3.0, reports/protocol_v3.md): held-out *shapes*, with a development
+# held-out set (val_heldout_shape) shape-disjoint from the sealed one (test_heldout_shape).
+V3_EVAL_SPLITS: tuple[Split, ...] = (
+    "test_heldout_shape",
+    "val_heldout_shape",
+    "test_extrapolation",
+    "test_id",
+    "val",
+)
+EVAL_SPLITS_BY_VERSION: dict[str, tuple[Split, ...]] = {"v1": EVAL_SPLITS, "v3": V3_EVAL_SPLITS}
 
 
 class _Strict(BaseModel):

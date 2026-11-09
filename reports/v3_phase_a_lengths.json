@@ -1,0 +1,80 @@
+{
+ "train": {
+  "plain_tokens": {
+   "mean": 89.6,
+   "p50": 84,
+   "p99": 217,
+   "max": 250
+  },
+  "sft_example_tokens": {
+   "mean": 68.9,
+   "p50": 47,
+   "p99": 218,
+   "max": 263
+  },
+  "show_work_response_tokens": {
+   "mean": 74.6,
+   "p50": 69,
+   "p99": 188,
+   "max": 220
+  }
+ },
+ "val_heldout_shape": {
+  "plain_tokens": {
+   "mean": 124.7,
+   "p50": 117,
+   "p99": 230,
+   "max": 239
+  },
+  "sft_example_tokens": {
+   "mean": 89.4,
+   "p50": 77,
+   "p99": 233,
+   "max": 251
+  },
+  "show_work_response_tokens": {
+   "mean": 104.8,
+   "p50": 98,
+   "p99": 201,
+   "max": 207
+  }
+ },
+ "test_extrapolation": {
+  "plain_tokens": {
+   "mean": 116.0,
+   "p50": 105,
+   "p99": 288,
+   "max": 302
+  },
+  "sft_example_tokens": {
+   "mean": 87.3,
+   "p50": 61,
+   "p99": 288,
+   "max": 315
+  },
+  "show_work_response_tokens": {
+   "mean": 94.8,
+   "p50": 85,
+   "p99": 249,
+   "max": 261
+  }
+ },
+ "v1_train_v1_tokenizer": {
+  "mean": 23.2,
+  "p50": 23,
+  "p99": 27,
+  "max": 29
+ },
+ "v1_train_v1_tokenizer_sft": {
+  "mean": 35.2,
+  "p50": 35,
+  "p99": 39,
+  "max": 41
+ },
+ "v3_train_v1_tokenizer": {
+  "mean": 68.6,
+  "p50": 64,
+  "p99": 163,
+  "max": 181
+ }
+}

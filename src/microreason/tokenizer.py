@@ -44,6 +44,10 @@ class TokenizerConfig(BaseModel):
     text_select_per_100k: int = Field(default=1300, gt=0, le=100_000)
     math_manifest: str = "data/manifests/math_train_v1.json"
     math_format: Literal["plain"] = "plain"
+    # "merge" (v1): numbers are merged by BPE like any text. "individual" (v2, protocol v3):
+    # every digit is split off before byte-level pre-tokenization, so each digit is exactly one
+    # token in every position and numbers of any length share the same digit tokens.
+    digits: Literal["merge", "individual"] = "merge"
     out_dir: str = "artifacts/tokenizer/v1"
 
 
@@ -99,10 +103,22 @@ def iter_training_texts(cfg: TokenizerConfig) -> Iterator[str]:
     yield from collect_training_texts(cfg)[0]
 
 
+def pre_tokenizer(digits: str = "merge") -> pre_tokenizers.PreTokenizer:
+    byte_level = pre_tokenizers.ByteLevel(add_prefix_space=False, use_regex=True)
+    if digits == "merge":
+        return byte_level
+    return pre_tokenizers.Sequence([pre_tokenizers.Digits(individual_digits=True), byte_level])
+
+
+def pre_tokenization_description(digits: str = "merge") -> str:
+    base = "ByteLevel(add_prefix_space=False, use_regex=True)"
+    return base if digits == "merge" else f"Digits(individual_digits=True) then {base}"
+
+
 def train_tokenizer(cfg: TokenizerConfig, texts: Iterable[str]) -> Tokenizer:
     tok = Tokenizer(models.BPE(unk_token=None, byte_fallback=False))
     tok.normalizer = _normalizer()
-    tok.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=False, use_regex=True)
+    tok.pre_tokenizer = pre_tokenizer(cfg.digits)
     tok.decoder = decoders.ByteLevel()
     trainer = trainers.BpeTrainer(
         vocab_size=cfg.vocab_size,
@@ -184,7 +200,7 @@ def save_tokenizer(tok: Tokenizer, cfg: TokenizerConfig, stats: dict) -> Path:
         "vocab_size": tok.get_vocab_size(),
         "model": "byte-level BPE",
         "normalization": NORMALIZATION,
-        "pre_tokenization": "ByteLevel(add_prefix_space=False, use_regex=True)",
+        "pre_tokenization": pre_tokenization_description(cfg.digits),
         "special_tokens": wrapped.special,
         "special_tokens_matched_in_text": False,
         "config": cfg.model_dump(mode="json"),

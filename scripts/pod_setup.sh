@@ -17,6 +17,22 @@ uv run python -c "import torch; print('torch', torch.__version__, 'cuda', torch.
 echo "== data (rebuilt from pinned sources)"
 uv run microreason data fetch-sources
 uv run microreason data split-text --out /tmp/general_text_split_v1.json
+if [[ "${SETUP_PROFILE:-full}" == "v3" ]]; then
+  # Protocol v3 (reports/protocol_v3.md): data v3 + tokenizer v2; no v1 math data is needed.
+  echo "== data v3: suites (built, audited, frozen), SFT split, stream"
+  mkdir -p reports/v3_phase_b
+  uv run microreason data generate-v3 --config configs/data_v3.yaml > reports/v3_phase_b/data_v3_build.json
+  uv run microreason data audit-v3 --report reports/v3_phase_b/data_v3_audit.json > /dev/null
+  uv run microreason data generate-stream-v3 --config configs/data_v3.yaml
+  echo "== tokenizer v2 (one token per digit)"
+  uv run microreason tokenizer train --config configs/tokenizer_v2.yaml
+  echo "== tokenize with tokenizer v2"
+  uv run microreason data tokenize --tokenizer artifacts/tokenizer/v2 --out data/tokenized_v2 \
+    --datasets general_text_train_v1,general_text_val_v1,math_train_v3,math_val_v3
+  uv run microreason data tokenize-stream-v3 --config configs/data_v3.yaml
+  echo "== setup v3 complete"
+  exit 0
+fi
 uv run microreason data generate          # refuses to change the frozen evaluation suites
 uv run microreason data audit --report /tmp/data_audit_v1.json
 uv run microreason data freeze             # idempotent: verifies the frozen suite hashes

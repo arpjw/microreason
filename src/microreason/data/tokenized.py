@@ -127,11 +127,11 @@ def tokenize_general_text(tok, split: str, out_dir: str | Path, batch: int = 204
     )
 
 
-def tokenize_math(tok, split: str, out_dir: str | Path) -> dict:
+def tokenize_math(tok, split: str, out_dir: str | Path, version: str = "v1") -> dict:
     from microreason.data.build import load_split
     from microreason.tokenizer import math_plain_text
 
-    manifest = json.loads(Path(f"data/manifests/math_{split}_v1.json").read_text())
+    manifest = json.loads(Path(f"data/manifests/math_{split}_{version}.json").read_text())
     if split != "train" and split != "val":
         raise ValueError("only train and val math splits may be tokenized for training/eval loss")
     recs = [r.model_dump() for r in load_split(manifest)]

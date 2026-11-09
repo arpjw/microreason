@@ -1,0 +1,31 @@
+# Data v3 (generator 3.0, reports/protocol_v3.md): compositional trees and linear equations,
+# held-out shape sets, digit-length extrapolation. Built on the pod in Phase B, then frozen.
+# Sizes from Phase A measurements (provisional digit tokenizer): a v3 problem is ~90 plain-text
+# tokens (p99 217). Stream: 6 M records; shard a (60%, ~324 M tokens) covers base pretraining's
+# 300 M math tokens in under one pass; shard b (40%) covers mid-training's ~41 M easy and
+# ~130 M hard math tokens in about one and under one pass.
+version: v3
+root_seed: 20261110
+counts:
+  train: 100000            # SFT pool (v2-sft draws 50,000)
+  val: 7000
+  test_id: 7000
+  test_extrapolation: 7000
+  val_heldout_shape: 6000  # development held-out set; capability gate
+  test_heldout_shape: 6000 # sealed until the confirmatory plan v2 is committed
+overgenerate: 1.2
+max_attempts_factor: 80
+corpus_scan:
+  enabled: true
+  sources_config: configs/data_sources.yaml
+  raw_dir: data/raw
+stream:
+  records: 6000000
+  shard_a_fraction: 0.6
+  part_size: 250000
+  workers: 12
+  out_path: data/generated/math_v3/train_stream/train_stream.jsonl
+  manifest_path: data/manifests/math_train_stream_v3.json
+  tokenized_prefix: math_stream
+out_dir: data/generated/math_v3
+manifest_dir: data/manifests

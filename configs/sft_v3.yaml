@@ -1,0 +1,35 @@
+# Protocol v3 (reports/protocol_v3.md): derived from the v2 config with tokenizer v2 and data v3.
+# Stage 3 supervised fine-tuning (spec §6). Proposal only; nothing here has been run.
+# 50,000 verified train records (fixed selection and 75/25 show-work/direct split, declared
+# before the run), 2 epochs (max_examples = 100,000), loss on assistant tokens only.
+stage: sft
+model: configs/model_43m.yaml
+tokenizer: artifacts/tokenizer/v2
+parent: artifacts/p3-v1-math  # the v3 v1-math checkpoint
+sft:
+  train_manifest: data/manifests/math_train_v3.json
+  val_manifest: data/manifests/math_val_v3.json
+  num_examples: 50000
+  show_work_fraction: 0.75
+  val_examples_per_format: 256
+seed: 54
+precision: bf16
+sequence_length: 384          # per-example cap; v3 SFT examples max ~260 tokens (Phase A, 30k sample); never truncated
+effective_batch_tokens: 24576 # 64 examples per optimizer step at 384
+micro_batch_size: 64
+max_examples: 100000          # 2 epochs over 50,000 examples -> 1,563 steps
+log_every_steps: 25
+eval_every_steps: 250
+checkpoint_every_steps: 500
+optimizer:
+  name: adamw
+  peak_lr: 0.00005
+  weight_decay: 0.1
+  grad_clip_norm: 1.0
+scheduler:
+  name: cosine
+  warmup_fraction: 0.02
+  min_lr_fraction: 0.1
+budget:
+  paid_compute_allowed: false
+  max_spend_usd: 0

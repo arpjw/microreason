@@ -6,6 +6,7 @@ import argparse
 import json
 import sys
 from collections.abc import Callable, Sequence
+from pathlib import Path
 
 from pydantic import ValidationError
 
@@ -106,6 +107,7 @@ def _cmd_eval(args: argparse.Namespace) -> int:
             tokenizer_dir=args.tokenizer, allow_test=args.allow_test, samples=args.samples,
             temperature=args.temperature, seed=args.seed, max_new_tokens=args.max_new_tokens,
             batch_size=args.batch_size, limit=args.limit, device=args.device or default_device(),
+            data_version=args.data_version, kv_cache=args.kv_cache,
         )  # fmt: skip
     except (SealedSuiteError, ValueError, FileExistsError, OSError) as exc:
         print(f"error: {exc}", file=sys.stderr)
@@ -192,6 +194,9 @@ def _cmd_data_tokenize(args: argparse.Namespace) -> int:
         "math_train_v1": lambda d: tokenize_math(tok, "train", d),
         "math_val_v1": lambda d: tokenize_math(tok, "val", d),
     }
+    if Path("data/manifests/math_val_v3.json").exists():
+        jobs["math_train_v3"] = lambda d: tokenize_math(tok, "train", d, "v3")
+        jobs["math_val_v3"] = lambda d: tokenize_math(tok, "val", d, "v3")
     stream_manifest = Path("data/manifests/math_train_stream_v1.json")
     if stream_manifest.exists():
         from microreason.data.tokenized import tokenize_math_stream
@@ -221,6 +226,80 @@ def _cmd_data_tokenize(args: argparse.Namespace) -> int:
         else:
             log.info("tokenizing %s", name)
             m = job(d)
+        out[name] = {"documents": m["documents"], "tokens": m["tokens"]}
+    print(json.dumps(out, indent=2, sort_keys=True))
+    return EXIT_OK
+
+
+def _cmd_data_generate_v3(args: argparse.Namespace) -> int:
+    from microreason.data import build_v3 as b3
+
+    try:
+        cfg = b3.load_v3_config(args.config)
+        result = b3.build_v3(cfg)
+        b3.guard_against_frozen_v3(cfg, result)
+    except (ValidationError, ValueError, RuntimeError, FileNotFoundError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    for path in b3.write_v3(cfg, result):
+        log.info("wrote %s", path)
+    try:
+        frozen = b3.freeze_v3(cfg.manifest_dir, cfg.version)
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    print(json.dumps({"frozen": str(frozen), "records": {k: len(v) for k, v in
+                      result["records"].items()}, "corpus_scan": result["corpus_scan"],
+                      "coverage": result["coverage"]}, indent=2, sort_keys=True))  # fmt: skip
+    return EXIT_OK
+
+
+def _cmd_data_audit_v3(args: argparse.Namespace) -> int:
+    from microreason.data import build_v3 as b3
+
+    report = b3.audit_v3(args.manifest_dir, args.version, regenerate=args.regenerate)
+    if args.report:
+        Path(args.report).write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
+    print(json.dumps(report, indent=2, sort_keys=True))
+    return EXIT_OK if report["passed"] else EXIT_CONFIG_ERROR
+
+
+def _cmd_data_generate_stream_v3(args: argparse.Namespace) -> int:
+    from microreason.data import build_v3 as b3
+
+    try:
+        m = b3.build_stream_v3(b3.load_v3_config(args.config))
+    except (ValidationError, ValueError, RuntimeError, FileNotFoundError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    print(json.dumps({k: m[k] for k in ("record_count", "sha256", "shards", "by_difficulty",
+                                        "distinct_shapes")}, indent=2, sort_keys=True))  # fmt: skip
+    return EXIT_OK
+
+
+def _cmd_data_tokenize_stream_v3(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from microreason.data import build_v3 as b3
+    from microreason.data.tokenized import MANIFEST_FILE, tokenize_math_stream
+    from microreason.tokenizer import MicroTokenizer
+
+    cfg = b3.load_v3_config(args.config)
+    tok = MicroTokenizer.load(args.tokenizer)
+    pre, ver = cfg.stream.tokenized_prefix, cfg.version
+    jobs = {
+        f"{pre}_a_{ver}": ("a", None),
+        f"{pre}_b_easy_{ver}": ("b", (1, 2)),
+        f"{pre}_b_hard_{ver}": ("b", (3, 4, 5)),
+    }
+    out = {}
+    for name, (shard, levels) in jobs.items():
+        d = Path(args.out) / name
+        if (d / MANIFEST_FILE).exists():
+            m = json.loads((d / MANIFEST_FILE).read_text())
+        else:
+            log.info("tokenizing %s", name)
+            m = tokenize_math_stream(tok, cfg.stream.manifest_path, shard, d, levels, name)
         out[name] = {"documents": m["documents"], "tokens": m["tokens"]}
     print(json.dumps(out, indent=2, sort_keys=True))
     return EXIT_OK
@@ -547,6 +626,23 @@ def build_parser() -> argparse.ArgumentParser:
     das.add_argument("--sample", type=float, default=0.02)
     das.add_argument("--report", default="reports/data_stream_audit_v1.json")
     das.set_defaults(func=_cmd_data_audit_stream)
+    dv3 = data_sub.add_parser("generate-v3", help="Data v3: build, audit and freeze suites.")
+    dv3.add_argument("--config", default="configs/data_v3.yaml")
+    dv3.set_defaults(func=_cmd_data_generate_v3)
+    dav3 = data_sub.add_parser("audit-v3", help="Data v3: cross-split audit + regeneration.")
+    dav3.add_argument("--manifest-dir", default="data/manifests")
+    dav3.add_argument("--version", default="v3")
+    dav3.add_argument("--regenerate", type=int, default=2000)
+    dav3.add_argument("--report", default=None)
+    dav3.set_defaults(func=_cmd_data_audit_v3)
+    dsv3 = data_sub.add_parser("generate-stream-v3", help="Data v3: training-only stream.")
+    dsv3.add_argument("--config", default="configs/data_v3.yaml")
+    dsv3.set_defaults(func=_cmd_data_generate_stream_v3)
+    dtv3 = data_sub.add_parser("tokenize-stream-v3", help="Data v3: tokenize stream shards.")
+    dtv3.add_argument("--config", default="configs/data_v3.yaml")
+    dtv3.add_argument("--tokenizer", default="artifacts/tokenizer/v2")
+    dtv3.add_argument("--out", default="data/tokenized_v2")
+    dtv3.set_defaults(func=_cmd_data_tokenize_stream_v3)
     dt = data_sub.add_parser("tokenize", help="Pre-tokenize train/val text and math datasets.")
     dt.add_argument("--tokenizer", default="artifacts/tokenizer/v1")
     dt.add_argument("--out", default="data/tokenized")
@@ -644,6 +740,8 @@ def build_parser() -> argparse.ArgumentParser:
     ev.add_argument("--limit", type=int, default=None, help="First N prompts (smoke only).")
     ev.add_argument("--device", default=None)
     ev.add_argument("--tokenizer", default="artifacts/tokenizer/v1")
+    ev.add_argument("--data-version", default="v1", help="Frozen suite version (v1 or v3).")
+    ev.add_argument("--kv-cache", action="store_true", help="Cached generator (eval-v2).")
     ev.set_defaults(func=_cmd_eval)
 
     cmp_ = sub.add_parser("compare", help="Paired bootstrap between two eval runs (b - a).")

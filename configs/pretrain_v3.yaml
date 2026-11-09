@@ -1,0 +1,34 @@
+# Protocol v3 (reports/protocol_v3.md): derived from the v2 config with tokenizer v2 and data v3.
+# Protocol v2 base pretraining: 1.0 B tokens (reports/protocol_v2.md). Same mixture, model and
+# optimizer as v1; math from shard a of stream v2 (~300 M tokens, at most one pass).
+stage: pretrain
+model: configs/model_43m.yaml
+tokenizer: artifacts/tokenizer/v2
+# 70/30 general/math by processed tokens (spec §4 proposal). Math comes from shard a of the
+# training-only stream (36.1 M tokens), so 120 M processed tokens see each math problem at most once.
+mixture:
+  - {dataset: data/tokenized_v2/general_text_train_v1, weight: 0.7}
+  - {dataset: data/tokenized_v2/math_stream_a_v3, weight: 0.3}
+validation:
+  - {dataset: data/tokenized_v2/general_text_val_v1, sequences: 256}
+  - {dataset: data/tokenized_v2/math_val_v3, sequences: 256}
+seed: 52
+precision: bf16
+sequence_length: 1024
+effective_batch_tokens: 65536
+micro_batch_size: 16  # 4 accumulation steps; measured 7.6 GiB peak and fastest on the pilot GPU
+max_train_tokens: 1000000000
+eval_every_steps: 1000
+checkpoint_every_steps: 2500
+optimizer:
+  name: adamw
+  peak_lr: 0.0003
+  weight_decay: 0.1
+  grad_clip_norm: 1.0
+scheduler:
+  name: cosine
+  warmup_fraction: 0.02
+  min_lr_fraction: 0.1
+budget:
+  paid_compute_allowed: false
+  max_spend_usd: 0
