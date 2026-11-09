@@ -1,0 +1,5330 @@
+{
+  "by_template": {
+    "(* (* (+ (/ n n) n) n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.125,
+      "mean_completion_tokens": 117.75,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "invalid_format": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (* (/ (+ n n) (* n n)) n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 144.25,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (* (/ n n) (/ n n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 107.125,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (* n (+ n n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 51.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (* n (/ (- n n) n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 96.5,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.875,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 7,
+        "wrong": 1
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (* n (/ n n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 76.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (* n n) (+ (+ n n) (+ n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 99.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (* n n) (+ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 67.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (* n n) (- n (- n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 80.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (* n n) (- n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 66.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (* n n) (/ n (* n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 112.25,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (* n n) n)": {
+      "all_correct_fraction": 0.6666666666666666,
+      "all_wrong_fraction": 0.0,
+      "completions": 24,
+      "groups": 3,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 54.0,
+      "mixed_group_fraction": 0.3333333333333333,
+      "pass_at_1": 0.8333333333333334,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 20,
+        "wrong": 4
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (+ (* n n) n) (/ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 88.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (+ (+ n (- n n)) n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 89.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (+ (+ n n) (+ (+ n n) n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 97.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (+ (+ n n) (/ n n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 83.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (+ (- (/ n n) n) n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 105.25,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (+ n (+ n n)) (- (- n n) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 89.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (+ n (/ n n)) (/ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 100.75,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (+ n n) (* n (* n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 67.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (+ n n) (* n (- n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 80.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (+ n n) (+ n (* (- n n) n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 100.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.25,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 2,
+        "wrong": 6
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (+ n n) (+ n (+ n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 81.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.375,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 3,
+        "wrong": 5
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (+ n n) (+ n (- n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 84.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.625,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 5,
+        "wrong": 3
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (+ n n) (- (* n n) (+ n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 105.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (+ n n) (/ (- n n) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 108.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (+ n n) (/ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 81.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (+ n n) n)": {
+      "all_correct_fraction": 0.6666666666666666,
+      "all_wrong_fraction": 0.3333333333333333,
+      "completions": 48,
+      "groups": 6,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 50.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.6666666666666666,
+      "pass_at_k": 0.6666666666666666,
+      "status_counts": {
+        "correct": 32,
+        "wrong": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (- (- (* n n) n) n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 78.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (- n (* n n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 68.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (- n (- n n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 68.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (- n n) n)": {
+      "all_correct_fraction": 0.3333333333333333,
+      "all_wrong_fraction": 0.3333333333333333,
+      "completions": 48,
+      "groups": 6,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 49.666666666666664,
+      "mixed_group_fraction": 0.3333333333333333,
+      "pass_at_1": 0.5833333333333334,
+      "pass_at_k": 0.6666666666666666,
+      "status_counts": {
+        "correct": 28,
+        "wrong": 20
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (/ (* n n) n) (- n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 101.125,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (/ (+ n n) n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 62.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (/ (/ n (- n n)) n) (+ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 118.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (/ (/ n n) (- n n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 70.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (/ n (* n n)) (* n (+ n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 114.75,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (/ n (* n n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 88.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (/ n n) (* (+ n n) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 85.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (/ n n) (* n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 78.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.875,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 7,
+        "wrong": 1
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (/ n n) (+ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.5,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 70.0,
+      "mixed_group_fraction": 0.5,
+      "pass_at_1": 0.25,
+      "pass_at_k": 0.5,
+      "status_counts": {
+        "correct": 4,
+        "wrong": 12
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* (/ n n) n)": {
+      "all_correct_fraction": 0.6666666666666666,
+      "all_wrong_fraction": 0.3333333333333333,
+      "completions": 24,
+      "groups": 3,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 49.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.6666666666666666,
+      "pass_at_k": 0.6666666666666666,
+      "status_counts": {
+        "correct": 16,
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* n (* (- n n) (+ (- n n) n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 99.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.5,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 4,
+        "wrong": 4
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* n (* n (+ n (- n n))))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 80.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* n (* n n))": {
+      "all_correct_fraction": 0.5,
+      "all_wrong_fraction": 0.5,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 49.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.5,
+      "pass_at_k": 0.5,
+      "status_counts": {
+        "correct": 8,
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* n (+ (+ n (+ n n)) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 84.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* n (+ n (+ (/ n n) n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 102.25,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* n (+ n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 46.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* n (- (/ n (+ n n)) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 104.75,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* n (- (/ n n) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 93.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* n (- n (* n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 63.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* n (- n (- n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 65.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* n (- n n))": {
+      "all_correct_fraction": 0.5,
+      "all_wrong_fraction": 0.5,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 47.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.5,
+      "pass_at_k": 0.5,
+      "status_counts": {
+        "correct": 8,
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* n (/ (+ n n) n))": {
+      "all_correct_fraction": 0.5,
+      "all_wrong_fraction": 0.5,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 76.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.5,
+      "pass_at_k": 0.5,
+      "status_counts": {
+        "correct": 8,
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* n (/ n (/ n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 90.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* n (/ n n))": {
+      "all_correct_fraction": 0.5714285714285714,
+      "all_wrong_fraction": 0.2857142857142857,
+      "completions": 56,
+      "groups": 7,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 55.0,
+      "mixed_group_fraction": 0.14285714285714285,
+      "pass_at_1": 0.6071428571428571,
+      "pass_at_k": 0.7142857142857143,
+      "status_counts": {
+        "correct": 34,
+        "wrong": 22
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(* n n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 28.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (* (+ (* n n) n) n) (+ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 117.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (* (+ n n) n) (- n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 79.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (* (/ n (* n n)) n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 103.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.25,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 2,
+        "wrong": 6
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (* (/ n (/ n n)) n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 107.375,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (* n (* (/ n n) n)) (+ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 132.875,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (* n n) (* n (+ n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 76.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (* n n) (+ n (* n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 81.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (* n n) (/ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 72.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (* n n) n)": {
+      "all_correct_fraction": 0.4,
+      "all_wrong_fraction": 0.0,
+      "completions": 40,
+      "groups": 5,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 48.4,
+      "mixed_group_fraction": 0.6,
+      "pass_at_1": 0.575,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 23,
+        "wrong": 17
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ (* n n) n) (* n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 97.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ (* n n) n) (- (- n n) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 109.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ (+ n (* n n)) n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 84.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.875,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 7,
+        "wrong": 1
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ (+ n n) (+ n n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 86.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ (+ n n) n) (/ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 102.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ (+ n n) n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 61.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ (- (/ n n) (- n n)) n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 97.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ (- n (- n n)) n) (/ n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 103.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ (- n n) (+ n n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 76.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.25,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 2,
+        "wrong": 6
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ (/ n n) n) (/ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 91.75,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ (/ n n) n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 72.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.25,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 2,
+        "wrong": 6
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ n (* (* n n) n)) (* n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 84.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ n (* (- (/ n n) n) n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 141.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ n (+ (+ n n) n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 73.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ n (+ n n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 59.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ n (/ n n)) (/ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 113.75,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ n (/ n n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 75.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ n n) (* n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 64.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ n n) (+ (+ n n) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 85.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ n n) (+ (/ (- n n) n) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 111.25,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ n n) (+ n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 60.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ n n) (/ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 78.75,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (+ n n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 72,
+      "groups": 9,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 43.666666666666664,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 72
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- (* n n) (* n (* n n))) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 102.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- (* n n) n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 57.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- (+ n n) (+ (/ n n) n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 110.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- (- n n) n) (* n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 71.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- (- n n) n) (- n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 77.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- (- n n) n) (/ n (+ n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 109.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.5,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 4,
+        "wrong": 4
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- (- n n) n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 75.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- (/ n n) (/ n n)) (+ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 123.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- (/ n n) n) (* n (+ n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 92.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- n (* n n)) (- (- n n) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 108.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- n (/ n n)) (* n (+ n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 121.375,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- n (/ n n)) (* n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 102.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- n (/ n n)) (- n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 104.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- n n) (* n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 58.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- n n) (+ n (+ n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 78.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- n n) (+ n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 55.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- n n) (- (/ n n) (/ n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 117.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- n n) (- n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 65.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- n n) (/ n (* n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 95.75,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- n n) (/ n (+ n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 90.875,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- n n) (/ n n))": {
+      "all_correct_fraction": 0.5,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 66.0,
+      "mixed_group_fraction": 0.5,
+      "pass_at_1": 0.875,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 14,
+        "wrong": 2
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (- n n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 48,
+      "groups": 6,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 44.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 48
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (/ (* n (+ n n)) n) (/ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 129.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (/ (* n n) n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 64.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (/ (- (/ n n) (- n n)) n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 142.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (/ n (+ n (+ n n))) (+ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 117.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (/ n (+ n n)) (- n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 90.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.75,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 6,
+        "wrong": 2
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (/ n (+ n n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 74.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (/ n (- n n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 74.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.5,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 4,
+        "wrong": 4
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (/ n n) (* n (/ n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 109.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (/ n n) (* n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 78.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 2,
+        "wrong": 14
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (/ n n) (+ n n))": {
+      "all_correct_fraction": 0.3333333333333333,
+      "all_wrong_fraction": 0.3333333333333333,
+      "completions": 24,
+      "groups": 3,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 70.33333333333333,
+      "mixed_group_fraction": 0.3333333333333333,
+      "pass_at_1": 0.5,
+      "pass_at_k": 0.6666666666666666,
+      "status_counts": {
+        "correct": 12,
+        "wrong": 12
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (/ n n) (- (+ n n) (* n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 118.75,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ (/ n n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.2,
+      "completions": 40,
+      "groups": 5,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 58.75,
+      "mixed_group_fraction": 0.8,
+      "pass_at_1": 0.6,
+      "pass_at_k": 0.8,
+      "status_counts": {
+        "correct": 24,
+        "wrong": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (* (* n n) n))": {
+      "all_correct_fraction": 0.6666666666666666,
+      "all_wrong_fraction": 0.3333333333333333,
+      "completions": 24,
+      "groups": 3,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 67.33333333333333,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.6666666666666666,
+      "pass_at_k": 0.6666666666666666,
+      "status_counts": {
+        "correct": 16,
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (* (+ n (- n n)) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 98.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (* (+ n n) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 67.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (* (- n (- n (+ n n))) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 112.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (* (/ (* n n) (+ n n)) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 117.75,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (* (/ n n) (- n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 109.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (* n (* (* n n) n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 97.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (* n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 48.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (+ (* n n) (- n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 90.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.5,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 4,
+        "wrong": 4
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (+ (+ n n) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 76.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (+ (- n n) (* n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 73.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (+ n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 46.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (- (* n n) (+ n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 81.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (- (- n n) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 59.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (- n (* n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 61.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (- n (- n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 65.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (- n (/ (/ n n) n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 104.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (- n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 46.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (/ (* n n) (- n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 106.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (/ (+ n (+ n n)) (/ n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 113.25,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (/ (- n (/ n n)) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 114.25,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (/ (- n n) (* n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 101.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (/ n (+ n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 70.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n (/ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.6666666666666666,
+      "completions": 24,
+      "groups": 3,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 58.0,
+      "mixed_group_fraction": 0.3333333333333333,
+      "pass_at_1": 0.08333333333333333,
+      "pass_at_k": 0.3333333333333333,
+      "status_counts": {
+        "correct": 2,
+        "wrong": 22
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(+ n n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 64,
+      "groups": 8,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 27.625,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 64
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (* (* n n) (/ n n)) (+ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 114.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (* (* n n) n) (* n n))": {
+      "all_correct_fraction": 0.5,
+      "all_wrong_fraction": 0.5,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 103.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.5,
+      "pass_at_k": 0.5,
+      "status_counts": {
+        "correct": 8,
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (* (+ n n) n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 53.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (* (- n n) n) (+ (+ n n) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 108.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (* (- n n) n) (/ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 108.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (* n (+ n n)) (+ n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 81.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (* n (/ n n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 90.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (* n n) (+ (* n (+ n n)) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 109.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (* n n) (+ n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 60.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (* n n) (/ n n))": {
+      "all_correct_fraction": 0.5,
+      "all_wrong_fraction": 0.5,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 74.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.5,
+      "pass_at_k": 0.5,
+      "status_counts": {
+        "correct": 8,
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (* n n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 32,
+      "groups": 4,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 47.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 32
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (+ (* (- n n) n) (* n n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 102.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (+ (+ (/ n n) (/ n n)) n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 113.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (+ (+ n (/ n n)) n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 101.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (+ (- n n) n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 62.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (+ (/ n n) n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.5,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 82.0,
+      "mixed_group_fraction": 0.5,
+      "pass_at_1": 0.0625,
+      "pass_at_k": 0.5,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 15
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (+ n (* n n)) (/ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 107.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (+ n (* n n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 54.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (+ n (+ n (+ n n))) (- n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 104.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (+ n (/ n n)) (+ n (+ n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 119.25,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (+ n n) (* n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 70.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (+ n n) (/ (/ n (/ n n)) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 132.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (+ n n) (/ n n))": {
+      "all_correct_fraction": 0.5,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 70.625,
+      "mixed_group_fraction": 0.5,
+      "pass_at_1": 0.875,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 14,
+        "wrong": 2
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (+ n n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 32,
+      "groups": 4,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 44.25,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 32
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (- (+ (+ n n) n) n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 80.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (- (+ n n) (- n (* n n))) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 99.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (- (+ n n) (- n n)) (/ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 98.625,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (- (- n n) (/ n (/ n n))) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 147.25,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (- (- n n) n) (+ n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 79.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (- (/ n n) (- n n)) (* n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 105.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (- n (* n n)) (+ (/ n n) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 113.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (- n (+ n n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 69.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (- n (- n n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 63.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (- n n) (* n (/ n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 76.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (- n n) (* n n))": {
+      "all_correct_fraction": 0.5,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 61.5,
+      "mixed_group_fraction": 0.5,
+      "pass_at_1": 0.75,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 12,
+        "wrong": 4
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (- n n) (- n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 63.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (- n n) (/ (- n n) (* n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 108.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (- n n) (/ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 70.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (- n n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 32,
+      "groups": 4,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 47.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 32
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (/ (* n n) (+ n n)) (* n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 128.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (/ (* n n) (- n n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 97.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (/ (+ (/ n n) n) n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 111.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (/ (+ n n) (+ n n)) (+ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 118.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (/ (- n n) (/ n n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 78.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (/ (/ (- n n) n) n) (- n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 137.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (/ (/ n n) (+ n n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 62.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (/ n (* (- n n) n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 105.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (/ n (- n (/ n n))) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 125.125,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (/ n (- n n)) n)": {
+      "all_correct_fraction": 0.5,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 64.0,
+      "mixed_group_fraction": 0.5,
+      "pass_at_1": 0.5625,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 9,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (/ n n) (- n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 80.75,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (/ n n) (/ (- n (* n n)) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 125.25,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (/ n n) (/ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 72.625,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- (/ n n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.3333333333333333,
+      "completions": 24,
+      "groups": 3,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 58.333333333333336,
+      "mixed_group_fraction": 0.6666666666666666,
+      "pass_at_1": 0.125,
+      "pass_at_k": 0.6666666666666666,
+      "status_counts": {
+        "correct": 3,
+        "wrong": 21
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (* (+ n (+ n n)) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 81.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (* (+ n n) (/ n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 79.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (* (- n n) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 64.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (* n (/ (- n n) n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 87.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (* n n))": {
+      "all_correct_fraction": 0.5,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 47.0,
+      "mixed_group_fraction": 0.5,
+      "pass_at_1": 0.6875,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 11,
+        "wrong": 5
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (+ (+ n n) (/ n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 112.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (+ (+ n n) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 69.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (+ (- n (* (/ n n) n)) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 128.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (+ (- n (+ n n)) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 80.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (+ (- n n) (+ n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 82.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.75,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 6,
+        "wrong": 2
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (+ (- n n) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 58.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (+ n (* (+ n n) n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 82.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (+ n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 48,
+      "groups": 6,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 45.666666666666664,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 48
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (- (- n n) (* n (* n n))))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 119.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (- (- n n) (- n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 82.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (- (- n n) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 61.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (- n (- (* (+ n n) n) n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 119.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (- n (- n (+ n n))))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 76.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (- n (/ n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 72.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (- n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 40,
+      "groups": 5,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 45.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 40
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (/ (* n n) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 62.75,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.875,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 7,
+        "wrong": 1
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n (/ n n))": {
+      "all_correct_fraction": 0.2,
+      "all_wrong_fraction": 0.4,
+      "completions": 40,
+      "groups": 5,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 57.6,
+      "mixed_group_fraction": 0.4,
+      "pass_at_1": 0.425,
+      "pass_at_k": 0.6,
+      "status_counts": {
+        "correct": 17,
+        "wrong": 23
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(- n n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 32,
+      "groups": 4,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 25.25,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 32
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (* (* n (+ n n)) (/ n n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 119.75,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (* (* n n) (+ n n)) (* n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 126.25,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (* (* n n) n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 65.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (* (+ n n) (/ n n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 80.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (* (+ n n) n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 65.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (* (- n (+ n n)) (+ n n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 110.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.25,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 2,
+        "wrong": 6
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (* (/ n n) n) (+ n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 76.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (* n (/ n n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 92.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (* n n) (* n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 83.25,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (* n n) (+ (- n n) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 100.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.375,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 3,
+        "wrong": 5
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (* n n) (+ n (+ (+ n n) n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 115.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (* n n) (+ n (- n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 99.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (* n n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.25,
+      "completions": 32,
+      "groups": 4,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 54.5,
+      "mixed_group_fraction": 0.75,
+      "pass_at_1": 0.46875,
+      "pass_at_k": 0.75,
+      "status_counts": {
+        "correct": 15,
+        "wrong": 17
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ (* n n) n) n)": {
+      "all_correct_fraction": 0.5,
+      "all_wrong_fraction": 0.5,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 80.25,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.5,
+      "pass_at_k": 0.5,
+      "status_counts": {
+        "correct": 8,
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ (+ (+ n n) n) n) (* n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 113.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ (+ n n) (- n n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 82.5,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ (- n n) n) (+ n (+ n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 102.25,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.875,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 7,
+        "wrong": 1
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ (- n n) n) (- n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 82.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ (- n n) n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 66.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ (/ (- (+ n n) n) n) n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 138.75,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ (/ (/ n n) n) (- n n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 136.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ (/ n n) (/ n n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 103.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ (/ n n) n) (/ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 111.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ n (* n (+ n n))) (+ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 111.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.75,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 6,
+        "wrong": 2
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ n (+ n n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 73.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ n (- n n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 70.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ n (/ n (+ n n))) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 98.75,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ n (/ n n)) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 95.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ n n) (* n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 76.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ n n) (- (* n n) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 82.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ n n) (- n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 68.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (+ n n) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 32,
+      "groups": 4,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 46.375,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 32
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (- (* n (/ n n)) n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 100.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (- (* n n) n) (+ n (- n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 100.75,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.875,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 7,
+        "wrong": 1
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (- (+ n n) n) (+ (+ n n) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 108.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.75,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 6,
+        "wrong": 2
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (- (/ n n) n) (- n (/ n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 136.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (- n (* n (* n n))) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 65.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (- n (+ n n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 71.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (- n (- n n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 73.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (- n n) (+ (+ (+ n n) n) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 104.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (- n n) (+ (- n n) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 75.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (- n n) (- n (* n (- n n))))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 98.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (- n n) (- n (/ (+ n n) n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 128.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (- n n) (- n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 64.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (- n n) n)": {
+      "all_correct_fraction": 0.6666666666666666,
+      "all_wrong_fraction": 0.0,
+      "completions": 24,
+      "groups": 3,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 47.708333333333336,
+      "mixed_group_fraction": 0.3333333333333333,
+      "pass_at_1": 0.9166666666666666,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 22,
+        "wrong": 2
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (/ (* (+ n n) n) n) (- n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 119.5,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.5,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 4,
+        "wrong": 4
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (/ (+ n n) n) n)": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 70.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.875,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 7,
+        "wrong": 1
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (/ (/ n n) n) n)": {
+      "all_correct_fraction": 0.5,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 67.0,
+      "mixed_group_fraction": 0.5,
+      "pass_at_1": 0.875,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 14,
+        "wrong": 2
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (/ n (+ n (- n n))) (/ n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 112.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (/ n (+ n n)) n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 71.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (/ n (/ n n)) (/ n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 106.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (/ n n) (* n (- (/ n n) n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 113.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (/ n n) (+ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 1.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 84.25,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.0,
+      "pass_at_k": 0.0,
+      "status_counts": {
+        "wrong": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (/ n n) (- n n))": {
+      "all_correct_fraction": 0.6666666666666666,
+      "all_wrong_fraction": 0.0,
+      "completions": 24,
+      "groups": 3,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 71.16666666666667,
+      "mixed_group_fraction": 0.3333333333333333,
+      "pass_at_1": 0.8333333333333334,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 20,
+        "wrong": 4
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (/ n n) (/ (* n n) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 83.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ (/ n n) n)": {
+      "all_correct_fraction": 0.8,
+      "all_wrong_fraction": 0.2,
+      "completions": 40,
+      "groups": 5,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 54.95,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.8,
+      "pass_at_k": 0.8,
+      "status_counts": {
+        "correct": 32,
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ n (* (- n n) (- n (- n n))))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 93.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ n (* (- n n) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 74.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.875,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 7,
+        "wrong": 1
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ n (* n (- n (+ n n))))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 87.25,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.375,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 3,
+        "wrong": 5
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ n (* n (- n (- (- n n) n))))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 108.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ n (* n n))": {
+      "all_correct_fraction": 0.5,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 52.375,
+      "mixed_group_fraction": 0.5,
+      "pass_at_1": 0.9375,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 15,
+        "wrong": 1
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ n (+ (* (- n n) n) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 92.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ n (+ (* n n) n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 58.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ n (+ (- n n) (* n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 93.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.375,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 3,
+        "wrong": 5
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ n (+ (/ n n) n))": {
+      "all_correct_fraction": 0.5,
+      "all_wrong_fraction": 0.5,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 72.125,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.5,
+      "pass_at_k": 0.5,
+      "status_counts": {
+        "correct": 8,
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ n (+ n (- n n)))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 75.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ n (+ n (/ n n)))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.5,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 76.8125,
+      "mixed_group_fraction": 0.5,
+      "pass_at_1": 0.4375,
+      "pass_at_k": 0.5,
+      "status_counts": {
+        "correct": 7,
+        "wrong": 9
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ n (+ n n))": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 40,
+      "groups": 5,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 43.4,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 40
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ n (- (+ n n) n))": {
+      "all_correct_fraction": 0.5,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 70.5,
+      "mixed_group_fraction": 0.5,
+      "pass_at_1": 0.75,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 12,
+        "wrong": 4
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ n (- (/ n n) n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 89.25,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ n (- n n))": {
+      "all_correct_fraction": 0.6,
+      "all_wrong_fraction": 0.0,
+      "completions": 40,
+      "groups": 5,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 48.55,
+      "mixed_group_fraction": 0.4,
+      "pass_at_1": 0.95,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 38,
+        "wrong": 2
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ n (/ (- n n) n))": {
+      "all_correct_fraction": 0.5,
+      "all_wrong_fraction": 0.5,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 80.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 0.5,
+      "pass_at_k": 0.5,
+      "status_counts": {
+        "correct": 8,
+        "wrong": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ n (/ n n))": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.5,
+      "completions": 32,
+      "groups": 4,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 57.5625,
+      "mixed_group_fraction": 0.5,
+      "pass_at_1": 0.375,
+      "pass_at_k": 0.5,
+      "status_counts": {
+        "correct": 12,
+        "wrong": 20
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "(/ n n)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 40,
+      "groups": 5,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 29.8,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 40
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x+b)+c=k(x+b)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 142.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x+b)+c=k(x-b)": {
+      "all_correct_fraction": 0.5,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 138.0,
+      "mixed_group_fraction": 0.5,
+      "pass_at_1": 0.9375,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 15,
+        "wrong": 1
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x+b)+c=k(x-b)+c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 182.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x+b)+c=kx+c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 48,
+      "groups": 6,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 118.33333333333333,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 48
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x+b)+c=kx-c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 126.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x+b)+c=x-c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 24,
+      "groups": 3,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 108.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 24
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x+b)-c=c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 89.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x+b)-c=k(x-b)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 133.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x+b)-c=k(x-b)+c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 184.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x+b)-c=kx": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 118.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x+b)-c=x": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 105.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x+b)=k(x+b)-c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 142.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x+b)=x+c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 80.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x-b)+c=k(x-b)+c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 24,
+      "groups": 3,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 177.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 24
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x-b)+c=k(x-b)-c": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 186.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.5,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 4,
+        "wrong": 4
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x-b)+c=kx-c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 116.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x-b)+c=x": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 105.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x-b)-c=k(x+b)-c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 182.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x-b)-c=kx+c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 112.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x-b)-c=kx-c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 98.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x-b)=k(x+b)-c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 129.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x-b)=kx+c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 93.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x-b)=x+c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 97.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "k(x-b)=x-c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 60.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "kx+c=k(x+b)-c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 109.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "kx+c=k(x-b)+c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 108.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "kx+c=kx": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 71.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.125,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 1,
+        "wrong": 7
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "kx+c=kx-c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 73.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "kx+c=x+c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 72.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "kx-c=k(x+b)": {
+      "all_correct_fraction": 0.5,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 97.25,
+      "mixed_group_fraction": 0.5,
+      "pass_at_1": 0.625,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 10,
+        "wrong": 6
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "kx-c=k(x+b)-c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 91.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "kx-c=k(x-b)+c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 120.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "kx-c=kx": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 40.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "kx-c=kx+c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 69.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "kx=k(x+b)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 65.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "kx=kx+c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 42.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "kx=kx-c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 44.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "x+c=c": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 24.125,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.375,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 3,
+        "wrong": 5
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "x+c=k(x+b)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 82.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "x+c=k(x+b)+c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 108.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "x+c=k(x+b)-c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 102.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "x+c=k(x-b)+c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 105.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "x+c=k(x-b)-c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 102.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "x+c=kx+c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 24,
+      "groups": 3,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 68.66666666666667,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 24
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "x-c=kx-c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 67.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "x=k(x+b)": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 16,
+      "groups": 2,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 69.5,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 16
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "x=k(x-b)-c": {
+      "all_correct_fraction": 0.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 90.0,
+      "mixed_group_fraction": 1.0,
+      "pass_at_1": 0.75,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 6,
+        "wrong": 2
+      },
+      "verifier_error_fraction": 0.0
+    },
+    "x=kx+c": {
+      "all_correct_fraction": 1.0,
+      "all_wrong_fraction": 0.0,
+      "completions": 8,
+      "groups": 1,
+      "malformed_fraction": 0.0,
+      "mean_completion_tokens": 52.0,
+      "mixed_group_fraction": 0.0,
+      "pass_at_1": 1.0,
+      "pass_at_k": 1.0,
+      "status_counts": {
+        "correct": 8
+      },
+      "verifier_error_fraction": 0.0
+    }
+  },
+  "checkpoint": "artifacts/p3-v2-sft",
+  "failures": [
+    "mixed_group_fraction 0.182 < 0.2"
+  ],
+  "overall": {
+    "all_correct_fraction": 0.583984375,
+    "all_wrong_fraction": 0.234375,
+    "completions": 4096,
+    "groups": 512,
+    "malformed_fraction": 0.000244140625,
+    "mean_completion_tokens": 78.851806640625,
+    "mixed_group_fraction": 0.181640625,
+    "pass_at_1": 0.6669921875,
+    "pass_at_k": 0.765625,
+    "status_counts": {
+      "correct": 2732,
+      "invalid_format": 1,
+      "wrong": 1363
+    },
+    "verifier_error_fraction": 0.0
+  },
+  "passed": false,
+  "pool": {
+    "manifest": "data/manifests/math_train_rl_v3.json",
+    "partition": "gate",
+    "partition_rule": "bucket = sha256('rl-partition:' + id)[:8] / 0xFFFFFFFF; gate < 0.005 <= grpo < 0.255 <= dpo < 0.40 <= sft_extra",
+    "prompts": 512,
+    "sha256": "0d333730d4fd9345eb80c6cf35f85387408b1efe8835846452df018618a7d7ba"
+  },
+  "rule": {
+    "max_malformed_fraction": 0.1,
+    "max_pass_at_1": 0.95,
+    "min_mixed_group_fraction": 0.2,
+    "min_pass_at_1": 0.05,
+    "prompts": 512
+  },
+  "sampling": {
+    "generation_batch_size": 256,
+    "group_size": 8,
+    "kv_cache": true,
+    "max_new_tokens": 256,
+    "temperature": 0.8
+  }
+}

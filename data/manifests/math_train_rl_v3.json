@@ -1,0 +1,83 @@
+{
+  "build_rejections": {
+    "duplicate": 32790,
+    "duplicate_across_parts": 79361,
+    "family_weight_drop": 1641894,
+    "frozen_eval_overlap": 31590,
+    "sampler:division_by_zero": 84600,
+    "sampler:no_unique_solution": 146057,
+    "sampler:solved_constant_out_of_range": 389017,
+    "sampler:trace_does_not_end_in_answer": 15220,
+    "sampler:value_cap": 320702,
+    "shape_not_in_split_set": 572418
+  },
+  "by_difficulty": {
+    "1": 72830,
+    "2": 584504,
+    "3": 553091,
+    "4": 455982,
+    "5": 333593
+  },
+  "by_family": {
+    "expression_1op": 98550,
+    "expression_2op": 546469,
+    "expression_3op": 491282,
+    "expression_4op": 353949,
+    "expression_5op": 231144,
+    "linear_equation": 278606
+  },
+  "code_revision": {
+    "dirty": false,
+    "git_commit": "f5a68a1f59fec7d1e87f9353a8a667a95f67e254",
+    "source": "REVISION file"
+  },
+  "data_config_hash": "sha256:bab0a3b2c627acab3f5e86efbf8b3b3b72e656450cdc98f5a2089e603745bf2c",
+  "dataset": "math",
+  "distinct_shapes": 35994,
+  "excluded_fingerprints": 33000,
+  "excluded_frozen_suites": {
+    "test_extrapolation": "28db77f8794d27dc7a31ff3901ca131c279f51a564d0c7d43fccb93b87e441ca",
+    "test_heldout_shape": "a370443a077d1469d8d6c1fa5528a0608f460763fa87bcfc57dab5c54546ae73",
+    "test_id": "2085da0f3c2ef612e58a266513e56760f6d8222a94cec663f1b6834b12f3254a",
+    "val": "4d9b10b328968dd9b6f2197ac36a28630fc7052c5fcd3a41d9624627aafadf21",
+    "val_heldout_shape": "fabbcecef5ddda6018b81c2df1c33d6f4146094e7db6c7be60ae508590d2c39e"
+  },
+  "family_accuracy": {
+    "expression_1op": 0.947,
+    "expression_2op": 0.796,
+    "expression_3op": 0.637,
+    "expression_4op": 0.505,
+    "expression_5op": 0.366,
+    "linear_equation": 0.958
+  },
+  "family_keep_probability": {
+    "expression_1op": 0.355944,
+    "expression_2op": 0.845443,
+    "expression_3op": 0.980269,
+    "expression_4op": 1.0,
+    "expression_5op": 0.981261,
+    "linear_equation": 0.292841
+  },
+  "file": "data/generated/math_v3/train_rl/train_rl.jsonl",
+  "generator_version": "3.0",
+  "group_size": 8,
+  "partitions": {
+    "dpo": 289415,
+    "gate": 9779,
+    "grpo": 500110,
+    "rule": "bucket = sha256('rl-partition:' + id)[:8] / 0xFFFFFFFF; gate < 0.005 <= grpo < 0.255 <= dpo < 0.40 <= sft_extra",
+    "sft_extra": 1200696
+  },
+  "purpose": "rl_pool",
+  "record_count": 2000000,
+  "root_seed": 20261111,
+  "schema_version": 1,
+  "sha256": "0d333730d4fd9345eb80c6cf35f85387408b1efe8835846452df018618a7d7ba",
+  "shards": {
+    "a": 999193,
+    "b": 1000807,
+    "rule": "sha256(id) bucket < 0.5 -> a, else b"
+  },
+  "split": "train_stream",
+  "version": "v3"
+}
