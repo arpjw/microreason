@@ -1,0 +1,21 @@
+# Budget for protocol v4 Phase C (reports/protocol_v4.md): 3 x v4-grpo + 3 x time-matched
+# v2-extra-sft, secondary arms v4-rft-s1 and v4-grpo-step-s1, val evals, and the single
+# confirmatory test evaluation (reports/confirmatory_plan_v3.md). One pod.
+# Provisional estimate: about 6.5 h, about $6.5 at $0.99/h; re-estimated from the Phase B pilot's
+# measured step time before approval is requested.
+# NOT YET APPROVED: paid_compute_allowed stays false (and the cap 0) until the owner approves the
+# Phase C spend in chat, after Phase B. Proposed on approval: max_spend_usd 9.0,
+# max_runtime_hours 8.0 (subject to the re-estimate).
+paid_compute_allowed: false
+provider: runpod
+gpu_type: NVIDIA RTX 6000 Ada Generation (Secure Cloud)
+hourly_rate_usd: 0.99
+max_spend_usd: 0
+max_runtime_hours: 8.0
+reserve_minutes: 20
+shutdown_rule: >-
+  Copy reports, metrics, budget ledgers, eval rows and every final RL-stage checkpoint off the
+  pod, then terminate (delete) it when the session finishes, at either ceiling, or on any
+  failure; the pod also deletes itself 45 minutes after finishing if not collected.
+approved_by: pending
+approved_at: pending

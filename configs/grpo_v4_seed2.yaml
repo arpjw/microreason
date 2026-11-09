@@ -1,0 +1,51 @@
+# Protocol v4 Phase C, primary arm v4-grpo, training seed 2 of 3 (reports/protocol_v4.md).
+# Dr. GRPO-style on-policy GRPO from the converged parent v2-sft-long: group mean / batch std
+# advantages, constant-denominator token loss, one update per rollout batch, KL 1e-3, G=16 x 64
+# prompts, streaming pass-rate filter 2..14 of 16 on the depth-weighted v4 RL pool, binary reward.
+# lr is replaced by --lr with the Phase B pilot selection (reports/v4_phase_b/selection.json).
+stage: grpo
+model: configs/model_43m.yaml
+tokenizer: artifacts/tokenizer/v2
+parent: artifacts/p4-v2-sft-long
+pool_manifest: data/manifests/math_train_rl_v4.json
+seed: 82
+precision: bf16
+sampling:
+  group_size: 16
+  temperature: 1.0
+  max_new_tokens: 256
+  generation_batch_size: 1024
+  kv_cache: true
+gate:                       # protocol v4 gate: sampling cost per trained group, not a mixed fraction
+  prompts: 512
+  min_mixed_group_fraction: null
+  max_malformed_fraction: 0.10
+  min_pass_at_1: 0.05
+  max_pass_at_1: 0.95
+  min_filter_yield: 0.125   # >= 1/8 of candidates pass the filter -> <= 4 chunks of 128 per step on average
+prompts_per_step: 64        # 64 groups x 16 = 1,024 trained completions per update
+steps: 300
+dynamic_sampling: true
+sample_chunk_prompts: 128
+max_sample_rounds: 8
+minibatches_per_step: 1     # fully on-policy: one optimizer update per rollout batch
+objective: grpo
+advantage: batch_std
+loss_aggregation: token_constant
+clip_eps: 0.2
+clip_eps_high: 0.28
+kl_beta: 0.001
+filter_min_correct: 2
+filter_max_correct: 14
+mask_truncated: true
+step_reward_weight: 0.0
+update_micro_batch: 256
+lr: 0.000003
+warmup_steps: 10
+weight_decay: 0.0
+grad_clip_norm: 1.0
+log_every_steps: 5
+checkpoint_every_steps: 100
+budget:
+  paid_compute_allowed: false
+  max_spend_usd: 0

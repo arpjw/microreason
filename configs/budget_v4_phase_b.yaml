@@ -1,0 +1,21 @@
+# Budget for protocol v4 Phase B (reports/protocol_v4.md): v4 SFT + RL pools, v2-sft-long
+# (3 M examples, ~67 min on an RTX 6000 Ada), plateau / headroom / KV / filter-yield checks, the
+# GRPO LR pilot (3 x 100 steps) and the time-matched control LR pilot (2 runs). Held-out-val only.
+# Estimate: about 3 h, about $3 at $0.99/h. One pod.
+# Owner pre-approved the whole protocol v4 experiment in chat on 2026-11-08 ("Consider the
+# experiment pre approved, get it done"); caps set as proposed: $5 / 4.5 h for Phase B.
+# hourly_rate_usd must equal the live rate of the pod created.
+paid_compute_allowed: true
+provider: runpod
+gpu_type: NVIDIA RTX 6000 Ada Generation (Secure Cloud)
+hourly_rate_usd: 0.99
+max_spend_usd: 5.0
+max_runtime_hours: 4.5
+reserve_minutes: 15
+shutdown_rule: >-
+  Copy reports, pool manifests, metrics, budget ledgers, eval rows and the final v2-sft-long
+  checkpoint off the pod, then terminate (delete) it when the session finishes, at either
+  ceiling, or on any failure; the pod also deletes itself 45 minutes after finishing if not
+  collected.
+approved_by: project owner (pre-approval in chat for protocol v4)
+approved_at: "2026-11-08"

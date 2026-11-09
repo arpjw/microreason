@@ -44,12 +44,51 @@ class Completion:
     status: str
     reason: str
     reward: float
+    step_credit: float = 0.0
+
+    @property
+    def correct(self) -> bool:
+        """Exact-answer success. Shaped rewards add at most w < 1, so reward >= 1 iff correct."""
+        return self.reward >= 1.0
 
 
-def score(record: dict, ids: list[int], hit_eos: bool, tok: MicroTokenizer) -> Completion:
-    s = score_completion(record, tok.decode(ids), hit_eos, ROLLOUT_FORMAT)
+def passes_filter(group: list[Completion], lo: int, hi: int) -> bool:
+    """The GRPO training filter: lo <= correct samples <= hi, and rewards not all equal."""
+    n = sum(c.correct for c in group)
+    return lo <= n <= hi and len({c.reward for c in group}) > 1
+
+
+def step_prefix_credit(text: str, gold_steps: list[str]) -> float:
+    """Fraction of the gold solution steps the completion reproduces exactly, as a prefix.
+
+    The show-work format numbers steps "1. ...", "2. ..." inside [steps] ... [/steps]
+    (`prompts.assistant_ids`). Gold traces are canonical (post-order reductions, fixed equation
+    moves), so a step counts only if it is character-identical to the gold step at the same
+    position and every earlier step also matched. Extra or repeated steps earn nothing, so the
+    credit cannot be raised by padding. Returns a value in [0, 1].
+    """
+    if not gold_steps or "[steps]" not in text:
+        return 0.0
+    body = text.split("[steps]", 1)[1].split("[/steps]", 1)[0]
+    lines = [ln.strip() for ln in body.strip().split("\n") if ln.strip()]
+    n = 0
+    for i, (line, gold) in enumerate(zip(lines, gold_steps, strict=False)):
+        if line != f"{i + 1}. {gold}":
+            break
+        n += 1
+    return n / len(gold_steps)
+
+
+def score(record: dict, ids: list[int], hit_eos: bool, tok: MicroTokenizer,
+          step_reward_weight: float = 0.0) -> Completion:  # fmt: skip
+    text = tok.decode(ids)
+    s = score_completion(record, text, hit_eos, ROLLOUT_FORMAT)
     reward = 1.0 if s["status"] == "correct" else 0.0
-    return Completion(ids, hit_eos, s["status"], s["reason"], reward)
+    credit = 0.0
+    if step_reward_weight:
+        credit = step_prefix_credit(text, record.get("solution_steps") or [])
+        reward += step_reward_weight * credit
+    return Completion(ids, hit_eos, s["status"], s["reason"], reward, credit)
 
 
 @torch.no_grad()
@@ -65,6 +104,7 @@ def sample_groups(
     batch_size: int,
     precision: str = "fp32",
     use_cache: bool = False,
+    step_reward_weight: float = 0.0,
 ) -> list[list[Completion]]:
     """Sample `group_size` completions per record. Returns one group per record, in order."""
     device = next(model.parameters()).device
@@ -82,7 +122,7 @@ def sample_groups(
                             eos_id=tok.eos_id, pad_id=tok.pad_id, temperature=temperature,
                             generator=generator, use_cache=use_cache)  # fmt: skip
         for (i, _), g in zip(chunk, gens, strict=True):
-            groups[i].append(score(records[i], g.ids, g.hit_eos, tok))
+            groups[i].append(score(records[i], g.ids, g.hit_eos, tok, step_reward_weight))
     if was_training:
         model.train()
     return groups
@@ -97,12 +137,12 @@ def group_stats(records: list[dict], groups: list[list[Completion]]) -> dict:
         comps = [c for _, g in pairs for c in g]
         if not comps:
             return {}
-        succ = [sum(c.reward for c in g) for _, g in pairs]
+        succ = [sum(c.correct for c in g) for _, g in pairs]
         size = len(pairs[0][1])
         return {
             "groups": n_groups,
             "completions": len(comps),
-            "pass_at_1": sum(c.reward for c in comps) / len(comps),
+            "pass_at_1": sum(c.correct for c in comps) / len(comps),
             "pass_at_k": sum(s > 0 for s in succ) / n_groups,
             "mixed_group_fraction": sum(0 < s < size for s in succ) / n_groups,
             "all_correct_fraction": sum(s == size for s in succ) / n_groups,

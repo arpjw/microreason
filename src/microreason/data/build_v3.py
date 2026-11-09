@@ -117,6 +117,13 @@ class RLPoolV3(_Strict):
     records: PositiveInt = 2_000_000
     group_size: PositiveInt = 8
     family_accuracy: dict[str, float] = Field(default_factory=dict)
+    # Protocol v4: keep probabilities declared directly (overrides family_accuracy). All 1.0
+    # gives the generator's natural family mix.
+    family_keep: dict[str, float] | None = None
+    # Record ids are f"{id_prefix}_{n:08d}"; partitions are a hash of the id, so pools that
+    # coexist (protocol v4's SFT and RL pools) must use different prefixes.
+    id_prefix: str = "v3_train_rl"
+    purpose: str = "rl_pool"
     part_size: PositiveInt = 250_000
     workers: PositiveInt = 12
     out_path: str = "data/generated/math_v3/train_rl/train_rl.jsonl"
@@ -473,11 +480,16 @@ def build_stream_v3(cfg: DataV3Config) -> dict:
 def build_rl_pool_v3(cfg: DataV3Config) -> dict:
     """Training-only RL pool for Phase C (see RLPoolV3)."""
     rp = cfg.rl_pool
-    if not rp.family_accuracy:
-        raise ValueError("rl_pool.family_accuracy must be declared before building the RL pool")
-    keep = family_keep_probability(rp)
+    if rp.family_keep is not None:
+        if not all(0 < v <= 1 for v in rp.family_keep.values()):
+            raise ValueError("rl_pool.family_keep probabilities must be in (0, 1]")
+        keep = dict(rp.family_keep)
+    elif rp.family_accuracy:
+        keep = family_keep_probability(rp)
+    else:
+        raise ValueError("declare rl_pool.family_accuracy or rl_pool.family_keep before building")
     m = _build_stream(cfg, rp.root_seed, rp.records, rp.part_size, rp.workers, rp.out_path,
-                      rp.manifest_path, 0.5, keep=keep, id_prefix="v3_train_rl")  # fmt: skip
+                      rp.manifest_path, 0.5, keep=keep, id_prefix=rp.id_prefix)  # fmt: skip
     from microreason.rl.pool import PARTITION_RULE, partition_of
 
     parts = Counter()
@@ -486,7 +498,7 @@ def build_rl_pool_v3(cfg: DataV3Config) -> dict:
         r = json.loads(line)
         parts[partition_of(r["id"])] += 1
         fams[r["family"]] += 1
-    m.update(purpose="rl_pool", family_accuracy=dict(rp.family_accuracy),
+    m.update(purpose=rp.purpose, family_accuracy=dict(rp.family_accuracy),
              group_size=rp.group_size, family_keep_probability=keep,
              partitions={"rule": PARTITION_RULE, **dict(sorted(parts.items()))},
              by_family=dict(sorted(fams.items())))  # fmt: skip
@@ -514,7 +526,9 @@ def _build_stream(cfg: DataV3Config, root_seed: int, records: int, part_size: in
     out = Path(out_path)
     tmp_dir = out.parent / "parts"
     tmp_dir.mkdir(parents=True, exist_ok=True)
-    yield_rate = 0.6 if keep is None else 0.6 * max(0.2, sum(keep.values()) / len(keep)) * 0.8
+    # conservative: only the first `records` records in part order are kept, so extra parts
+    # change nothing but generation time
+    yield_rate = 0.6 if keep is None else 0.6 * max(0.2, sum(keep.values()) / len(keep)) * 0.7
     n_parts = math.ceil(records / (yield_rate * part_size)) + 1
     jobs = [(root_seed, p, part_size, str(tmp_dir), keep) for p in range(n_parts)]
     results = {}

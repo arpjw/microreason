@@ -1,0 +1,21 @@
+# Protocol v4 (reports/protocol_v4.md): training-only SFT pool for the converged parent
+# (v2-sft-long). Built with `microreason data generate-rl-pool-v3 --pool configs/sft_pool_v4.yaml`
+# (the same seeded, eval-excluding stream builder as the v3 RL pool). Natural family mix (every
+# keep probability 1.0), its own root seed and id prefix, so it shares no ids with the RL pool.
+# v2-sft-long trains on the first 3,000,000 records of its `sft_extra` partition (60% by id hash).
+root_seed: 20261201
+records: 5000000
+group_size: 16
+family_keep:
+  expression_1op: 1.0
+  expression_2op: 1.0
+  expression_3op: 1.0
+  expression_4op: 1.0
+  expression_5op: 1.0
+  linear_equation: 1.0
+id_prefix: v4_train_sft
+purpose: sft_pool
+part_size: 250000
+workers: 12
+out_path: data/generated/math_v3/train_sft_v4/train_sft_v4.jsonl
+manifest_path: data/manifests/math_train_sft_pool_v4.json

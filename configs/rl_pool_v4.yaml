@@ -1,0 +1,25 @@
+# Protocol v4 (reports/protocol_v4.md): training-only RL pool, declared before any v4 run. Built
+# with `microreason data generate-rl-pool-v3 --pool configs/rl_pool_v4.yaml`.
+# Depth-weighted candidate stream (edge-of-competence weighting, research report
+# "reports/GRPO gains for tiny models.md"): target family mix about 1op 3%, 2op 12%, 3op 25%,
+# 4op 25%, 5op 20%, linear equations 15%, i.e. ~70% at 4-6 leaves. Keep probability =
+# target / natural share, scaled so the largest is 1. Natural shares measured from the v3
+# generator on 30,000 draws: 1op 0.105, 2op 0.173, 3op 0.165, 4op 0.119, 5op 0.076, eq 0.363.
+# Partitions (rl.pool, by id hash): gate ~0.5% (gate + pilot val-free checks), grpo ~25%
+# (GRPO / RFT prompts, every arm), dpo ~14.5% (unused), sft_extra ~60% (time-matched SFT control).
+root_seed: 20261202
+records: 4000000
+group_size: 16
+family_keep:
+  expression_1op: 0.108
+  expression_2op: 0.263
+  expression_3op: 0.577
+  expression_4op: 0.802
+  expression_5op: 1.0
+  linear_equation: 0.157
+id_prefix: v4_train_rl
+purpose: rl_pool
+part_size: 250000
+workers: 12
+out_path: data/generated/math_v3/train_rl_v4/train_rl_v4.jsonl
+manifest_path: data/manifests/math_train_rl_v4.json

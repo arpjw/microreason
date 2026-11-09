@@ -427,7 +427,7 @@ def _load_rl(args):
 
     from microreason.rl.config import load_rl_config
 
-    over = {"parent": getattr(args, "parent", None)}
+    over = {"parent": getattr(args, "parent", None), "lr": getattr(args, "lr", None)}
     if getattr(args, "budget", None):
         with open(args.budget, encoding="utf-8") as f:
             over["budget"] = yaml.safe_load(f)
@@ -513,6 +513,9 @@ def _cmd_train(args: argparse.Namespace) -> int:
 
             with open(args.budget, encoding="utf-8") as f:
                 updates["budget"] = yaml.safe_load(f)
+        if getattr(args, "peak_lr", None) is not None:
+            opt = resolved.stage.optimizer.model_dump()
+            updates["optimizer"] = {**opt, "peak_lr": args.peak_lr}
         if updates:
             from microreason.config import ResolvedConfig, StageConfig
 
@@ -710,6 +713,12 @@ def build_parser() -> argparse.ArgumentParser:
     tr.add_argument("--micro-batch-size", type=int, default=None, help="Override the config.")
     tr.add_argument("--max-steps", type=int, default=None, help="Override the config.")
     tr.add_argument(
+        "--peak-lr",
+        type=float,
+        default=None,
+        help="Override optimizer.peak_lr (protocol v4: the pilot-selected value).",
+    )
+    tr.add_argument(
         "--max-wall-seconds",
         type=float,
         default=None,
@@ -744,6 +753,12 @@ def build_parser() -> argparse.ArgumentParser:
         rt.add_argument("--budget", default=None)
         rt.add_argument("--pod-id", default=None)
         rt.add_argument("--billing-start", default=None)
+        rt.add_argument(
+            "--lr",
+            type=float,
+            default=None,
+            help="Override the config's lr (protocol v4: the pilot-selected value).",
+        )
         rt.set_defaults(func=_cmd_rl_train, expect_stage=name)
 
     # eval / compare / serve

@@ -34,6 +34,10 @@ Capability gate passed; see `reports/v3_phase_b.md` and `reports/protocol_v3.md`
 **Protocol v3 Phase C (≈$0.63, two attempts):** the RL reward-variance gate failed twice (mixed
 groups 0.182 at T 0.8, 0.195 at T 1.0; rule ≥ 0.20). v2-sft's outcomes are near all-or-nothing per
 prompt. No GRPO ran; the v3 test suites stay sealed; H4 undecided. See `reports/v3_phase_c_attempt2.md`.
+**Protocol v4 (in progress):** converged SFT parent, a pass-rate-filtered depth-weighted prompt
+stream and a published-default on-policy GRPO recipe, 3 seeds vs time-matched continued SFT, plus RFT
+and step-reward arms. See `reports/protocol_v4.md`, `reports/confirmatory_plan_v3.md` and the
+literature review `reports/GRPO gains for tiny models.md`.
 Math training data: a 1.47M-problem training-only stream (≈70M tokens) excludes every frozen
 evaluation problem; see `reports/math_stream_v1.md`. No real training stage or evaluation has run yet. Every number in the spec is a target or estimate, not a measured result.
 

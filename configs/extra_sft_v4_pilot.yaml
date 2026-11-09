@@ -1,0 +1,35 @@
+# Protocol v4 Phase B control pilot: continued SFT from v2-sft-long on the v4 RL pool's
+# sft_extra partition (same depth-weighted family mix as GRPO's prompts), constant LR, seed 90.
+# Run at each pilot LR via --peak-lr {5e-6, 2e-5}, each time-matched (--max-wall-seconds) to the
+# selected GRPO pilot run's training loop; selected on held-out-VAL accuracy like GRPO.
+stage: extra_sft
+model: configs/model_43m.yaml
+tokenizer: artifacts/tokenizer/v2
+parent: artifacts/p4-v2-sft-long
+sft:
+  train_manifest: data/manifests/math_train_rl_v4.json
+  stream_partition: sft_extra
+  val_manifest: data/manifests/math_val_v3.json
+  num_examples: 2200000
+  show_work_fraction: 0.75
+  val_examples_per_format: 256
+seed: 90
+precision: bf16
+sequence_length: 384
+effective_batch_tokens: 24576
+micro_batch_size: 64
+max_examples: 20000000         # upper cap only; --max-wall-seconds ends the run
+log_every_steps: 100
+eval_every_steps: 5000
+checkpoint_every_steps: 1000000
+optimizer:
+  name: adamw
+  peak_lr: 0.000005            # replaced by --peak-lr with the Phase B pilot selection
+  weight_decay: 0.1
+  grad_clip_norm: 1.0
+scheduler:
+  name: constant
+  warmup_fraction: 0.0
+budget:
+  paid_compute_allowed: false
+  max_spend_usd: 0

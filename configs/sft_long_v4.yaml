@@ -1,0 +1,38 @@
+# Protocol v4 (reports/protocol_v4.md) Phase B: v2-sft-long, the converged SFT parent of every
+# v4 branch. Continues p3-v2-sft (protocol v3 Phase B, sha256:8c2cf6b9...) with the unchanged v3
+# SFT recipe (75/25 show-work/direct, loss on assistant tokens) for one epoch over 3,000,000
+# fresh verified records (first 3 M of the v4 SFT pool's sft_extra partition, fixed order).
+# Cosine 5e-5 -> 5e-6 (the v3 SFT schedule, re-warmed over 1%). Checkpoints every 5,860 steps
+# (~375 k examples); the plateau check evaluates the 375 k, 750 k, 1.5 M and 3 M points.
+stage: extra_sft
+model: configs/model_43m.yaml
+tokenizer: artifacts/tokenizer/v2
+parent: artifacts/p3-v2-sft
+sft:
+  train_manifest: data/manifests/math_train_sft_pool_v4.json
+  stream_partition: sft_extra
+  val_manifest: data/manifests/math_val_v3.json
+  num_examples: 3000000
+  show_work_fraction: 0.75
+  val_examples_per_format: 256
+seed: 74
+precision: bf16
+sequence_length: 384
+effective_batch_tokens: 24576   # 64 examples per optimizer step
+micro_batch_size: 64
+max_examples: 3000000           # one epoch -> 46,875 steps
+log_every_steps: 100
+eval_every_steps: 5860
+checkpoint_every_steps: 5860
+optimizer:
+  name: adamw
+  peak_lr: 0.00005
+  weight_decay: 0.1
+  grad_clip_norm: 1.0
+scheduler:
+  name: cosine
+  warmup_fraction: 0.01
+  min_lr_fraction: 0.1
+budget:
+  paid_compute_allowed: false
+  max_spend_usd: 0

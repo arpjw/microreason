@@ -61,6 +61,7 @@ from microreason.rl.rollout import (
     MALFORMED,
     autocast,
     build_sequences,
+    passes_filter,
     sample_groups,
     token_logprobs,
 )
@@ -68,11 +69,29 @@ from microreason.rl.rollout import (
 log = get_logger("microreason.rl.grpo")
 
 
-def group_advantages(rewards: torch.Tensor, eps: float = 1e-6) -> torch.Tensor:
-    """rewards: (groups, group_size) -> standardized advantages; zero for zero-variance groups."""
+def group_advantages(rewards: torch.Tensor, eps: float = 1e-6, mode: str = "group_std",
+                     batch_rows: torch.Tensor | None = None) -> torch.Tensor:  # fmt: skip
+    """rewards: (groups, group_size) -> advantages; zero for zero-variance groups.
+
+    group_std (v1-v3): (r - group mean) / group std. group_mean (Dr. GRPO): r - group mean.
+    batch_std: (r - group mean) / std of the rewards in `batch_rows` (the trained groups;
+    default all). reward (RFT): A = r, no baseline.
+    """
+    if mode == "reward":
+        return rewards.clone()
     mean = rewards.mean(dim=1, keepdim=True)
     std = rewards.std(dim=1, unbiased=False, keepdim=True)
-    adv = (rewards - mean) / (std + eps)
+    centered = rewards - mean
+    if mode == "group_std":
+        adv = centered / (std + eps)
+    elif mode == "group_mean":
+        adv = centered
+    elif mode == "batch_std":
+        sel = rewards if batch_rows is None else rewards[batch_rows]
+        bstd = sel.std(unbiased=False) if sel.numel() > 1 else torch.tensor(0.0)
+        adv = centered / (bstd + eps)
+    else:
+        raise ValueError(f"unknown advantage mode {mode!r}")
     return torch.where(std > 0, adv, torch.zeros_like(adv))
 
 
@@ -84,26 +103,65 @@ def grpo_loss(
     adv: torch.Tensor,
     clip_eps: float,
     kl_beta: float,
+    *,
+    clip_eps_high: float | None = None,
+    aggregation: str = "sequence_mean",
+    max_len: int | None = None,
+    denom: float | None = None,
 ) -> tuple[torch.Tensor, dict]:
-    """All log-prob tensors (B, T) fp32, mask (B, T) bool, adv (B,). Returns (loss, stats)."""
+    """All log-prob tensors (B, T) fp32, mask (B, T) bool, adv (B,). Returns (loss, stats).
+
+    sequence_mean: sum over completions of each completion's token mean, / denom (default B).
+    token_constant: sum over every completion token, / (denom x max_len) (Dr. GRPO), with
+    denom defaulting to B. Passing the whole update's completion count as `denom` lets
+    micro-batches accumulate into exactly the full-batch loss. The clip range is
+    [1 - clip_eps, 1 + clip_eps_high] (DAPO clip-higher when clip_eps_high > clip_eps).
+    """
+    hi = clip_eps if clip_eps_high is None else clip_eps_high
     m = mask.float()
     n_tok = m.sum(dim=1).clamp(min=1.0)
     log_ratio = (new_lp - old_lp) * m
     ratio = torch.exp(log_ratio)
     a = adv[:, None]
-    surr = torch.minimum(ratio * a, torch.clamp(ratio, 1 - clip_eps, 1 + clip_eps) * a)
+    surr = torch.minimum(ratio * a, torch.clamp(ratio, 1 - clip_eps, 1 + hi) * a)
     d = (ref_lp - new_lp) * m
     kl = torch.exp(d) - d - 1
     per_tok = -(surr - kl_beta * kl) * m
-    loss = (per_tok.sum(dim=1) / n_tok).mean()
+    n = float(new_lp.shape[0]) if denom is None else float(denom)
+    if aggregation == "sequence_mean":
+        loss = (per_tok.sum(dim=1) / n_tok).sum() / n
+    elif aggregation == "token_constant":
+        if not max_len:
+            raise ValueError("token_constant aggregation needs max_len")
+        loss = per_tok.sum() / (n * max_len)
+    else:
+        raise ValueError(f"unknown loss aggregation {aggregation!r}")
     with torch.no_grad():
-        clipped = ((ratio - 1).abs() > clip_eps) & mask
+        clipped = (((ratio - 1) > hi) | ((1 - ratio) > clip_eps)) & mask
         stats = {
             "kl": float(((kl * m).sum(dim=1) / n_tok).mean()),
             "clip_fraction": float(clipped.sum() / m.sum().clamp(min=1.0)),
             "ratio_mean": float((ratio * m).sum() / m.sum().clamp(min=1.0)),
         }
     return loss, stats
+
+
+def _objective_description(cfg: GRPOConfig) -> str:
+    if cfg.objective == "grpo" and (
+        cfg.advantage, cfg.loss_aggregation, cfg.clip_eps_high, cfg.step_reward_weight,
+        cfg.mask_truncated) == ("group_std", "sequence_mean", None, 0.0, False):  # fmt: skip
+        return "GRPO, clipped ratio, k3 KL to frozen parent, sequence-mean tokens"
+    lo, hi = cfg.filter_bounds()
+    head = ("RFT (on-policy rejection-sampling fine-tuning: A = reward, no baseline)"
+            if cfg.objective == "rft" else f"GRPO, advantage {cfg.advantage}")  # fmt: skip
+    clip = f"clip [1-{cfg.clip_eps}, 1+{cfg.clip_eps_high or cfg.clip_eps}]"
+    reward = ("binary exact-answer reward" if not cfg.step_reward_weight else
+              f"exact answer + {cfg.step_reward_weight} x gold step-prefix fraction")  # fmt: skip
+    return (
+        f"{head}; {clip}; k3 KL beta {cfg.kl_beta} to frozen parent; {cfg.loss_aggregation} "
+        f"aggregation; {reward}; filter {lo}..{hi} correct of {cfg.sampling.group_size}"
+        + ("; truncated masked" if cfg.mask_truncated else "")
+    )
 
 
 def _lr_at(step: int, cfg: GRPOConfig) -> float:
@@ -175,7 +233,7 @@ class GRPOTrainer:
                 "partition": "grpo",
                 "prompts_used": need,
             },  # fmt: skip
-            "objective": "GRPO, clipped ratio, k3 KL to frozen parent, sequence-mean tokens",
+            "objective": _objective_description(cfg),
         }
         self.step = 0
         self.updates = 0
@@ -219,7 +277,12 @@ class GRPOTrainer:
         return sample_groups(self.policy, self.tok, recs, group_size=s.group_size,
                              temperature=s.temperature, max_new_tokens=s.max_new_tokens,
                              generator=self.gen, batch_size=s.generation_batch_size,
-                             precision=self.cfg.precision, use_cache=s.kv_cache)  # fmt: skip
+                             precision=self.cfg.precision, use_cache=s.kv_cache,
+                             step_reward_weight=self.cfg.step_reward_weight)  # fmt: skip
+
+    def _keep_group(self, g: list) -> bool:
+        """The training filter: lo <= correct samples <= hi and rewards not all equal."""
+        return passes_filter(g, *self.cfg.filter_bounds())
 
     def _collect(self) -> tuple[list[dict], list[list], list[bool], int]:
         """Sampled records, their groups, which groups train, and the number of rounds."""
@@ -229,7 +292,6 @@ class GRPOTrainer:
             self.cursor += len(recs)
             groups = self._sample(recs)
             return recs, groups, [True] * len(recs), 1
-        k = cfg.sampling.group_size
         recs, groups, use = [], [], []
         kept, rounds = 0, 0
         while kept < cfg.prompts_per_step and rounds < cfg.max_sample_rounds:
@@ -239,8 +301,7 @@ class GRPOTrainer:
             self.cursor += len(chunk)
             rounds += 1
             for r, g in zip(chunk, self._sample(chunk), strict=True):
-                n = sum(c.reward for c in g)
-                take = 0 < n < k and kept < cfg.prompts_per_step
+                take = self._keep_group(g) and kept < cfg.prompts_per_step
                 kept += take
                 recs.append(r)
                 groups.append(g)
@@ -256,7 +317,9 @@ class GRPOTrainer:
         recs, groups, use, rounds = self._collect()
         t_roll = time.time() - t0
         rewards_all = torch.tensor([[c.reward for c in g] for g in groups])
-        adv_all = group_advantages(rewards_all, cfg.adv_eps)
+        mode = "reward" if cfg.objective == "rft" else cfg.advantage
+        adv_all = group_advantages(rewards_all, cfg.adv_eps, mode,
+                                   batch_rows=torch.tensor(use, dtype=torch.bool))  # fmt: skip
         from microreason.eval.generate import eval_prompt_ids
         from microreason.rl.rollout import ROLLOUT_FORMAT
 
@@ -276,10 +339,13 @@ class GRPOTrainer:
             batch = build_sequences([prompt_cache[gi] for gi, _ in flat],
                                     [c.ids for _, c in flat], self.tok.pad_id)  # fmt: skip
             batch = {k: v.to(self.device) for k, v in batch.items()}
-            with torch.no_grad(), autocast(self.device, cfg.precision):
-                old_lp = token_logprobs(self.policy, batch, s.temperature)
-                ref_lp = token_logprobs(self.ref, batch, s.temperature)
+            old_lp = self._chunked_logprobs(self.policy, batch)
+            ref_lp = self._chunked_logprobs(self.ref, batch)
             old_cpu, mask_cpu = old_lp.cpu(), batch["response_mask"].cpu()
+            if cfg.mask_truncated:
+                keep = torch.tensor([c.status != "truncated" for _, c in flat],
+                                    device=self.device)  # fmt: skip
+                batch["response_mask"] = batch["response_mask"] & keep[:, None]
         # immutable rollout record: every sampled completion, trained on or not
         row_of = {(gi, j): n for n, (gi, j) in enumerate(
             (gi, j) for gi in train_idx for j in range(len(groups[gi])))}  # fmt: skip
@@ -301,6 +367,9 @@ class GRPOTrainer:
                 }, sort_keys=True) + "\n")  # fmt: skip
         stats = defaultdict(float)
         grad_norms = []
+        if flat:
+            m = batch["response_mask"]
+            stats["sampled_token_nll"] = float(-(old_lp * m).sum() / m.sum().clamp(min=1))
         if not flat:
             log.warning("step %d: no mixed groups after %d rounds; no update", self.step, rounds)
         else:
@@ -312,26 +381,52 @@ class GRPOTrainer:
         return self._step_metrics(lr, recs, groups, use, rounds, rewards_all, stats, grad_norms,
                                   t_roll, t_upd)  # fmt: skip
 
+    @torch.no_grad()
+    def _chunked_logprobs(self, model, batch: dict) -> torch.Tensor:
+        """Teacher-forced completion log probabilities in micro-batches (memory-bounded)."""
+        cfg = self.cfg
+        n = batch["input_ids"].shape[0]
+        out = []
+        for i in range(0, n, cfg.update_micro_batch):
+            sub = {k: v[i : i + cfg.update_micro_batch] for k, v in batch.items()}
+            with autocast(self.device, cfg.precision):
+                out.append(token_logprobs(model, sub, cfg.sampling.temperature))
+        return torch.cat(out)
+
     def _update(self, batch, old_lp, ref_lp, adv, perm, stats, grad_norms) -> None:
+        """One optimizer update per minibatch; each minibatch accumulates gradients over
+        micro-batches of `update_micro_batch` completions, normalized by the minibatch size, so
+        the update equals a single full-minibatch step."""
         cfg, s = self.cfg, self.cfg.sampling
         for chunk in perm.chunk(cfg.minibatches_per_step):
-            idx = chunk.to(self.device)
-            sub = {k: v[idx] for k, v in batch.items()}
-            with autocast(self.device, cfg.precision):
-                new_lp = token_logprobs(self.policy, sub, s.temperature)
-            loss, st = grpo_loss(new_lp, old_lp[idx], ref_lp[idx], sub["response_mask"],
-                                 adv[idx], cfg.clip_eps, cfg.kl_beta)  # fmt: skip
-            loss.backward()
+            idx_all = chunk.to(self.device)
+            self.optimizer.zero_grad(set_to_none=True)
+            loss_total = 0.0
+            st_acc: dict[str, float] = defaultdict(float)
+            for idx in idx_all.split(cfg.update_micro_batch):
+                sub = {k: v[idx] for k, v in batch.items()}
+                with autocast(self.device, cfg.precision):
+                    new_lp = token_logprobs(self.policy, sub, s.temperature)
+                loss, st = grpo_loss(new_lp, old_lp[idx], ref_lp[idx], sub["response_mask"],
+                                     adv[idx], cfg.clip_eps, cfg.kl_beta,
+                                     clip_eps_high=cfg.clip_eps_high,
+                                     aggregation=cfg.loss_aggregation,
+                                     max_len=s.max_new_tokens, denom=len(idx_all))  # fmt: skip
+                loss.backward()
+                loss_total += float(loss.detach())
+                w = len(idx) / len(idx_all)
+                for k, v in st.items():
+                    st_acc[k] += v * w
             gn = torch.nn.utils.clip_grad_norm_(self.policy.parameters(), cfg.grad_clip_norm)
             gn = float(gn)
-            if not (math.isfinite(float(loss.detach())) and math.isfinite(gn)):
+            if not (math.isfinite(loss_total) and math.isfinite(gn)):
                 raise RuntimeError(f"non-finite GRPO loss/grad at step {self.step}")
             self.optimizer.step()
             self.optimizer.zero_grad(set_to_none=True)
             self.updates += 1
             grad_norms.append(gn)
-            stats["loss"] += float(loss.detach()) / cfg.minibatches_per_step
-            for k, v in st.items():
+            stats["loss"] += loss_total / cfg.minibatches_per_step
+            for k, v in st_acc.items():
                 stats[k] += v / cfg.minibatches_per_step
 
     def _step_metrics(self, lr, recs, groups, use, rounds, rewards, stats, grad_norms, t_roll,
@@ -339,18 +434,22 @@ class GRPOTrainer:
         """Reward and group statistics are over every sampled group (the policy's behaviour);
         loss statistics are over the groups trained on."""
         s = self.cfg.sampling
-        succ = rewards.sum(dim=1)
+        succ = torch.tensor([sum(c.correct for c in g) for g in groups])
         k = s.group_size
+        kept = [self._keep_group(g) for g in groups]
         comps = [c for g in groups for c in g]
         by_family: dict[str, list[float]] = defaultdict(list)
         for r, g in zip(recs, groups, strict=True):
-            by_family[r["family"]] += [c.reward for c in g]
+            by_family[r["family"]] += [float(c.correct) for c in g]
         return {
             "lr": lr,
             "sampled_prompts": len(recs),
             "trained_groups": sum(use),
             "sample_rounds": rounds,
             "mean_reward": float(rewards.mean()),
+            "pass_rate": float(succ.float().mean() / k),
+            "filter_yield": sum(kept) / len(kept),
+            "mean_step_credit": sum(c.step_credit for c in comps) / len(comps),
             "mixed_group_fraction": float(((succ > 0) & (succ < k)).float().mean()),
             "all_correct_fraction": float((succ == k).float().mean()),
             "all_wrong_fraction": float((succ == 0).float().mean()),

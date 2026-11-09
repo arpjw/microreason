@@ -13,13 +13,15 @@ from pathlib import Path
 import torch
 
 from microreason.rl.config import GRPOConfig, ResolvedRL
-from microreason.rl.rollout import group_stats, sample_groups
+from microreason.rl.rollout import group_stats, passes_filter, sample_groups
 
 
 def decide(overall: dict, cfg: GRPOConfig) -> tuple[bool, list[str]]:
     r = cfg.gate
     failures = []
-    if overall["mixed_group_fraction"] < r.min_mixed_group_fraction:
+    if r.min_mixed_group_fraction is not None and (
+        overall["mixed_group_fraction"] < r.min_mixed_group_fraction
+    ):
         failures.append(f"mixed_group_fraction {overall['mixed_group_fraction']:.3f} < "
                         f"{r.min_mixed_group_fraction}")  # fmt: skip
     if overall["malformed_fraction"] > r.max_malformed_fraction:
@@ -28,7 +30,17 @@ def decide(overall: dict, cfg: GRPOConfig) -> tuple[bool, list[str]]:
     if not r.min_pass_at_1 <= overall["pass_at_1"] <= r.max_pass_at_1:
         failures.append(f"pass_at_1 {overall['pass_at_1']:.3f} outside "
                         f"[{r.min_pass_at_1}, {r.max_pass_at_1}]")  # fmt: skip
+    if r.min_filter_yield is not None and overall.get("filter_yield", 0.0) < r.min_filter_yield:
+        failures.append(f"filter_yield {overall.get('filter_yield', 0.0):.3f} < "
+                        f"{r.min_filter_yield}")  # fmt: skip
     return not failures, failures
+
+
+def filter_yield(groups: list, cfg: GRPOConfig) -> float:
+    """Fraction of groups the GRPO training filter would keep (protocol v4 gate)."""
+    lo, hi = cfg.filter_bounds()
+    kept = [passes_filter(g, lo, hi) for g in groups]
+    return sum(kept) / len(kept) if kept else 0.0
 
 
 def run_gate(resolved: ResolvedRL, checkpoint: str, out: str | Path, device: str,
@@ -51,8 +63,11 @@ def run_gate(resolved: ResolvedRL, checkpoint: str, out: str | Path, device: str
     groups = sample_groups(model, tok, records, group_size=s.group_size,
                            temperature=s.temperature, max_new_tokens=s.max_new_tokens,
                            generator=gen, batch_size=s.generation_batch_size,
-                           precision=cfg.precision, use_cache=s.kv_cache)  # fmt: skip
+                           precision=cfg.precision, use_cache=s.kv_cache,
+                           step_reward_weight=cfg.step_reward_weight)  # fmt: skip
     stats = group_stats(records, groups)
+    stats["overall"]["filter_yield"] = filter_yield(groups, cfg)
+    stats["overall"]["filter_bounds"] = list(cfg.filter_bounds())
     passed, failures = decide(stats["overall"], cfg)
     report = {
         "checkpoint": str(checkpoint),

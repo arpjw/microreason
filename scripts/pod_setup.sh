@@ -34,6 +34,35 @@ assert h == m['tokenizer_sha256'], 'tokenizer v2 hash mismatch'; print('tokenize
   echo "== setup v3c complete"
   exit 0
 fi
+if [[ "${SETUP_PROFILE:-full}" == "v4" || "${SETUP_PROFILE:-full}" == "v4c" ]]; then
+  # Protocol v4 (reports/protocol_v4.md): regenerate the frozen v3 suites (the build refuses any
+  # change), verify the committed tokenizer v2. Phase B (v4) also builds the v4 SFT pool here;
+  # its session script builds the RL pool v4 in the background. Phase C (v4c) rebuilds the RL
+  # pool, which must match the manifest committed after Phase B.
+  rep="reports/v4_phase_b"; [[ "$SETUP_PROFILE" == "v4c" ]] && rep="reports/v4_phase_c"
+  mkdir -p "$rep"
+  echo "== data v3 suites (regenerated; must match math_eval_frozen_v3.json)"
+  uv run microreason data generate-v3 --config configs/data_v3.yaml > "$rep/data_v3_build.json"
+  uv run microreason data audit-v3 --report "$rep/data_v3_audit.json" > /dev/null
+  echo "== tokenizer v2 (committed)"
+  uv run python -c "import hashlib, json; m = json.load(open('artifacts/tokenizer/v2/tokenizer_manifest.json')); \
+h = hashlib.sha256(open('artifacts/tokenizer/v2/tokenizer.json', 'rb').read()).hexdigest(); \
+assert h == m['tokenizer_sha256'], 'tokenizer v2 hash mismatch'; print('tokenizer v2 verified', h[:12])"
+  if [[ "$SETUP_PROFILE" == "v4" ]]; then
+    echo "== SFT pool v4 (5 M records; v2-sft-long uses 3 M of its sft_extra partition)"
+    uv run microreason data generate-rl-pool-v3 --config configs/data_v3.yaml \
+      --pool configs/sft_pool_v4.yaml | tee "$rep/sft_pool_v4.json"
+  else
+    committed="$(git show HEAD:data/manifests/math_train_rl_v4.json | uv run python -c "import json,sys; print(json.load(sys.stdin)['sha256'])")"
+    echo "== RL pool v4 (must match the Phase B manifest, sha256 ${committed:0:12})"
+    uv run microreason data generate-rl-pool-v3 --config configs/data_v3.yaml \
+      --pool configs/rl_pool_v4.yaml | tee "$rep/rl_pool_v4.json"
+    uv run python -c "import json,sys; m=json.load(open('data/manifests/math_train_rl_v4.json')); \
+assert m['sha256'] == sys.argv[1], 'RL pool v4 differs from Phase B'; print('rl pool v4 verified')" "$committed"
+  fi
+  echo "== setup $SETUP_PROFILE complete"
+  exit 0
+fi
 if [[ "${SETUP_PROFILE:-full}" == "v3" ]]; then
   # Protocol v3 (reports/protocol_v3.md): data v3 + tokenizer v2; no v1 math data is needed.
   echo "== data v3: suites (built, audited, frozen), SFT split, stream"
