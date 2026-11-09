@@ -207,3 +207,24 @@ no pilot or test result had been seen. Changes:
 - The headroom gate: passed, with pass@16 − pass@1 = 0.113.
 - KV parity: passed, 23× faster.
 - The filter-yield gate: passed at 0.213.
+
+## Amendment 2 (2026-11-09 UTC, during Phase C seed 1, before any Phase C result)
+
+GRPO steps on the Phase C pod take about 17–21 s. As written, the session could run to within
+about 20 minutes of its 8 h ceiling. A budget stop inside a secondary arm would have ended the
+session before the confirmatory test phase. The fix:
+- **Secondary arms are non-blocking:** each one starts only if the time left covers its run plus
+  a 50-minute test-phase allowance.
+- **Incomplete arms are skipped:** an arm that does not complete is reported and skipped.
+- **The test phase always runs** for every completed checkpoint.
+
+**How it was applied:**
+- **No edit to the running script:** bash reads scripts incrementally, so the running file was
+  left untouched.
+- **A copy and a watcher:** the amended script was copied to the pod as
+  `scripts/pod_v4_phase_c_resume.sh`. A watcher on the pod stopped the original session when it
+  printed its "secondary arms" marker, then started the copy with `FROM=secondary`. That
+  happened after all six primary runs and their val evaluations.
+
+**Unchanged:** the primary runs, the H4 rule, and the order in which test suites are opened
+(after all training).
