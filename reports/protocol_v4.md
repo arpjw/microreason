@@ -183,3 +183,27 @@ for every arm. RFT, as a secondary arm, shares GRPO's rollout procedure exactly.
   expressions with unseen structure.
 - **Rollout records.** They are about 0.5–0.8 GB per run. Each run manifest keeps their sha256;
   the files are copied off the pod only on request (`PULL_ROLLOUTS=1`).
+
+## Amendment 1 (2026-11-09 UTC, Phase B, before any pilot result)
+
+On the Phase B pod a GRPO step took about 18 s: roughly 15 s to sample about 6,000 completions
+(filter yield 0.21, so about 3 chunks per step) and about 2 s to update. The plan had assumed
+8–10 s. The plan as written did not fit:
+- **Phase B pilots** would have taken about 3.5 h, against a 4.5 h ceiling for the whole session.
+- **Phase C** (8 runs × 300 steps) would have cost about $14, against its $9 cap.
+
+The session was stopped 10 steps into the first pilot. That pilot was discarded unevaluated, and
+no pilot or test result had been seen. Changes:
+
+- **GRPO pilots:** 40 steps per LR, not 100. The same three LRs, seed and selection rule.
+- **Control pilots:** still time-matched to the selected GRPO pilot run.
+- **Phase C runs:** every RL arm runs **150 steps, not 300**: 153,600 trained completions per
+  run, twice rl-v2's 76,800. The literature puts most RL gains in the first ~200 steps.
+  Controls stay time-matched to their GRPO seed.
+- **Phase C estimate:** about 7 h, about $7, within its $9 / 8 h cap.
+
+**Already completed before the stop, and unchanged:**
+- v2-sft-long: 80.7% on held-out-val, not plateaued, gaining 6.1 points over the last doubling.
+- The headroom gate: passed, with pass@16 − pass@1 = 0.113.
+- KV parity: passed, 23× faster.
+- The filter-yield gate: passed at 0.213.

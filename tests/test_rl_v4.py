@@ -172,7 +172,7 @@ def test_shipped_v4_configs_declare_the_registered_recipe():
         assert (c.objective, c.advantage, c.loss_aggregation) == ("grpo", "batch_std",
                                                                    "token_constant")  # fmt: skip
         assert c.minibatches_per_step == 1 and c.kl_beta == 1e-3 and c.step_reward_weight == 0
-        assert c.sampling.group_size == 16 and c.prompts_per_step == 64 and c.steps == 300
+        assert c.sampling.group_size == 16 and c.prompts_per_step == 64 and c.steps == 150
         assert c.filter_bounds() == (2, 14) and c.gate.min_mixed_group_fraction is None
     assert len({c.seed for c in seeds}) == 3
     rft = load_rl_config(ROOT / "configs/rft_v4_seed1.yaml").stage

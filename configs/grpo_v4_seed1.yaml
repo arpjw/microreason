@@ -24,7 +24,7 @@ gate:                       # protocol v4 gate: sampling cost per trained group,
   max_pass_at_1: 0.95
   min_filter_yield: 0.125   # >= 1/8 of candidates pass the filter -> <= 4 chunks of 128 per step on average
 prompts_per_step: 64        # 64 groups x 16 = 1,024 trained completions per update
-steps: 300
+steps: 150               # amendment 1: was 300 (measured ~18 s per step)
 dynamic_sampling: true
 sample_chunk_prompts: 128
 max_sample_rounds: 8

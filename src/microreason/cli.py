@@ -427,7 +427,11 @@ def _load_rl(args):
 
     from microreason.rl.config import load_rl_config
 
-    over = {"parent": getattr(args, "parent", None), "lr": getattr(args, "lr", None)}
+    over = {
+        "parent": getattr(args, "parent", None),
+        "lr": getattr(args, "lr", None),
+        "steps": getattr(args, "steps", None),
+    }
     if getattr(args, "budget", None):
         with open(args.budget, encoding="utf-8") as f:
             over["budget"] = yaml.safe_load(f)
@@ -759,6 +763,7 @@ def build_parser() -> argparse.ArgumentParser:
             default=None,
             help="Override the config's lr (protocol v4: the pilot-selected value).",
         )
+        rt.add_argument("--steps", type=int, default=None, help="Override the config's steps.")
         rt.set_defaults(func=_cmd_rl_train, expect_stage=name)
 
     # eval / compare / serve

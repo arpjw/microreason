@@ -20,6 +20,11 @@ MAX_NEW="${MAX_NEW:-320}"
 TOK=artifacts/tokenizer/v2
 SW=sft-show-work-v1
 GRPO_PILOT_LRS=(0.000001 0.000003 0.00001)
+# Amendment 1 (2026-11-09, before any pilot result): measured GRPO steps take ~18 s, so pilots
+# run 40 steps (not 100) to fit the Phase B ceiling. FROM=pilot resumes a stopped session at the
+# pilot, reusing the completed v2-sft-long, plateau/headroom checks, RL pool and gates.
+PILOT_STEPS="${PILOT_STEPS:-40}"
+FROM="${FROM:-start}"
 SFT_PILOT_LRS=(0.000005 0.00002)
 
 : "${MICROREASON_BILLING_START:?set MICROREASON_BILLING_START}"
@@ -60,6 +65,7 @@ run_eval() {  # name checkpoint suite format [extra args]
   echo "$name $suite $fmt evaluated"
 }
 
+if [[ "$FROM" == start ]]; then
 echo "== quick CUDA checks"
 timeout 900 uv run pytest -p no:cacheprovider -rN tests/test_model.py tests/test_rl.py \
   tests/test_rl_v4.py tests/test_eval.py 2>&1 | tail -1 | tee "$REPORTS/cuda_checks.txt"
@@ -134,12 +140,24 @@ if [[ $gate -ne 0 ]]; then
   exit 0
 fi
 
-echo "== GRPO LR pilot (100 steps each, pilot seed 80; held-out-val selection)"
+else
+  PARENT="$(final_checkpoint "$RUNS/v2-sft-long")"
+  for f in headroom.json gate.json kv_check.json RL_POOL_DONE; do
+    [[ -f "$REPORTS/$f" ]] || { echo "error: resume needs $REPORTS/$f" >&2; exit 1; }
+  done
+  uv run python -c "import json, sys; assert all(json.load(open(f))['passed'] for f in sys.argv[1:])" \
+    "$REPORTS/headroom.json" "$REPORTS/gate.json" "$REPORTS/kv_check.json"
+  echo "resuming at the pilot; parent $PARENT"
+fi
+
+echo "== GRPO LR pilot ($PILOT_STEPS steps each, pilot seed 80; held-out-val selection)"
 cands=()
 for lr in "${GRPO_PILOT_LRS[@]}"; do
   n="pilot-grpo-lr$lr"
+  rm -rf "${RUNS:?}/$n"  # a pilot stopped by amendment 1 is discarded, never evaluated
   uv run microreason rl grpo --config configs/grpo_v4_pilot.yaml --parent "$PARENT" --lr "$lr" \
-    --device "$DEVICE" --run-dir "$RUNS/$n" "${paid[@]}" | tee "$REPORTS/${n}_result.json"
+    --steps "$PILOT_STEPS" --device "$DEVICE" --run-dir "$RUNS/$n" "${paid[@]}" \
+    | tee "$REPORTS/${n}_result.json"
   run_eval "$n" "$(final_checkpoint "$RUNS/$n")" val_heldout_shape "$SW"
   cands+=("$lr:$n")
 done
