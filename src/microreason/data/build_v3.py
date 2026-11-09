@@ -102,6 +102,27 @@ class StreamV3(_Strict):
     tokenized_prefix: str = "math_stream"
 
 
+class RLPoolV3(_Strict):
+    """Training-only RL pool (protocol v3 Phase C): GRPO prompts, the reward-variance gate and the
+    equal-compute SFT control's examples, split by `rl.pool` partitions. A separate seed stream
+    (its own root seed), excluding every frozen v3 evaluation record.
+
+    Family weights (declared before any RL run): a candidate of family f is kept with probability
+    w_f / max(w), w_f = 1 - p_f^k - (1 - p_f)^k, the chance that a group of k samples from v2-sft
+    mixes successes and failures, with p_f v2-sft's greedy show-work val accuracy for f
+    (reports/v3_phase_b.md). The keep/drop draw is a hash of the record seed, so it is
+    deterministic."""
+
+    root_seed: int = 20261111
+    records: PositiveInt = 2_000_000
+    group_size: PositiveInt = 8
+    family_accuracy: dict[str, float] = Field(default_factory=dict)
+    part_size: PositiveInt = 250_000
+    workers: PositiveInt = 12
+    out_path: str = "data/generated/math_v3/train_rl/train_rl.jsonl"
+    manifest_path: str = "data/manifests/math_train_rl_v3.json"
+
+
 class DataV3Config(_Strict):
     dataset: str = "math"
     version: str = "v3"
@@ -111,6 +132,7 @@ class DataV3Config(_Strict):
     max_attempts_factor: PositiveInt = 80
     corpus_scan: CorpusScanV3 = CorpusScanV3()
     stream: StreamV3 = StreamV3()
+    rl_pool: RLPoolV3 = RLPoolV3()
     out_dir: str = "data/generated/math_v3"
     manifest_dir: str = "data/manifests"
 
@@ -386,8 +408,20 @@ def freeze_v3(manifest_dir: str | Path, version: str = "v3") -> Path:
 # ----------------------------------------------------------------------------- stream
 
 
-def _stream_part(args: tuple[int, int, int, str]) -> tuple[int, str, dict]:
-    root_seed, part, part_size, tmp_dir = args
+def family_keep_probability(pool: RLPoolV3) -> dict[str, float]:
+    k = pool.group_size
+    w = {f: 1 - p**k - (1 - p) ** k for f, p in pool.family_accuracy.items()}
+    top = max(w.values())
+    return {f: round(v / top, 6) for f, v in w.items()}
+
+
+def _keep(seed: int, prob: float) -> bool:
+    u = int(hashlib.sha256(f"rl-pool-keep:{seed}".encode()).hexdigest()[:12], 16) / 16**12
+    return u < prob
+
+
+def _stream_part(args: tuple) -> tuple[int, str, dict]:
+    root_seed, part, part_size, tmp_dir, keep = args
     from microreason.data.build_v3 import _EVAL_KEYS  # set in the worker initializer
 
     fps, prompts = _EVAL_KEYS
@@ -400,6 +434,13 @@ def _stream_part(args: tuple[int, int, int, str]) -> tuple[int, str, dict]:
             if c is None:
                 rej[why] += 1
                 continue
+            if keep is not None:
+                fam = family(c.shape)
+                if fam not in keep:
+                    raise ValueError(f"no declared accuracy for family {fam}")
+                if not _keep(c.seed, keep[fam]):
+                    rej["family_weight_drop"] += 1
+                    continue
             npr = normalize_prompt(c.problem.prompt)
             if c.fingerprint in fps or npr in prompts:
                 rej["frozen_eval_overlap"] += 1
@@ -423,6 +464,39 @@ def _init_stream_worker(fps: set[str], prompts: set[str]) -> None:
 
 def build_stream_v3(cfg: DataV3Config) -> dict:
     """Training-only stream for base and mid-training, excluding every frozen v3 eval record."""
+    sc = cfg.stream
+    return _build_stream(cfg, cfg.root_seed, sc.records, sc.part_size, sc.workers, sc.out_path,
+                         sc.manifest_path, sc.shard_a_fraction, keep=None,
+                         id_prefix="v3_train_stream")  # fmt: skip
+
+
+def build_rl_pool_v3(cfg: DataV3Config) -> dict:
+    """Training-only RL pool for Phase C (see RLPoolV3)."""
+    rp = cfg.rl_pool
+    if not rp.family_accuracy:
+        raise ValueError("rl_pool.family_accuracy must be declared before building the RL pool")
+    keep = family_keep_probability(rp)
+    m = _build_stream(cfg, rp.root_seed, rp.records, rp.part_size, rp.workers, rp.out_path,
+                      rp.manifest_path, 0.5, keep=keep, id_prefix="v3_train_rl")  # fmt: skip
+    from microreason.rl.pool import PARTITION_RULE, partition_of
+
+    parts = Counter()
+    fams = Counter()
+    for line in open(m["file"], encoding="utf-8"):
+        r = json.loads(line)
+        parts[partition_of(r["id"])] += 1
+        fams[r["family"]] += 1
+    m.update(purpose="rl_pool", family_accuracy=dict(rp.family_accuracy),
+             group_size=rp.group_size, family_keep_probability=keep,
+             partitions={"rule": PARTITION_RULE, **dict(sorted(parts.items()))},
+             by_family=dict(sorted(fams.items())))  # fmt: skip
+    Path(rp.manifest_path).write_text(json.dumps(m, indent=2, sort_keys=True) + "\n")
+    return m
+
+
+def _build_stream(cfg: DataV3Config, root_seed: int, records: int, part_size: int, workers: int,
+                  out_path: str, out_manifest: str, shard_a: float, keep,
+                  id_prefix: str) -> dict:  # fmt: skip
     from microreason.data.stream import shard_of
 
     frozen_path = Path(cfg.manifest_dir) / f"math_eval_frozen_{cfg.version}.json"
@@ -437,14 +511,14 @@ def build_stream_v3(cfg: DataV3Config) -> dict:
         for r in load_split_v3(m):
             fps.add(r.semantic_fingerprint)
             prompts.add(normalize_prompt(r.prompt))
-    sc = cfg.stream
-    out = Path(sc.out_path)
+    out = Path(out_path)
     tmp_dir = out.parent / "parts"
     tmp_dir.mkdir(parents=True, exist_ok=True)
-    n_parts = math.ceil(sc.records / (0.6 * sc.part_size)) + 1
-    jobs = [(cfg.root_seed, p, sc.part_size, str(tmp_dir)) for p in range(n_parts)]
+    yield_rate = 0.6 if keep is None else 0.6 * max(0.2, sum(keep.values()) / len(keep)) * 0.8
+    n_parts = math.ceil(records / (yield_rate * part_size)) + 1
+    jobs = [(root_seed, p, part_size, str(tmp_dir), keep) for p in range(n_parts)]
     results = {}
-    with ProcessPoolExecutor(sc.workers, initializer=_init_stream_worker,
+    with ProcessPoolExecutor(workers, initializer=_init_stream_worker,
                              initargs=(fps, prompts)) as ex:  # fmt: skip
         for part, path, rej in ex.map(_stream_part, jobs):
             results[part] = (path, rej)
@@ -461,7 +535,7 @@ def build_stream_v3(cfg: DataV3Config) -> dict:
     with tmp.open("wb") as f:
         for part in range(n_parts):
             for line in open(results[part][0], encoding="utf-8"):
-                if n == sc.records:
+                if n == records:
                     break
                 row = json.loads(line)
                 kf = hashlib.sha256(row["fp"].encode()).digest()[:16]
@@ -472,28 +546,28 @@ def build_stream_v3(cfg: DataV3Config) -> dict:
                 seen_fp.add(kf)
                 seen_np.add(kp)
                 rec = json.loads(row["rec"])
-                rec["id"] = f"v3_train_stream_{n:08d}"
+                rec["id"] = f"{id_prefix}_{n:08d}"
                 line_b = (json.dumps(rec, sort_keys=True, ensure_ascii=False) + "\n").encode()
                 f.write(line_b)
                 h.update(line_b)
-                shards[shard_of(rec["id"], sc.shard_a_fraction)] += 1
+                shards[shard_of(rec["id"], shard_a)] += 1
                 by_level[str(rec["difficulty"])] += 1
                 shapes.add(row["c"])
                 n += 1
-    if n < sc.records:
-        raise RuntimeError(f"stream: only {n} of {sc.records} records; raise part count")
+    if n < records:
+        raise RuntimeError(f"stream: only {n} of {records} records; raise part count")
     tmp.replace(out)
     manifest = {
         "schema_version": 1, "dataset": "math", "version": cfg.version,
         "split": "train_stream", "file": str(out), "sha256": h.hexdigest(),
         "record_count": n, "generator_version": GENERATOR_VERSION_V3,
-        "root_seed": cfg.root_seed, "data_config_hash": config_hash(cfg),
+        "root_seed": root_seed, "data_config_hash": config_hash(cfg),
         "by_difficulty": dict(sorted(by_level.items())), "distinct_shapes": len(shapes),
-        "shards": {"rule": f"sha256(id) bucket < {sc.shard_a_fraction} -> a, else b",
+        "shards": {"rule": f"sha256(id) bucket < {shard_a} -> a, else b",
                    **dict(sorted(shards.items()))},
         "excluded_frozen_suites": {s: frozen[s]["sha256"] for s in V3_EVAL_SPLITS},
         "excluded_fingerprints": len(fps), "build_rejections": dict(sorted(rejections.items())),
         "code_revision": _code_revision(),
     }  # fmt: skip
-    Path(sc.manifest_path).write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+    Path(out_manifest).write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     return manifest

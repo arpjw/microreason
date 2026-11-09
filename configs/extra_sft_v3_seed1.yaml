@@ -1,0 +1,37 @@
+# Protocol v3 Phase C: v2-extra-sft, the equal-compute control for v4-grpo seed 1.
+# Continues p3-v2-sft with the unchanged v3 SFT recipe (75/25 show-work/direct, masked loss,
+# 64 examples per step) at a constant LR of 5e-6, on the sft_extra partition of the v3 RL pool
+# (same family mix as GRPO's prompts). The session passes --max-wall-seconds = the matching
+# GRPO seed's measured train_wall_seconds (rollouts, verification and updates; final
+# evaluations excluded for both).
+stage: extra_sft
+model: configs/model_43m.yaml
+tokenizer: artifacts/tokenizer/v2
+parent: artifacts/p3-v2-sft
+sft:
+  train_manifest: data/manifests/math_train_rl_v3.json
+  stream_partition: sft_extra
+  val_manifest: data/manifests/math_val_v3.json
+  num_examples: 1000000
+  show_work_fraction: 0.75
+  val_examples_per_format: 256
+seed: 71
+precision: bf16
+sequence_length: 384
+effective_batch_tokens: 24576
+micro_batch_size: 64
+max_examples: 20000000         # upper cap only; the wall-time limit ends the run
+log_every_steps: 50
+eval_every_steps: 2000
+checkpoint_every_steps: 100000
+optimizer:
+  name: adamw
+  peak_lr: 0.000005
+  weight_decay: 0.1
+  grad_clip_norm: 1.0
+scheduler:
+  name: constant
+  warmup_fraction: 0.0
+budget:
+  paid_compute_allowed: false
+  max_spend_usd: 0

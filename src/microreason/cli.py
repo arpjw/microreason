@@ -277,6 +277,23 @@ def _cmd_data_generate_stream_v3(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _cmd_data_generate_rl_pool_v3(args: argparse.Namespace) -> int:
+    import yaml
+
+    from microreason.data import build_v3 as b3
+
+    try:
+        cfg = b3.load_v3_config(args.config)
+        pool = b3.RLPoolV3.model_validate(yaml.safe_load(Path(args.pool).read_text()))
+        m = b3.build_rl_pool_v3(cfg.model_copy(update={"rl_pool": pool}))
+    except (ValidationError, ValueError, RuntimeError, FileNotFoundError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return EXIT_CONFIG_ERROR
+    keys = ("record_count", "sha256", "partitions", "by_family", "family_keep_probability")
+    print(json.dumps({k: m[k] for k in keys}, indent=2, sort_keys=True))
+    return EXIT_OK
+
+
 def _cmd_data_tokenize_stream_v3(args: argparse.Namespace) -> int:
     from pathlib import Path
 
@@ -638,6 +655,10 @@ def build_parser() -> argparse.ArgumentParser:
     dsv3 = data_sub.add_parser("generate-stream-v3", help="Data v3: training-only stream.")
     dsv3.add_argument("--config", default="configs/data_v3.yaml")
     dsv3.set_defaults(func=_cmd_data_generate_stream_v3)
+    drv3 = data_sub.add_parser("generate-rl-pool-v3", help="Data v3: Phase C RL pool.")
+    drv3.add_argument("--config", default="configs/data_v3.yaml")
+    drv3.add_argument("--pool", default="configs/rl_pool_v3.yaml")
+    drv3.set_defaults(func=_cmd_data_generate_rl_pool_v3)
     dtv3 = data_sub.add_parser("tokenize-stream-v3", help="Data v3: tokenize stream shards.")
     dtv3.add_argument("--config", default="configs/data_v3.yaml")
     dtv3.add_argument("--tokenizer", default="artifacts/tokenizer/v2")

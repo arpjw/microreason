@@ -246,3 +246,105 @@ def test_eval_on_v3_suites_with_cached_generator_and_sealing(tmp_path):
     with pytest.raises(ValueError, match="not an evaluation suite of data-v3"):
         run_eval("test_heldout_template", ckpt, "sft-show-work-v1", tmp_path / "e4",
                  allow_test=True, **common)  # fmt: skip
+
+
+# ----------------------------------------------------------------------------- Phase C RL pool
+
+FAMILY_P = {"expression_1op": 0.947, "expression_2op": 0.796, "expression_3op": 0.637,
+            "expression_4op": 0.505, "expression_5op": 0.366, "linear_equation": 0.958}  # fmt: skip
+
+
+def _pool_cfg(tmp_path, workers=2, records=1500):
+    cfg = _cfg(tmp_path)
+    pool = b3.RLPoolV3(records=records, family_accuracy=FAMILY_P, part_size=1000,
+                       workers=workers, out_path=str(tmp_path / "math_v3/train_rl/train_rl.jsonl"),
+                       manifest_path=str(tmp_path / "manifests/math_train_rl_v3.json"))  # fmt: skip
+    return cfg.model_copy(update={"rl_pool": pool})
+
+
+def test_rl_pool_is_weighted_partitioned_and_eval_free(tmp_path):
+    from collections import Counter
+
+    from microreason.rl.pool import load_partition, partition_of
+
+    hashes = []
+    for w in (1, 2):
+        cfg = _pool_cfg(tmp_path / f"w{w}", workers=w)
+        b3.write_v3(cfg, b3.build_v3(cfg))
+        b3.freeze_v3(cfg.manifest_dir)
+        m = b3.build_rl_pool_v3(cfg)
+        hashes.append(m["sha256"])
+    assert hashes[0] == hashes[1]
+    assert m["record_count"] == 1500 and m["purpose"] == "rl_pool"
+    keep = m["family_keep_probability"]
+    assert keep["expression_4op"] == 1.0 and keep["linear_equation"] < 0.35
+    recs = [json.loads(x) for x in open(m["file"])]
+    assert all(r["id"].startswith("v3_train_rl_") for r in recs)
+    fam = Counter(r["family"] for r in recs)
+    # equations are ~36% of unweighted problems; the weights cut them to well under that
+    assert fam["linear_equation"] / len(recs) < 0.2
+    assert fam["expression_4op"] > fam["expression_1op"]
+    eval_fps = set()
+    for split in b3.V3_EVAL_SPLITS:
+        em = json.loads(b3.manifest_path(cfg.manifest_dir, "v3", split).read_text())
+        eval_fps |= {r.semantic_fingerprint for r in b3.load_split_v3(em)}
+    assert not {r["semantic_fingerprint"] for r in recs} & eval_fps
+    grpo, _ = load_partition(cfg.rl_pool.manifest_path, "grpo")
+    assert grpo and all(partition_of(r["id"]) == "grpo" for r in grpo)
+    assert set(m["partitions"]) >= {"rule", "gate", "grpo", "sft_extra"}
+
+
+def test_rl_pool_requires_declared_accuracies(tmp_path):
+    cfg = _cfg(tmp_path)
+    with pytest.raises(ValueError, match="family_accuracy"):
+        b3.build_rl_pool_v3(cfg)
+
+
+def test_grpo_and_extra_sft_run_on_the_v3_pool(tmp_path):
+    import torch
+
+    from microreason.checkpoint import load_checkpoint, save_checkpoint
+    from microreason.config import ResolvedConfig, StageConfig, load_model_config
+    from microreason.model import build_model
+    from microreason.rl.config import GRPOConfig, ResolvedRL
+    from microreason.rl.grpo import GRPOTrainer
+    from microreason.rl.pool import load_partition
+    from microreason.tokenizer import MicroTokenizer
+    from microreason.train.sft import build_sft_trainer
+
+    tok_dir = "artifacts/tokenizer/v2"
+    tok = MicroTokenizer.load(tok_dir)
+    cfg = _pool_cfg(tmp_path, records=1500)
+    b3.write_v3(cfg, b3.build_v3(cfg))
+    b3.freeze_v3(cfg.manifest_dir)
+    b3.build_rl_pool_v3(cfg)
+    smoke = "configs/model_smoke.yaml"
+    mc = load_model_config(smoke)
+    torch.manual_seed(0)
+    m = build_model(mc)
+    prov = {"config_hash": "p", "tokenizer_sha256": tok.sha256}
+    opt = torch.optim.AdamW(m.parameters())
+    parent = save_checkpoint(tmp_path / "parent", 1, m, opt, {"step": 1}, prov)
+    pool, _ = load_partition(cfg.rl_pool.manifest_path, "grpo")
+    g = GRPOConfig(model=smoke, tokenizer=tok_dir, parent=str(parent), precision="fp32",
+                   sampling={"group_size": 2, "max_new_tokens": 8, "generation_batch_size": 8,
+                             "kv_cache": True},
+                   prompts_per_step=2, steps=2, warmup_steps=0, checkpoint_every_steps=10,
+                   log_every_steps=1, dynamic_sampling=True, sample_chunk_prompts=4,
+                   max_sample_rounds=2)  # fmt: skip
+    res = GRPOTrainer(ResolvedRL(stage=g, model=mc), tmp_path / "grpo", "cpu", pool=pool).train()
+    assert res["status"] == "completed"
+    stage = StageConfig.model_validate(dict(
+        stage="extra_sft", model=smoke, tokenizer=tok_dir, parent=str(parent),
+        sft={"train_manifest": cfg.rl_pool.manifest_path, "stream_partition": "sft_extra",
+             "val_manifest": str(b3.manifest_path(cfg.manifest_dir, "v3", "val")),
+             "num_examples": 200, "val_examples_per_format": 4},
+        seed=0, precision="fp32", sequence_length=384, effective_batch_tokens=384 * 4,
+        micro_batch_size=4, max_examples=10_000_000, max_wall_seconds=1.0, log_every_steps=1,
+        eval_every_steps=10_000, checkpoint_every_steps=10_000,
+        optimizer={"peak_lr": 1e-4}, scheduler={"name": "constant", "warmup_fraction": 0.0},
+    ))  # fmt: skip
+    out = build_sft_trainer(ResolvedConfig(stage=stage, model=mc), tmp_path / "xsft", "cpu").train()
+    assert out.final_checkpoint is not None
+    _, _, cm = load_checkpoint(out.final_checkpoint)
+    assert cm["tokenizer_sha256"] == tok.sha256

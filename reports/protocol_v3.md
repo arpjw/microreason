@@ -274,3 +274,74 @@ manifests are pulled and committed after the session.
 - **Cost:** **about $3–3.5** at the RTX 6000 Ada's $0.99/h.
 - **Proposed bounds:** **$6 and 4.5 h** (`configs/budget_v3_phase_b.yaml`, which stays unpaid
   until approved).
+
+## Phase C settings (declared 2026-11-09, after Phase B and before any Phase C run)
+
+The capability gate passed (`reports/v3_phase_b.md`: v2-sft scored 70.3% greedy and 74.4%
+pass@4 on held-out-val). The settings below are fixed for Phase C.
+
+**RL pool** (`configs/rl_pool_v3.yaml`): a separate training-only seed stream (root seed
+20261111) of 2 M records, excluding every frozen v3 evaluation record.
+- **Family weights:** a record is kept with probability w_f / max(w), where
+  w_f = 1 − p_f⁸ − (1 − p_f)⁸. Here p_f is v2-sft's greedy show-work **val** accuracy for its
+  family.
+
+  | Family | Keep probability |
+  | --- | ---: |
+  | 1 operator | 0.356 |
+  | 2 operators | 0.846 |
+  | 3 operators | 0.980 |
+  | 4 operators | 1.000 |
+  | 5 operators | 0.981 |
+  | Linear equations | 0.293 |
+
+- **Partitions** (`rl.pool`, by id hash):
+
+  | Partition | Records | Use |
+  | --- | ---: | --- |
+  | gate | ~10 k | Reward-variance gate |
+  | grpo | ~500 k | GRPO prompts |
+  | dpo | ~290 k | Unused |
+  | sft_extra | ~1.2 M | Extra-SFT examples |
+
+**Checks before any GRPO update:**
+- **KV-cache parity:** the check is re-run on p3-v2-sft with tokenizer v2, under the rl-v2 rule
+  (fp32 greedy agreement at least 0.99; bf16 sampled pass@1 gap at most 0.02).
+- **Reward-variance gate:** re-run on 512 gate prompts with GRPO's exact sampling (group 8,
+  temperature 0.8, 256 tokens), under the v1 rule. The group size is now 8.
+
+If either fails, the session stops and the test suites stay sealed.
+
+**Training branches:**
+- **v4-grpo-s1 and v4-grpo-s2** (`configs/grpo_v3_seed{1,2}.yaml`, seeds 61 and 62): rl-v2's
+  selected recipe, with **no LR search**. LR is 1e-5, with dynamic sampling (32 mixed groups per
+  step, chunks of 64, at most 8 rounds), group 8, 300 steps, 2 updates per step, clip 0.2, k3 KL
+  β 0.04, and KV-cache rollouts of at most 256 tokens.
+- **v2-extra-sft-s1 and v2-extra-sft-s2** (`configs/extra_sft_v3_seed{1,2}.yaml`, seeds 71 and
+  72): the v3 SFT recipe at a constant LR of 5e-6, on 1 M `sft_extra` examples. Each is stopped
+  at the matching GRPO seed's measured `train_wall_seconds` on the same pod.
+
+**Evaluations:**
+- **During training:** every branch, plus v2-sft re-evaluated on the same pod, is evaluated on
+  val and held-out-val (greedy show-work).
+- **Test suites:** opened once, afterwards, under `reports/confirmatory_plan_v2.md`.
+  - **H4** needs all four GRPO comparisons, against v2-sft and against the matched control in
+    each seed, to reach at least +2 points with intervals above 0.
+  - **H1 and H2** get confirmatory checks on `test_id` (interval above 0).
+  - v0-base and v1-math are uploaded to the pod for H1 and H2.
+
+**Phase C estimate** (`scripts/pod_setup.sh` with `SETUP_PROFILE=v3c`, then
+`scripts/pod_v3_phase_c.sh`):
+
+| Step | Time |
+| --- | --- |
+| Setup and RL pool | about 15 min |
+| KV check and gate | about 5 min |
+| 2 × GRPO | about 20–25 min each |
+| 2 × control | the same |
+| Val evaluations | about 10 min |
+| Test evaluations | about 40 min |
+
+That totals **about 2.7–3 h**, so **≈ $3–3.5** on an RTX 6000 Ada at $0.99/h. The proposed
+bounds are **$6 and 5 h** (`configs/budget_v3_phase_c.yaml`, which stays unpaid until approved).
+GRPO step time is the main uncertainty, because v3 rollouts are about 2–3× longer than rl-v2's.

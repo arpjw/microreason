@@ -1,0 +1,22 @@
+# Protocol v3 Phase C RL pool (reports/protocol_v3.md), declared before any RL run. Merged into
+# configs/data_v3.yaml's `rl_pool` section by `microreason data generate-rl-pool-v3`.
+# family_accuracy: v2-sft greedy show-work val accuracy by family (reports/v3_phase_b.md,
+# reports/v3_phase_b_results/v2-sft_val_sft-show-work-v1_summary.json). Keep probability per
+# family = w / max(w), w = 1 - p^8 - (1 - p)^8 (chance a group of 8 samples mixes outcomes):
+#   1op 0.356, 2op 0.846, 3op 0.980, 4op 1.000, 5op 0.981, linear_equation 0.293.
+# 2 M records -> partitions (rl.pool): gate ~10 k, grpo ~500 k, dpo ~290 k (unused in v3),
+# sft_extra ~1.2 M.
+root_seed: 20261111
+records: 2000000
+group_size: 8
+family_accuracy:
+  expression_1op: 0.947
+  expression_2op: 0.796
+  expression_3op: 0.637
+  expression_4op: 0.505
+  expression_5op: 0.366
+  linear_equation: 0.958
+part_size: 250000
+workers: 12
+out_path: data/generated/math_v3/train_rl/train_rl.jsonl
+manifest_path: data/manifests/math_train_rl_v3.json

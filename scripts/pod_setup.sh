@@ -17,6 +17,23 @@ uv run python -c "import torch; print('torch', torch.__version__, 'cuda', torch.
 echo "== data (rebuilt from pinned sources)"
 uv run microreason data fetch-sources
 uv run microreason data split-text --out /tmp/general_text_split_v1.json
+if [[ "${SETUP_PROFILE:-full}" == "v3c" ]]; then
+  # Protocol v3 Phase C: regenerate the frozen v3 suites (the build refuses any change), build
+  # the RL pool, verify the committed tokenizer v2. No pretraining stream or tokenization needed.
+  mkdir -p reports/v3_phase_c
+  echo "== data v3 suites (regenerated; must match math_eval_frozen_v3.json)"
+  uv run microreason data generate-v3 --config configs/data_v3.yaml > reports/v3_phase_c/data_v3_build.json
+  uv run microreason data audit-v3 --report reports/v3_phase_c/data_v3_audit.json > /dev/null
+  echo "== RL pool v3"
+  uv run microreason data generate-rl-pool-v3 --config configs/data_v3.yaml \
+    --pool configs/rl_pool_v3.yaml | tee reports/v3_phase_c/rl_pool_v3.json
+  echo "== tokenizer v2 (committed)"
+  uv run python -c "import hashlib, json; m = json.load(open('artifacts/tokenizer/v2/tokenizer_manifest.json')); \
+h = hashlib.sha256(open('artifacts/tokenizer/v2/tokenizer.json', 'rb').read()).hexdigest(); \
+assert h == m['tokenizer_sha256'], 'tokenizer v2 hash mismatch'; print('tokenizer v2 verified', h[:12])"
+  echo "== setup v3c complete"
+  exit 0
+fi
 if [[ "${SETUP_PROFILE:-full}" == "v3" ]]; then
   # Protocol v3 (reports/protocol_v3.md): data v3 + tokenizer v2; no v1 math data is needed.
   echo "== data v3: suites (built, audited, frozen), SFT split, stream"

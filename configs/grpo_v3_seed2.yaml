@@ -1,0 +1,40 @@
+# Protocol v3 Phase C (reports/protocol_v3.md): v4-grpo from p3-v2-sft, training seed 2 of 2.
+# rl-v2's recipe (configs/grpo_v2_lr1e-5.yaml) with no LR search: KV-cache rollouts, dynamic
+# sampling (train only on mixed groups), group 8, LR 1e-5 constant after 10 warmup steps.
+# v3 changes: tokenizer v2, the v3 RL pool (configs/rl_pool_v3.yaml), 256-token rollouts.
+stage: grpo
+model: configs/model_43m.yaml
+tokenizer: artifacts/tokenizer/v2
+parent: artifacts/p3-v2-sft
+pool_manifest: data/manifests/math_train_rl_v3.json
+seed: 62
+precision: bf16
+sampling:
+  group_size: 8
+  temperature: 0.8
+  max_new_tokens: 256
+  generation_batch_size: 256
+  kv_cache: true
+gate:              # reward-variance gate on 512 gate-partition prompts, same sampling (group 8)
+  prompts: 512
+  min_mixed_group_fraction: 0.20
+  max_malformed_fraction: 0.10
+  min_pass_at_1: 0.05
+  max_pass_at_1: 0.95
+prompts_per_step: 32
+steps: 300
+dynamic_sampling: true
+sample_chunk_prompts: 64
+max_sample_rounds: 8
+minibatches_per_step: 2
+clip_eps: 0.2
+kl_beta: 0.04
+lr: 0.00001
+warmup_steps: 10
+weight_decay: 0.0
+grad_clip_norm: 1.0
+log_every_steps: 5
+checkpoint_every_steps: 100
+budget:
+  paid_compute_allowed: false
+  max_spend_usd: 0
